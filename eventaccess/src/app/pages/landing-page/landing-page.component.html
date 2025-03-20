@@ -1,0 +1,58 @@
+
+
+<div class="status-container">
+
+    <div class="title">
+        <h1>Status übersicht</h1>
+
+    </div>
+
+    @if(isLoaded){
+            
+        <div class="row-services">
+        
+
+            <div class="col-services" *ngFor="let event of eventList">
+                <app-event-box 
+                    [eventName]="event.eventName" 
+                    [eventTitle]="event.eventTitle" 
+                    [eventInfo]="event.eventInfo"
+                    [routerLink]="['/eventedit']">
+                </app-event-box>
+            </div>
+
+    
+            <div class="col-services">
+                <div class="more-services">
+                    <p>Neues Event erstellen?</p>
+                    <section>
+                        <button mat-button class="btn" routerLink="/addevent">Neues Event erstellen</button>
+                    </section>
+    
+                </div>
+            </div>
+
+        </div>
+        
+      }
+
+      @else {
+
+        @if(isFailed) {
+            
+            <div class="loading-container">
+                loading
+            </div>
+        }
+
+        @else { 
+            <div class="loading-container">
+                fehler
+            </div>
+        }
+
+      }
+
+</div>
+
+
