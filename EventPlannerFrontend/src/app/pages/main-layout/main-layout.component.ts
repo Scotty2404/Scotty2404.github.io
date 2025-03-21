@@ -9,17 +9,16 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatListItem } from '@angular/material/list';
 import { MatNavList } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
 
-import { LandingPageComponent } from './pages/landing-page/landing-page.component';
-import { CalendarPageComponent } from './pages/calendar-page/calendar-page.component';
-import { MainLayoutComponent } from './pages/main-layout/main-layout.component';
-
-
-
-
+import { LandingPageComponent } from '../landing-page/landing-page.component';
+import { CalendarPageComponent } from '../calendar-page/calendar-page.component';
+import { ContactPageComponent } from '../contact-page/contact-page.component';
+import { ImprintPageComponent } from '../imprint-page/imprint-page.component';
 
 @Component({
-  selector: 'app-root',
+  selector: 'app-main-layout',
+  standalone: true,
   imports: [
     RouterOutlet,
     RouterModule, 
@@ -30,13 +29,15 @@ import { MainLayoutComponent } from './pages/main-layout/main-layout.component';
     MatListModule,
     MatListItem,
     MatNavList,
+    MatMenuModule,
     LandingPageComponent,
     CalendarPageComponent,
-    MainLayoutComponent,
+    ContactPageComponent,
+    ImprintPageComponent,
   ],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  templateUrl: './main-layout.component.html',
+  styleUrl: './main-layout.component.scss'
 })
-export class AppComponent {
-  title = 'eventaccess';
+export class MainLayoutComponent {
+
 }
