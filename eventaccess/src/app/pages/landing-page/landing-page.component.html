@@ -9,10 +9,10 @@
 
     @if(isLoaded){
             
-        <div class="row-services">
+        <div class="row">
         
 
-            <div class="col-services" *ngFor="let event of eventList">
+            <div class="col" *ngFor="let event of eventList">
                 <app-event-box 
                     [eventName]="event.eventName" 
                     [eventTitle]="event.eventTitle" 

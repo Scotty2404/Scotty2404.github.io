@@ -57,7 +57,7 @@
     padding-right: 10px;
 }
 
-.row-services {
+.row {
     margin-right: -15px;
     margin-left: -15px;
     width: 100%;
@@ -65,7 +65,7 @@
     margin-bottom: 150px;
 }
 
-.col-services {
+.col {
     width: 33%;
     position: relative;
     min-height: 1px;
@@ -78,19 +78,19 @@
 
 
 @media (max-width: 70em) {
-    .col-services {
+    .col {
         width: 100%;
     }
 }
 
 @media (min-width: 70em) and (max-width: 95em) {
-    .col-services {
+    .col {
         width: 50%;
     }
 }
 
 @media (min-width: 150em) {
-    .col-services {
+    .col {
         width: 25%;
     }
 }
