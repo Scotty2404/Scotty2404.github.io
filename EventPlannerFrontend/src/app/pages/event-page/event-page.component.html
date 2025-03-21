@@ -1,0 +1,43 @@
+
+
+<div class="status-container">
+
+    <div class="title">
+        <h1>Status übersicht</h1>
+
+    </div>
+
+    @if(isLoaded){
+            
+        <div class="row">
+        
+
+            <div class="col">
+                <app-event-detail-box>
+                </app-event-detail-box>
+            </div>
+
+        </div>
+        
+      }
+
+      @else {
+
+        @if(isFailed) {
+            
+            <div class="loading-container">
+                loading
+            </div>
+        }
+
+        @else { 
+            <div class="loading-container">
+                fehler
+            </div>
+        }
+
+      }
+
+</div>
+
+
