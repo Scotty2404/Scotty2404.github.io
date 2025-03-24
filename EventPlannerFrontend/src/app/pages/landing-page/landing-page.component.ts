@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatButton } from '@angular/material/button';
 import { NgFor } from '@angular/common';
 import { EventBoxComponent } from '../../components/event-box/event-box.component';
-import { DataService } from '../../services/data.service';
+import { ApiService } from '../../services/api.service';
 import { AddEventPageComponent } from '../add-event-page/add-event-page.component';
 
 @Component({
@@ -29,14 +29,18 @@ export class LandingPageComponent {
   isFailed = false;
   eventList: any[] = [];
 
-  constructor(private dataService: DataService) {}
+  constructor(private apiService: ApiService) {}
 
   ngOnInit() {
-    try {
-      this.eventList = this.dataService.getEventList();
-      this.isLoaded = true;
-    } catch (error) {
-      this.isFailed = true;
-    }
+    this.apiService.getEvents().subscribe({
+      next: (data) => {
+        this.eventList = data;
+        this.isLoaded = true;
+      },
+      error: (error) => {
+        console.error('Error fetching Events: ', error);
+        this.isFailed = true;
+      }
+    });
   }
 }
