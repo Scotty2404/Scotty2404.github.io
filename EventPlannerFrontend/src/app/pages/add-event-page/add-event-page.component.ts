@@ -1,12 +1,98 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatButtonModule } from '@angular/material/button';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatRadioButton } from '@angular/material/radio';
+
+
 
 
 @Component({
   selector: 'app-add-event-page',
-  imports: [],
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatRadioModule,
+    MatButtonModule,
+    ReactiveFormsModule,
+    MatRadioButton
+  ],
   templateUrl: './add-event-page.component.html',
   styleUrl: './add-event-page.component.scss'
 })
 export class AddEventPageComponent {
+  eventForm: FormGroup;
+  selectedFile: File | null = null;
+  
 
+  standardImages = [
+    '/auswahl/hochzeit.jpg',
+    '/auswahl/geburtstag.avif',
+    '/auswahl/jugendweihe.jpg',
+  ];
+  
+
+  constructor(private fb: FormBuilder) {
+    this.eventForm = this.fb.group({
+      title: ['', Validators.required],
+      date: ['', Validators.required],
+      location: ['', Validators.required],
+      description: ['', Validators.required],
+      image: ['', Validators.required],
+      guestCount: [''],
+      timeOption: ['ganztags', Validators.required],
+  startTime: [''],
+  endTime: [''],
+      
+    });
+
+    // Uhrzeit validieren
+this.eventForm.get('timeOption')?.valueChanges.subscribe((value) => {
+  if (value === 'ganztags') {
+    this.eventForm.get('startTime')?.setValidators([]);
+    this.eventForm.get('endTime')?.setValidators([]);
+  } else if (value === 'startzeit') {
+    this.eventForm.get('startTime')?.setValidators([Validators.required]);
+    this.eventForm.get('endTime')?.setValidators([]);
+  } else if (value === 'start_endzeit') {
+    this.eventForm.get('startTime')?.setValidators([Validators.required]);
+    this.eventForm.get('endTime')?.setValidators([Validators.required]);
+  }
+  this.eventForm.get('startTime')?.updateValueAndValidity();
+  this.eventForm.get('endTime')?.updateValueAndValidity();
+});
+  }
+
+  
+
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+      this.eventForm.patchValue({ image: file.name });
+    }
+  }
+
+  onSubmit() {
+    if (this.eventForm.valid) {
+      const eventData = this.eventForm.value;
+      console.log('Event gespeichert:', eventData);
+      // Hier kannst du den API-Call zum Speichern machen
+    }
+  }
+
+  
 }
+

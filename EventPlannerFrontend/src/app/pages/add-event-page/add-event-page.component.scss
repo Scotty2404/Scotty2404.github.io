@@ -1,22 +1,113 @@
-.add-event-container {
-    max-width: 500px;
-    margin: 20px auto;
-    padding: 20px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .full-width {
-    width: 100%;
-    margin-bottom: 16px;
-  }
-  
-  .upload-container {
-    margin: 10px 0;
-  }
-  
-  .upload-container input {
-    margin-top: 10px;
-  }
+@import '../../styles/colors.scss';
+.body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.title {
+  display: flex;
+  align-items: left;
+  width: 100%;
+  color: $secondarycolor;
+}
+
+.title h1 {
+  font-weight: 200;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 200px;
+}
+
+.mat-card {
+  padding: 20px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+mat-card-title {
+  text-align: left;
+  margin-bottom: 20px;
+  font-size: smaller;
+}
+
+
+.image-selection {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.thumbnail {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.mat-form-field {
+  width: 100%;
+}
+
+
+
+
+.mat-form-field-appearance-outline .mat-form-field-outline-thick {
+  border-width: 2px;
+}
+
+/* Datei-Upload */
+.file-upload-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.file-preview {
+  max-width: 100px;
+  max-height: 100px;
+  border-radius: 8px;
+  border: 2px solid #ddd;
+  object-fit: cover;
+}
+
+/* Button Styling */
+.button-container {
+  text-align: center;
+}
+
+button {
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+  background: $primarycolor;
+  color: white;
+}
+
   
