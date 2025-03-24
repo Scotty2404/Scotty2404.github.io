@@ -18,11 +18,19 @@ export class ApiService {
     return this.http.post(`${this.baseUrl}/auth/login`, loginData);
   }
 
+  getUser():Observable<any>{
+    return this.http.get<any>(`${this.baseUrl}/auth/me`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }
+
   testDBConnection(): Observable<any> {
     return this.http.get(`${this.baseUrl}/test-db`);
   }
 
   getEvents(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/events`);
+    return this.http.get(`${this.baseUrl}/test-db`);
   }
 }
