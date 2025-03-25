@@ -35,6 +35,7 @@ export class LandingPageComponent {
     this.apiService.getEvents().subscribe({
       next: (data) => {
         this.eventList = data;
+        console.log(this.eventList);
         this.isLoaded = true;
       },
       error: (error) => {

@@ -14,9 +14,9 @@
 
             <div class="col" *ngFor="let event of eventList">
                 <app-event-box 
-                    [eventName]="event.eventName" 
+                    [eventName]="event.title" 
                     [eventTitle]="event.eventTitle" 
-                    [eventInfo]="event.eventInfo"
+                    [eventInfo]="event.description"
                     [routerLink]="['/event']">
                 </app-event-box>
             </div>
