@@ -20,7 +20,7 @@ export const routes: Routes = [
             { path: 'imprint', component: ImprintPageComponent },
             { path: 'eventedit', component: EventEditPageComponent },
             { path: 'addevent', component: AddEventPageComponent },
-            { path: 'event', component: EventPageComponent }
+            { path: 'event/:id', component: EventPageComponent }
 
         ] 
 

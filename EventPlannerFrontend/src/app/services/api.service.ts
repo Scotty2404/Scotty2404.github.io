@@ -41,4 +41,12 @@ export class ApiService {
       }
     });
   }
+
+  getEventById(eventId: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/events/my-events/${eventId}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }
 }
