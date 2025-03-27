@@ -8,6 +8,8 @@ import { NgFor } from '@angular/common';
 import { EventBoxComponent } from '../../components/event-box/event-box.component';
 import { DataService } from '../../services/data.service';
 import { AddEventPageComponent } from '../add-event-page/add-event-page.component';
+import { LoadingBoxComponent } from '../../components/loading-box/loading-box.component';
+import { LoadingFailedBoxComponent } from '../../components/loading-failed-box/loading-failed-box.component';
 
 @Component({
   selector: 'app-landing-page',
@@ -18,7 +20,9 @@ import { AddEventPageComponent } from '../add-event-page/add-event-page.componen
     MatButtonModule,
     NgFor,
     EventBoxComponent,
-    AddEventPageComponent
+    AddEventPageComponent,
+    LoadingBoxComponent,
+    LoadingFailedBoxComponent
   ],
   templateUrl: './landing-page.component.html',
   styleUrl: './landing-page.component.scss'
