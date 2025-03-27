@@ -14,6 +14,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatButtonModule } from '@angular/material/button';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatRadioButton } from '@angular/material/radio';
+import { MatIcon } from '@angular/material/icon';
 
 
 
@@ -30,7 +31,8 @@ import { MatRadioButton } from '@angular/material/radio';
     MatRadioModule,
     MatButtonModule,
     ReactiveFormsModule,
-    MatRadioButton
+    MatRadioButton,
+    MatIcon
   ],
   templateUrl: './add-event-page.component.html',
   styleUrl: './add-event-page.component.scss'
@@ -38,6 +40,9 @@ import { MatRadioButton } from '@angular/material/radio';
 export class AddEventPageComponent {
   eventForm: FormGroup;
   selectedFile: File | null = null;
+  previewImage: string | null = null;
+  
+  
   
 
   standardImages = [
@@ -52,7 +57,10 @@ export class AddEventPageComponent {
       title: ['', Validators.required],
       description: ['', Validators.required],
       date: ['', Validators.required],
-      location: ['', Validators.required],
+      street: ['', Validators.required], 
+      city: ['', Validators.required], 
+      postalCode: ['', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
+      description: ['', Validators.required],
       image: ['', Validators.required],
       guestCount: [''],
       timeOption: ['ganztags', Validators.required],
@@ -84,7 +92,14 @@ export class AddEventPageComponent {
     const file = event.target.files[0];
     if (file) {
       this.selectedFile = file;
-      this.eventForm.patchValue({ image: file.name });
+      const reader = new FileReader();
+      
+      reader.onload = (e: any) => {
+        this.previewImage = e.target.result; // Bild als Base64 speichern
+        this.eventForm.patchValue({ image: this.previewImage }); // Bild direkt auswählen
+      };
+      
+      reader.readAsDataURL(file);
     }
   }
 
