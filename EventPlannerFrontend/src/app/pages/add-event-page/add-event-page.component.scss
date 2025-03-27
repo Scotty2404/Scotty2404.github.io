@@ -37,22 +37,6 @@ mat-card-title {
   font-size: smaller;
 }
 
-
-.image-selection {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.thumbnail {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-
 form {
   display: flex;
   flex-direction: column;
@@ -63,11 +47,30 @@ form {
   width: 100%;
 }
 
-
-
-
 .mat-form-field-appearance-outline .mat-form-field-outline-thick {
   border-width: 2px;
+}
+
+.image-selection-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.selection-img {
+  min-width: 60px;
+  max-height: 60px;
+  object-fit: cover;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+
+/* Wenn ein Bild ausgewählt ist, umranden wir es */
+mat-radio-button .mat-radio-checked img {
+  border-color: pink;
+  box-shadow: 0 0 5px blue;
 }
 
 /* Datei-Upload */
@@ -78,19 +81,21 @@ form {
 }
 
 .file-preview {
-  max-width: 100px;
+  min-width: 100px;
   max-height: 100px;
   border-radius: 8px;
   border: 2px solid #ddd;
   object-fit: cover;
 }
 
+
+
 /* Button Styling */
 .button-container {
   text-align: center;
 }
 
-button {
+.save-btn {
   color: white;
   padding: 12px 20px;
   border: none;
@@ -100,12 +105,12 @@ button {
   transition: 0.3s;
 }
 
-button:disabled {
+.save-btn button:disabled {
   background: #ccc;
   cursor: not-allowed;
 }
 
-button:hover:not(:disabled) {
+.save-btn button:hover:not(:disabled) {
   background: $primarycolor;
   color: white;
 }

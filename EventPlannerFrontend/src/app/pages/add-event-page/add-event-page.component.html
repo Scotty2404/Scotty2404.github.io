@@ -41,12 +41,25 @@
             <input matInput type="time" formControlName="endTime" required />
         </mat-form-field>
 
-
+        
+        <!-- Straße -->
+        <mat-form-field appearance="outline">
+            <mat-label>Straße</mat-label>
+            <input matInput formControlName="street" required />
+        </mat-form-field>
+  
         <!-- Ort -->
         <mat-form-field appearance="outline">
-          <mat-label>Ort</mat-label>
-          <input matInput formControlName="location" required />
+            <mat-label>Ort</mat-label>
+            <input matInput formControlName="city" required />
         </mat-form-field>
+  
+        <!-- Postleitzahl -->
+        <mat-form-field appearance="outline">
+            <mat-label>Postleitzahl</mat-label>
+            <input matInput type="number" formControlName="postalCode" required />
+        </mat-form-field>
+  
   
         <!-- Beschreibung -->
         <mat-form-field appearance="outline">
@@ -56,29 +69,48 @@
   
         <!-- Bildauswahl -->
         <p>Bild auswählen:</p>
-        <div class="image-selection">
-          <mat-radio-group formControlName="image">
-            <mat-radio-button *ngFor="let img of standardImages" [value]="img">
-              <img [src]="img" class="thumbnail" />
-            </mat-radio-button>
-          </mat-radio-group>
+        <div class="image-selection-container">
+            <mat-radio-group formControlName="image">
+                <mat-radio-button *ngFor="let img of standardImages" [value]="img">
+                    <img [src]="img" class="selection-img" />
+                </mat-radio-button>
+
+                <!-- Hochgeladenes Bild als auswählbare Option -->
+                <mat-radio-button *ngIf="previewImage" [value]="previewImage">
+                    <img [src]="previewImage" class="selection-img" />
+                </mat-radio-button>
+            </mat-radio-group>
         </div>
   
         <!-- Bild hochladen -->
-        <input type="file" (change)="onFileSelected($event)" />
+        <div class="file-upload-container">
+            <button mat-raised-button color="accent" (click)="fileInput.click()">
+                <mat-icon>upload</mat-icon> Bild hochladen
+            </button>
+            <input #fileInput type="file" hidden (change)="onFileSelected($event)" accept="image/*" />
+        </div>
   
         <!-- Gästeanzahl (optional) -->
         <mat-form-field appearance="outline">
           <mat-label>Gästeanzahl (optional)</mat-label>
           <input matInput type="number" formControlName="guestCount" />
         </mat-form-field>
+
+        <!-- Umfrage -->
+        <div class="survey-container">
+            <button class="add-survey-btn" mat-raised-button>
+                <mat-icon>add</mat-icon>
+                Umfrage hinzufügen
+            </button>
+        </div>
   
         <!-- Speicher-Button -->
-        <button mat-raised-button color="primary" type="submit" [disabled]="eventForm.invalid">
+        <button class="save-btn" mat-raised-button color="primary" type="submit" [disabled]="eventForm.invalid">
           Event speichern
         </button>
       </form>
     </mat-card-content>
 </mat-card>
+
 </div>
 </body>  
