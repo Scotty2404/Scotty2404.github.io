@@ -78,6 +78,7 @@ mat-radio-button .mat-radio-checked img {
   display: flex;
   align-items: center;
   gap: 10px;
+  margin-bottom: 10px;
 }
 
 .file-preview {
@@ -87,6 +88,25 @@ mat-radio-button .mat-radio-checked img {
   border: 2px solid #ddd;
   object-fit: cover;
 }
+
+
+.question-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  margin-top: 10px;
+  background-color: rgb(255, 255, 255);
+}
+
+.answer-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 
 
 
