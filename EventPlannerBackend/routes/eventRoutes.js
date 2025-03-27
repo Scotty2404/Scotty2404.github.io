@@ -201,6 +201,33 @@ router.get('/my-events', authMiddleware, (req, res) => {
     });
 });
 
+// Get Event From EventId
+router.get('/my-events/:id', authMiddleware, async(req, res) => {
+    try {
+        const eventId = req.params.id;
+        const userId = req.user;
+
+        // Query events where the Ids match
+        db.query(`
+            SELECT e.*, v.street, v.city, v.postal_code
+            FROM event_management.event e
+            JOIN event_management.user_event ue ON e.event_id = ue.event_id
+            LEFT JOIN event_management.venue v ON e.venue_id = v.venue_id
+            WHERE ue.user_id = ? AND ue.owner = 1 AND e.event_id = ?
+        `, [userId, eventId], (err, events) => {
+            if(err) {
+                return res.status(500).json({ error: err.message });
+            } else if (!events.length) {
+                return res.status(404).json({ error: "Event not found" });
+            }
+
+            res.json(events[0]);
+        });
+    } catch (err) {
+        res.status(500).json({error: err.message });
+    }
+});
+
 // event information after scanning qr (link + token) // !! Venue not in !!
 router.get('/public-event/:eventId', async (req, res) => {
     try {

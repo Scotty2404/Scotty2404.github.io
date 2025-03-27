@@ -26,11 +26,27 @@ export class ApiService {
     });
   }
 
-  testDBConnection(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/test-db`);
+  createEvent(eventData: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/events/create`, eventData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
   }
 
   getEvents(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/test-db`);
+    return this.http.get(`${this.baseUrl}/events/my-events`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }
+
+  getEventById(eventId: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/events/my-events/${eventId}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
   }
 }
