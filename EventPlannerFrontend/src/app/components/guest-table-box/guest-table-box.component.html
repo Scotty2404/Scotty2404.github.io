@@ -1,1 +1,63 @@
-<p>guest-table-box works!</p>
+
+<div class="box-table">
+    <mat-form-field>
+      <mat-label>Filter</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Fabi" #input>
+    </mat-form-field>
+  
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+        
+      
+        <ng-container matColumnDef="firstname">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Vorname </th>
+          <td mat-cell *matCellDef="let row"> {{row.firstname}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="lastname">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Nachname </th>
+            <td mat-cell *matCellDef="let row"> {{row.lastname}} </td>
+        </ng-container>
+  
+       
+        <ng-container matColumnDef="mail">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Mail </th>
+          <td mat-cell *matCellDef="let row">
+            <mat-card class="name-card"> {{row.mail}} </mat-card>
+            </td>
+        </ng-container>
+  
+        <ng-container matColumnDef="info">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Info </th>
+            <td mat-cell *matCellDef="let row">{{row.info}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="commitment">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Zusage? </th>
+          <td mat-cell *matCellDef="let row">
+              <mat-icon *ngIf="row.commitment === 'yes'" class="green">check_circle</mat-icon>
+              <mat-icon *ngIf="row.commitment === 'no'" class="red">cancel</mat-icon>
+              <mat-icon *ngIf="row.commitment === 'maybe'" class="gray">help_outline</mat-icon>
+          </td>
+      </ng-container>
+      
+        
+  
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+        </tr>
+      </table>
+  
+      <div class="table-footer">
+        <mat-icon>access_time</mat-icon> 
+        <mat-paginator  [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users" style="background-color: white;"></mat-paginator>
+      </div>
+    
+      
+    </div>
+  
+  </div>
+        

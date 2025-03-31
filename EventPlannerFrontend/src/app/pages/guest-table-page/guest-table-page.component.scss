@@ -1,0 +1,79 @@
+@import '../../styles/colors.scss';
+
+.page-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: auto;
+    min-height: calc(100vh - 150px);
+
+    background-image: url('/MX_hintergrund.svg');
+    background-repeat: no-repeat;
+    background-size: 1200px;
+    background-position-x: 50%;
+    background-position-y: 50%;
+}
+
+
+
+.breadcrumb-link {
+    color: $secondarycolor;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.breadcrumb-link:hover {
+    color: $secondarycolor;
+    text-decoration: underline 1.5px;
+    cursor: pointer;
+}
+
+.breadcrumb p {
+    font-size: 1.1em;
+    margin: 10px 0;
+}
+
+.title {
+    color: $secondarycolor;
+    display: flex;
+    margin-bottom: 10px;
+    gap: 10px;
+}
+
+.title h1 {
+    font-weight: normal;
+    margin: 0px;
+}
+
+
+.title h1 {
+    font-weight: normal;
+    margin: 0px;
+}
+
+.content-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 150px;
+    gap: 10px;
+    padding: 20px;
+}
+
+.table-btn {
+    display: flex;
+    margin-right: 20px;
+    justify-content: right;
+}
+
+.table-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.loading-container {
+    min-height: 600px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+}

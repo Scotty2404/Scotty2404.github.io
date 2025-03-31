@@ -1,1 +1,70 @@
-<p>guest-table-page works!</p>
+
+<div class="page-container">
+
+    
+
+        <div class="breadcrumb">
+            <p>
+                <a [routerLink]="['/start']" class="breadcrumb-link">Home</a> / 
+                Gästeliste
+            </p>
+        </div>
+
+        
+
+        <div class="title">
+
+        <button mat-icon-button [routerLink]="['/start']" class="btn-back">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+
+       
+        <h1>Userübersicht</h1>
+        
+   
+
+    
+
+</div>
+
+
+
+    
+
+    <div class="content-container">
+
+        
+
+            @if(isLoaded){
+
+                <div class="table-container">
+
+                <div class="table-btn">
+                    <button mat-fab extended (click)="openDialog()"><mat-icon>add</mat-icon> Gast hinzufügen</button>
+                </div>
+
+                <app-guest-table-box [data]="guests"></app-guest-table-box>
+            </div>
+              }
+        
+              @else {
+        
+                @if(isFailed) {
+                    
+                    <div class="loading-container">
+                        fehler
+                    </div>
+                }
+        
+                @else { 
+                    <div class="loading-container">
+                        loading
+                    </div>
+                }
+        
+            }
+
+        
+
+    </div>
+</div>
