@@ -7,6 +7,7 @@ import { ImprintPageComponent } from './pages/imprint-page/imprint-page.componen
 import { EventEditPageComponent } from './pages/event-edit-page/event-edit-page.component';
 import { AddEventPageComponent } from './pages/add-event-page/add-event-page.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
+import { EventPageComponent } from './pages/event-page/event-page.component';
 
 export const routes: Routes = [
     { 
@@ -19,6 +20,7 @@ export const routes: Routes = [
             { path: 'imprint', component: ImprintPageComponent },
             { path: 'eventedit', component: EventEditPageComponent },
             { path: 'addevent', component: AddEventPageComponent },
+            { path: 'event/:id', component: EventPageComponent }
 
         ] 
 

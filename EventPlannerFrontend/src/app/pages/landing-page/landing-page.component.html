@@ -14,15 +14,15 @@
 
             <div class="col" *ngFor="let event of eventList">
                 <app-event-box 
-                    [eventName]="event.eventName" 
+                    [eventName]="event.title" 
                     [eventTitle]="event.eventTitle" 
-                    [eventInfo]="event.eventInfo"
-                    [routerLink]="['/event']">
+                    [eventInfo]="event.description"
+                    [routerLink]="'/event/' + event.event_id">
                 </app-event-box>
             </div>
 
     
-            <div class="col-services">
+            <div class="col">
                 <div class="more-services">
                     <p>Neues Event erstellen?</p>
                     <section>
