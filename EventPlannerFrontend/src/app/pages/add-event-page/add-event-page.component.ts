@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormArray, AbstractControl, FormControl } from '@angular/forms';
 
 import { ApiService } from '../../services/api.service';
 import { Router } from '@angular/router';
@@ -65,7 +65,7 @@ export class AddEventPageComponent {
       timeOption: ['ganztags', Validators.required],
       startTime: [''],
       endTime: [''],
-      
+      survey: this.fb.array([]),
     });
 
     // Uhrzeit validieren
@@ -101,7 +101,42 @@ export class AddEventPageComponent {
       reader.readAsDataURL(file);
     }
   }
+  // Getter für das FormArray
+  get survey(): FormArray {
+    return this.eventForm.get('survey') as FormArray;
+  }
 
+  // Neue Frage zur Umfrage hinzufügen
+  addQuestion() {
+    this.survey.push(
+      this.fb.group({
+        question: ['', Validators.required], // Frage als String
+        answers: this.fb.array([this.fb.control('', Validators.required)]), // Antworten als FormArray
+      })
+    );
+  }
+
+  // Antwortmöglichkeit zu einer Frage hinzufügen
+  addAnswer(questionIndex: number) {
+    const answers = this.survey.at(questionIndex).get('answers') as FormArray;
+    answers.push(this.fb.control('', Validators.required));
+  }
+
+  // Frage entfernen
+  removeQuestion(index: number) {
+    this.survey.removeAt(index);
+  }
+
+  // Antwortmöglichkeit entfernen
+  removeAnswer(questionIndex: number, answerIndex: number) {
+    const answers = this.survey.at(questionIndex).get('answers') as FormArray;
+    answers.removeAt(answerIndex);
+  }
+
+  getAnswers(question: AbstractControl | null): FormArray {
+    return question?.get('answers') as FormArray;
+  }
+  
   private transformEventData() {
     const formData = this.eventForm.value;
 
@@ -158,3 +193,9 @@ export class AddEventPageComponent {
   }
 }
 
+  onSubmit() {
+    if (this.eventForm.valid) {
+      console.log('Event gespeichert:', this.eventForm.value);
+    }
+  }
+}

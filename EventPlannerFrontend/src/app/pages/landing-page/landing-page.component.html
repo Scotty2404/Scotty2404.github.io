@@ -4,6 +4,7 @@
 
     <div class="title">
         <h1>Event übersicht</h1>
+        <button routerLink="/guesttable">Gästeliste Test</button>
 
     </div>
 
@@ -41,13 +42,13 @@
         @if(isFailed) {
             
             <div class="loading-container">
-                loading
+                <app-loading-failed-box></app-loading-failed-box>
             </div>
         }
 
         @else { 
             <div class="loading-container">
-                fehler
+                <app-loading-box></app-loading-box>
             </div>
         }
 

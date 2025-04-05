@@ -6,7 +6,7 @@
 <mat-card class="mat-card">
     <mat-card-title>Geben Sie die Event Daten an (*Pflichtfelder)</mat-card-title>
     <mat-card-content>
-      <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
         <!-- Titel -->
         <mat-form-field appearance="outline">
           <mat-label>Titel</mat-label>
@@ -96,11 +96,58 @@
           <input matInput type="number" formControlName="guestCount" />
         </mat-form-field>
 
-        <!-- Umfrage -->
+        <!-- Umfrage hinzufügen Button -->
         <div class="survey-container">
-            <button class="add-survey-btn" mat-raised-button>
-                <mat-icon>add</mat-icon>
-                Umfrage hinzufügen
+            <button mat-fab extended color="accent" (click)="addQuestion()">
+                <mat-icon>add</mat-icon> Umfrage hinzufügen
+            </button>
+        </div>
+
+        <!-- Dynamische Umfrage-Elemente -->
+        <div formArrayName="survey">
+            <div *ngFor="let question of survey.controls; let i = index" [formGroupName]="i" class="question-box">
+                <mat-form-field appearance="outline">
+                    <mat-label>Frage {{ i + 1 }}</mat-label>
+                    <input matInput formControlName="question" required />
+                </mat-form-field>
+
+                <!-- Antwortmöglichkeiten -->
+                <div formArrayName="answers">
+                    <div *ngFor="let answer of getAnswers(question).controls; let j = index" style="display: flex; flex-direction: row; align-items: center; ">
+                        <div >
+                        <mat-form-field appearance="outline">
+                            <mat-label>Antwort {{ j + 1 }}</mat-label>
+                            <input matInput [formControlName]="j" required />
+                        </mat-form-field>
+                        </div>
+
+                        <div >
+                            <button mat-icon-button color="warn" (click)="removeAnswer(i, j)" style="margin-left: 5px;">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+
+                    <!-- Antwort hinzufügen -->
+                    <button mat-mini-fab color="primary" (click)="addAnswer(i)" style="margin-right: 10px;">
+                        <mat-icon>add</mat-icon>
+                    </button>
+
+                    <!-- Frage entfernen -->
+                    <button mat-mini-fab color="warn" (click)="removeQuestion(i)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <!-- Frage hinzufügen nur anzeigen, wenn mindestens eine Frage existiert -->
+            <button mat-raised-button color="primary" (click)="addQuestion()" *ngIf="survey.length > 0">
+                <mat-icon>add</mat-icon>Frage hinzufügen
             </button>
         </div>
   
@@ -108,7 +155,7 @@
         <button class="save-btn" mat-raised-button color="primary" type="submit" [disabled]="eventForm.invalid">
           Event speichern
         </button>
-      </form>
+    </form>
     </mat-card-content>
 </mat-card>
 
