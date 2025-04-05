@@ -41,16 +41,12 @@ export class AddEventPageComponent {
   eventForm: FormGroup;
   selectedFile: File | null = null;
   previewImage: string | null = null;
-  
-  
-  
 
   standardImages = [
     '/auswahl/hochzeit.jpg',
     '/auswahl/geburtstag.avif',
     '/auswahl/jugendweihe.jpg',
   ];
-  
 
   constructor(private fb: FormBuilder, private apiService: ApiService, private router: Router) {
     this.eventForm = this.fb.group({
@@ -169,7 +165,7 @@ export class AddEventPageComponent {
     return {
       title: formData.title,
       description: formData.description,
-      venue: eventVenue, //Vorläufitge Lösung
+      venue: eventVenue,
       startdate: startdate,
       enddate: enddate,
       max_guests: formData.guestCount,
@@ -189,13 +185,6 @@ export class AddEventPageComponent {
     if (this.eventForm.valid) {
       this.saveEvent();
       this.router.navigate(['/landing-page']);
-    }
-  }
-}
-
-  onSubmit() {
-    if (this.eventForm.valid) {
-      console.log('Event gespeichert:', this.eventForm.value);
     }
   }
 }
