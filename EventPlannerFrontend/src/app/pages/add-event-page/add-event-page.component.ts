@@ -55,7 +55,6 @@ export class AddEventPageComponent {
   constructor(private fb: FormBuilder, private apiService: ApiService, private router: Router) {
     this.eventForm = this.fb.group({
       title: ['', Validators.required],
-      description: ['', Validators.required],
       date: ['', Validators.required],
       street: ['', Validators.required], 
       city: ['', Validators.required], 
@@ -125,9 +124,9 @@ export class AddEventPageComponent {
 
     //Venue Setzten
     eventVenue = {
-      street: 'Hans-Grundig-Straße 25',
-      city: 'Dresden',
-      postal_code: '01307',
+      street: formData.street,
+      city: formData.city,
+      postal_code: formData.postalCode,
     };
 
 
