@@ -22,8 +22,7 @@ export const routes: Routes = [
             { path: 'eventedit', component: EventEditPageComponent },
             { path: 'addevent', component: AddEventPageComponent },
             { path: 'guesttable', component: GuestTablePageComponent },
-            { path: 'event', component: EventPageComponent }
-
+            { path: 'event/:id', component: EventPageComponent }
         ] 
 
         
