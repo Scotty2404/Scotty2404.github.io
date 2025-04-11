@@ -1,3 +1,4 @@
 node_modules
 eventRoutesNotIn.js
 EventPlannerBackend/testconnectiondb.js
+**/.env
