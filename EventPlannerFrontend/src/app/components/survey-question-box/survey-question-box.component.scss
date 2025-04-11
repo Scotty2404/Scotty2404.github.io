@@ -1,0 +1,41 @@
+.box-table {
+  display: flex;
+  flex-direction: column;
+  min-width: 1000px;
+  height: auto;
+  max-width: 1500px;
+  border-radius: 5px;
+  box-shadow: 0px 3px 10px silver;
+  margin: 20px;
+  background-color: white;
+  padding: 10px;
+}
+
+table {
+  width: 100%;
+  padding: 20px;
+  background-color: white;
+}
+
+.mat-mdc-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+td, th {
+  width: 35%;
+}
+
+td {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin-top: 5px;
+}

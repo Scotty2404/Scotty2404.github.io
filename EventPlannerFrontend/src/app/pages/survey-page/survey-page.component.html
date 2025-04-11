@@ -1,0 +1,27 @@
+<div class="page-container">
+    <div class="breadcrumb">
+        <p>
+            <a [routerLink]="['/start']" class="breadcrumb-link">Home</a> / 
+            Umfrage
+        </p>
+    </div>
+
+    <div class="title">
+        <button mat-icon-button [routerLink]="['/start']" class="btn-back">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+        <h1>Umfragen Übersicht</h1>
+    </div>
+
+    <div class="content-container">
+        <div class="table-btn">
+            <button mat-fab extended (click)="openDialog()">
+                <mat-icon>add</mat-icon> Umfrage hinzufügen
+            </button>
+        </div>
+
+        <div class="table-container">
+            <app-survey-question-box [data]="surveys"></app-survey-question-box>
+        </div>
+    </div>
+</div>

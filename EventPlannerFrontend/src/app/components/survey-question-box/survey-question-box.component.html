@@ -1,0 +1,40 @@
+<div class="box-table">
+  <mat-form-field>
+      <mat-label>Filter</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Frage" #input>
+  </mat-form-field>
+
+  <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+          <ng-container matColumnDef="question">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Frage </th>
+              <td mat-cell *matCellDef="let row"> {{row.question}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="options">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Optionen </th>
+              <td mat-cell *matCellDef="let row"> {{row.options.join(', ')}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef> Aktionen </th>
+              <td mat-cell *matCellDef="let row">
+                  <button mat-button (click)="editQuestion(row)">Bearbeiten</button>
+                  <button mat-button (click)="deleteQuestion(row)">Löschen</button>
+              </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+          <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell" colspan="3">Keine Daten, die dem Filter "{{input.value}}" entsprechen</td>
+          </tr>
+      </table>
+
+      <div class="table-footer">
+          <mat-icon>access_time</mat-icon>
+          <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Seite auswählen" style="background-color: white;"></mat-paginator>
+      </div>
+  </div>
+</div>
