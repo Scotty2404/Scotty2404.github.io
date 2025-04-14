@@ -1,0 +1,47 @@
+<div [formGroup]="questionForm" class="question-box">
+    <mat-form-field appearance="outline">
+      <mat-label>Frage {{ questionIndex + 1 }}</mat-label>
+      <input matInput formControlName="question" required />
+    </mat-form-field>
+  
+    <div formArrayName="answers">
+      <div
+        *ngFor="let answer of getAnswers().controls; let j = index"
+        style="display: flex; flex-direction: row; align-items: center;"
+      >
+        <mat-form-field appearance="outline">
+          <mat-label>Antwort {{ j + 1 }}</mat-label>
+          <input matInput [formControlName]="j" required />
+        </mat-form-field>
+        <button
+          mat-icon-button
+          color="warn"
+          (click)="removeAnswer(j)"
+          style="margin-left: 5px;"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+  
+    <div style=" display: flex; justify-content: space-between;">
+      
+      <div>
+        <button mat-mini-fab color="primary" (click)="addAnswer(questionIndex)" style="margin-right: 10px;">
+        <mat-icon>add</mat-icon>
+      </button>
+  
+      <button mat-mini-fab color="warn" (click)="removeQuestion(questionIndex)">
+        <mat-icon>delete</mat-icon>
+      </button></div>
+
+      
+        <mat-button-toggle-group>
+          <mat-button-toggle>eine Antwortmöglichkeit</mat-button-toggle>
+          <mat-button-toggle>mehrere Antwortmöglichkeit</mat-button-toggle>
+        </mat-button-toggle-group>
+        
+      
+    </div>
+  </div>
+  

@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators, FormArray, AbstractControl, FormCon
 
 import { ApiService } from '../../services/api.service';
 import { Router } from '@angular/router';
+import { NgModule } from '@angular/core';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -15,6 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatRadioButton } from '@angular/material/radio';
 import { MatIcon } from '@angular/material/icon';
+import { SurveyQuestionBoxComponent } from '../../components/survey-question-box/survey-question-box.component';
 
 
 
@@ -32,7 +34,8 @@ import { MatIcon } from '@angular/material/icon';
     MatButtonModule,
     ReactiveFormsModule,
     MatRadioButton,
-    MatIcon
+    MatIcon,
+    SurveyQuestionBoxComponent
   ],
   templateUrl: './add-event-page.component.html',
   styleUrl: './add-event-page.component.scss'
@@ -118,9 +121,10 @@ export class AddEventPageComponent {
 
   // Antwortmöglichkeit zu einer Frage hinzufügen
   addAnswer(questionIndex: number) {
-    const answers = this.survey.at(questionIndex).get('answers') as FormArray;
+    const answers = this.getAnswers(this.survey.at(questionIndex));
     answers.push(this.fb.control('', Validators.required));
   }
+  
 
   // Frage entfernen
   removeQuestion(index: number) {
@@ -191,4 +195,9 @@ export class AddEventPageComponent {
       this.router.navigate(['/landing-page']);
     }
   }
+
+  get surveyFormGroups(): FormGroup[] {
+  return this.survey.controls as FormGroup[];
+}
+
 }
