@@ -192,10 +192,3 @@ export class AddEventPageComponent {
     }
   }
 }
-
-  onSubmit() {
-    if (this.eventForm.valid) {
-      console.log('Event gespeichert:', this.eventForm.value);
-    }
-  }
-}
