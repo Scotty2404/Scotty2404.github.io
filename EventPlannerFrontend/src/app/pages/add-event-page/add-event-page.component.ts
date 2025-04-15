@@ -166,7 +166,9 @@ export class AddEventPageComponent {
       postal_code: formData.postalCode,
     };
 
-
+    //Image setzten !Achtung custom images werden noch nicht berücksichtigt!
+    const imageURL = formData.image;
+    console.log(imageURL);
 
     return {
       title: formData.title,
@@ -175,6 +177,7 @@ export class AddEventPageComponent {
       startdate: startdate,
       enddate: enddate,
       max_guests: formData.guestCount,
+      image: imageURL,
     }
   }
 

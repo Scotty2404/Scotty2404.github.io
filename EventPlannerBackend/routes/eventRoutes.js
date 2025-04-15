@@ -37,6 +37,7 @@ router.post('/create', authMiddleware, async (req, res) => {
             startdate, 
             enddate, 
             max_guests,
+            image,
             survey_id
         } = req.body;
         
@@ -73,8 +74,8 @@ router.post('/create', authMiddleware, async (req, res) => {
         function createEventWithVenue(venueId) {
             // Insert event into the database first to get the event ID
             db.query(
-                'INSERT INTO event_management.event (title, description, venue_id, playlist_id, startdate, enddate, max_guests, active, survey_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                [title, description, venueId, playlist_id, startdate, enddate, max_guests, 1, survey_id],
+                'INSERT INTO event_management.event (title, description, venue_id, playlist_id, startdate, enddate, max_guests, image, active, survey_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                [title, description, venueId, playlist_id, startdate, enddate, max_guests, image, 1, survey_id],
                 async (err, result) => {
                     if (err) {
                         return res.status(500).json({ error: err.message });
