@@ -113,11 +113,13 @@ export class AddEventPageComponent {
   addQuestion() {
     this.survey.push(
       this.fb.group({
-        question: ['', Validators.required], // Frage als String
-        answers: this.fb.array([this.fb.control('', Validators.required)]), // Antworten als FormArray
+        question: ['', Validators.required],
+        answerType: ['einzelauswahl', Validators.required], // <== NEU: default ist "einzelauswahl"
+        answers: this.fb.array([this.fb.control('', Validators.required)]),
       })
     );
   }
+  
 
   // Antwortmöglichkeit zu einer Frage hinzufügen
   addAnswer(questionIndex: number) {
