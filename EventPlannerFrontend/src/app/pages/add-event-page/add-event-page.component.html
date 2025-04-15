@@ -103,46 +103,19 @@
             </button>
         </div>
 
-        <!-- Dynamische Umfrage-Elemente -->
         <div formArrayName="survey">
-            <div *ngFor="let question of survey.controls; let i = index" [formGroupName]="i" class="question-box">
-                <mat-form-field appearance="outline">
-                    <mat-label>Frage {{ i + 1 }}</mat-label>
-                    <input matInput formControlName="question" required />
-                </mat-form-field>
+            <app-survey-question-box
+                *ngFor="let question of surveyFormGroups; let i = index"
+                [questionForm]="question"
+                [questionIndex]="i"
+                [removeQuestion]="removeQuestion.bind(this)"
+                [addAnswer]="addAnswer.bind(this)"
+            ></app-survey-question-box>
 
-                <!-- Antwortmöglichkeiten -->
-                <div formArrayName="answers">
-                    <div *ngFor="let answer of getAnswers(question).controls; let j = index" style="display: flex; flex-direction: row; align-items: center; ">
-                        <div >
-                        <mat-form-field appearance="outline">
-                            <mat-label>Antwort {{ j + 1 }}</mat-label>
-                            <input matInput [formControlName]="j" required />
-                        </mat-form-field>
-                        </div>
-
-                        <div >
-                            <button mat-icon-button color="warn" (click)="removeAnswer(i, j)" style="margin-left: 5px;">
-                                <mat-icon>delete</mat-icon>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-
-                    <!-- Antwort hinzufügen -->
-                    <button mat-mini-fab color="primary" (click)="addAnswer(i)" style="margin-right: 10px;">
-                        <mat-icon>add</mat-icon>
-                    </button>
-
-                    <!-- Frage entfernen -->
-                    <button mat-mini-fab color="warn" (click)="removeQuestion(i)">
-                        <mat-icon>delete</mat-icon>
-                    </button>
-                </div>
-            </div>
-        </div>
+          </div>
+          
+          
+        
 
         <div>
             <!-- Frage hinzufügen nur anzeigen, wenn mindestens eine Frage existiert -->
