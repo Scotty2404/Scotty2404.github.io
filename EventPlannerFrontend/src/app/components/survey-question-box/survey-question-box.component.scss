@@ -39,7 +39,8 @@ mat-card-title {
 .question {
   font-weight: 600;
   font-size: 1.1rem;
-  margin-bottom: 8px;
+  margin-top: 15px;
+  margin-bottom: 20px;
   color: #333;
 }
 
@@ -90,7 +91,7 @@ mat-slider {
 }
 
 .option-label {
-  flex: 0 0 150px; // fester Platz für den Label-Text
+  flex: 0 0 150px;
   font-weight: 500;
 }
 
