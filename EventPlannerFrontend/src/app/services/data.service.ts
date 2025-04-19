@@ -1,16 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { Survey } from '../models/survey.model';
 
-// Definiere die Typen für Umfragen
-interface Question {
-  question: string;
-  options: string[];
-}
-
-interface Survey {
-  title: string;
-  questions: Question[];
-}
 
 @Injectable({
   providedIn: 'root'

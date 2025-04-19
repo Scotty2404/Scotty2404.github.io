@@ -1,9 +1,13 @@
 export interface Question {
-    question: string; // Der Text der Frage
-    options: string[]; // Ein Array von Antwortmöglichkeiten
-  }
-  
-  export interface Survey {
-    title: string; // Der Titel der Umfrage
-    questions: Question[]; // Ein Array von Fragen
-  }
+  text: string;
+  answerType: 'checkbox' | 'open' | 'scale';
+  options?: string[];                 // z. B. ['Option A', 'Option B']
+  optionPercentages?: number[];      // z. B. [45, 55] → Prozentwerte passend zu den Optionen
+  answerPercentage?: number;         // Nur für 'scale' Fragen
+  answerField?: string[];            // Nur für 'open' Fragen
+}
+
+export interface Survey {
+  title: string;
+  questions: Question[];
+}

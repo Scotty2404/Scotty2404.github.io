@@ -1,62 +1,60 @@
 @import '../../styles/colors.scss';
 
+
 .page-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    height: auto;
-    min-height: calc(100vh - 150px);
-    background-image: url('/MX_hintergrund.svg');
-    background-repeat: no-repeat;
-    background-size: 1200px;
-    background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: calc(100vh - 150px);
+  background-image: url('/MX_hintergrund.svg');
+  background-repeat: no-repeat;
+  background-size: 1200px;
+  background-position: center;
 }
 
 .breadcrumb-link {
-    color: $secondarycolor;
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
+  color: $secondarycolor;
+  text-decoration: none;
+  transition: all 0.3s ease;
 
-.breadcrumb-link:hover {
-    color: $secondarycolor;
+  &:hover {
     text-decoration: underline 1.5px;
     cursor: pointer;
+  }
 }
 
 .breadcrumb p {
-    font-size: 1.1em;
-    margin: 10px 0;
+  font-size: 1.1em;
+  margin: 10px 0;
 }
 
 .title {
-    color: $secondarycolor;
-    display: flex;
-    gap: 10px;
+  color: $secondarycolor;
+  display: flex;
+  gap: 10px;
 }
 
 .title h1 {
-    font-weight: normal;
-    margin: 0;
+  font-weight: normal;
+  margin: 0;
 }
 
 .content-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 150px;
-    gap: 10px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 150px;
+  gap: 10px;
 }
 
 .table-btn {
-    display: flex;
-    justify-content: right;
-    padding-right: 20px;
+  display: flex;
+  justify-content: center;
 }
 
 .table-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0px;
 }

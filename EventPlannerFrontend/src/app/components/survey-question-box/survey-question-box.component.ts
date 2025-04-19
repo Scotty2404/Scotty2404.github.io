@@ -1,5 +1,6 @@
-import { AfterViewInit, Component, ViewChild, Input } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
+import { CommonModule } from '@angular/common';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -7,56 +8,45 @@ import { MatLabel } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatInputModule } from '@angular/material/input';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatListModule } from '@angular/material/list';
+import { Survey } from '../../models/survey.model';
 
 
-interface Question {
-  question: string;
-  options: string[];
-}
 
 @Component({
   selector: 'app-survey-question-box',
-  imports: [MatFormFieldModule,
+  standalone: true,
+  imports: [MatPaginator,
+            MatSort,
+            CommonModule,
+            MatFormFieldModule,
             MatLabel,
             MatIcon,
             MatPaginatorModule,
             MatTableModule,
+            MatButtonModule,
+            MatCardModule,
+            MatTabsModule,
+            MatCheckboxModule,
+            MatInputModule,
+            MatSliderModule,
+            MatProgressBarModule,
+            MatListModule
   ],
   templateUrl: './survey-question-box.component.html',
   styleUrls: ['./survey-question-box.component.scss']
 })
-export class SurveyQuestionBoxComponent implements AfterViewInit {
-  @Input() data: any[] = [];
-  displayedColumns: string[] = ['question', 'options', 'actions'];
-  dataSource!: MatTableDataSource<any>;
-  survey = { title: '', questions: [] as Question[] };
-  newQuestion: { question: string; options: string[] } = { question: '', options: [] };
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
+export class SurveyQuestionBoxComponent {
+  @Input() data: Survey[] = []; 
+  
+  selectedAnswerTypeIndex = 0;
 
-  ngAfterViewInit() {
-    this.dataSource = new MatTableDataSource(this.data);
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }
-
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
-  }
-
-  editQuestion(question: { question: string; options: string[] }) {
-    this.newQuestion = { ...question }; // Setze newQuestion auf die zu bearbeitende Frage
-  }
-
-  deleteQuestion(question: { question: string; options: string[] }) {
-    const index = this.survey.questions.indexOf(question);
-    if (index >= 0) {
-      this.survey.questions.splice(index, 1); // Entferne die Frage aus dem Array
-    }
-  }
 }

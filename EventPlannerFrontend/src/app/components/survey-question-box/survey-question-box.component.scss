@@ -1,41 +1,106 @@
-.box-table {
+.survey-box {
+  width: 97%;
+  box-sizing: border-box;
+  padding: 24px;
+  background-color: #f9f9f9;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Arial', sans-serif;
+  text-align: left;
+
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+mat-card {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 10px 0px;
+  padding: 16px;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+mat-card-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.question-row {
   display: flex;
   flex-direction: column;
-  min-width: 1000px;
-  height: auto;
-  max-width: 1500px;
-  border-radius: 5px;
-  box-shadow: 0px 3px 10px silver;
-  margin: 20px;
-  background-color: white;
-  padding: 10px;
+  margin-bottom: 24px;
 }
 
-table {
-  width: 100%;
-  padding: 20px;
-  background-color: white;
+.question {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  color: #333;
 }
 
-.mat-mdc-form-field {
-  font-size: 14px;
-  width: 100%;
+.answer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
 }
 
-td, th {
-  width: 35%;
+.scale {
+  align-items: center;
+  gap: 12px;
 }
 
-td {
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-
-.table-footer {
+.scale-result {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding-left: 20px;
-  padding-right: 20px;
-  margin-top: 5px;
+  gap: 12px;
+  width: 100%;
+}
+
+.percentage-label {
+  min-width: 40px;
+  font-weight: 500;
+}
+
+mat-form-field {
+  width: 100%;
+  max-width: 400px;
+}
+
+mat-slider {
+  width: 300px;
+}
+
+.checkbox-result {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.option-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.option-label {
+  flex: 0 0 150px; // fester Platz für den Label-Text
+  font-weight: 500;
+}
+
+.option-percentage {
+  flex: 0 0 50px;
+  text-align: right;
+  font-size: 0.9rem;
+}
+
+.option-bar {
+  flex: 1;
+  height: 12px;
 }
