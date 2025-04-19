@@ -1,27 +1,53 @@
 <div class="page-container">
     <div class="breadcrumb">
-        <p>
-            <a [routerLink]="['/start']" class="breadcrumb-link">Home</a> / 
-            Umfrage
-        </p>
+      <p>
+        <a [routerLink]="['/start']" class="breadcrumb-link">Home</a> / 
+        Umfrage
+      </p>
     </div>
-
+  
     <div class="title">
-        <button mat-icon-button [routerLink]="['/start']" class="btn-back">
-            <mat-icon>arrow_back</mat-icon>
-        </button>
-        <h1>Umfragen Übersicht</h1>
+      <button mat-icon-button [routerLink]="['/start']" class="btn-back">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h1>Umfragen Übersicht</h1>
     </div>
-
+  
     <div class="content-container">
-        <div class="table-btn">
-            <button mat-fab extended (click)="openDialog()">
-                <mat-icon>add</mat-icon> Umfrage hinzufügen
-            </button>
-        </div>
-
-        <div class="table-container">
-            <app-survey-question-box [data]="surveys"></app-survey-question-box>
-        </div>
+      <div class="table-btn">
+        <button mat-fab extended (click)="openDialog()">
+          <mat-icon>add</mat-icon> Umfrage hinzufügen
+        </button>
+      </div>
+  
+      <div class="table-container">
+        <mat-accordion>
+  
+          <!-- Abgeschlossene Umfragen -->
+          <mat-expansion-panel (opened)="panelOpenState.set(true)" (closed)="panelOpenState.set(false)">
+            <mat-expansion-panel-header>
+              <mat-panel-description> Abgeschlossene Umfragen </mat-panel-description>
+            </mat-expansion-panel-header>
+            <app-survey-question-result-box [data]="completedSurveys"></app-survey-question-result-box>
+          </mat-expansion-panel>
+  
+          <!-- Laufende Umfragen -->
+          <mat-expansion-panel (opened)="panelOpenState.set(true)" (closed)="panelOpenState.set(false)">
+            <mat-expansion-panel-header>
+              <mat-panel-description> Laufende Umfragen </mat-panel-description>
+            </mat-expansion-panel-header>
+            <app-survey-question-result-box [data]="ongoingSurveys"></app-survey-question-result-box>
+          </mat-expansion-panel>
+  
+          <!-- Unveröffentlichte Umfragen -->
+          <mat-expansion-panel (opened)="panelOpenState.set(true)" (closed)="panelOpenState.set(false)">
+            <mat-expansion-panel-header>
+              <mat-panel-description> Unveröffentlichte Umfragen </mat-panel-description>
+            </mat-expansion-panel-header>
+            <app-survey-question-result-box [data]="draftSurveys"></app-survey-question-result-box>
+          </mat-expansion-panel>
+  
+        </mat-accordion>
+      </div>
     </div>
-</div>
+  </div>

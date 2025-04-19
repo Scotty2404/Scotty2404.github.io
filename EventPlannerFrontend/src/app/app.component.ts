@@ -8,7 +8,7 @@ import { MatListModule } from '@angular/material/list';
 
 @Component({
   selector: 'app-root',
-  standalone: true, // Stelle sicher, dass die Komponente als Standalone deklariert ist
+  standalone: true, 
   imports: [
     RouterOutlet,
     MatToolbarModule,
@@ -18,7 +18,7 @@ import { MatListModule } from '@angular/material/list';
     MatListModule,
   ],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'] // Korrigiere den Namen von styleUrl zu styleUrls
+  styleUrls: ['./app.component.scss'] 
 })
 export class AppComponent {
   title = 'eventaccess';

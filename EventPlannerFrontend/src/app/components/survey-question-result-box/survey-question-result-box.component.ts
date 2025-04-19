@@ -21,7 +21,7 @@ import { Survey } from '../../models/survey.model';
 
 
 @Component({
-  selector: 'app-survey-question-box',
+  selector: 'app-survey-question-result-box',
   standalone: true,
   imports: [MatPaginator,
             MatSort,
@@ -40,11 +40,11 @@ import { Survey } from '../../models/survey.model';
             MatProgressBarModule,
             MatListModule
   ],
-  templateUrl: './survey-question-box.component.html',
-  styleUrls: ['./survey-question-box.component.scss']
+  templateUrl: './survey-question-result-box.component.html',
+  styleUrls: ['./survey-question-result-box.component.scss']
 })
 
-export class SurveyQuestionBoxComponent {
+export class SurveyQuestionResultBoxComponent {
   @Input() data: Survey[] = []; 
   
   selectedAnswerTypeIndex = 0;

@@ -1,22 +1,48 @@
 <h2 mat-dialog-title>Neue Umfrage hinzufügen</h2>
+
 <mat-dialog-content>
-    <mat-form-field>
-        <mat-label>Titel der Umfrage</mat-label>
-        <input matInput [(ngModel)]="survey.title">
-    </mat-form-field>
+  <!-- Titel der Umfrage -->
+  <mat-form-field>
+    <mat-label>Titel der Umfrage</mat-label>
+    <input matInput [(ngModel)]="survey.title">
+  </mat-form-field>
 
-    <mat-form-field>
-        <mat-label>Frage</mat-label>
-        <input matInput [(ngModel)]="newQuestion.question">
-    </mat-form-field>
+  <!-- Fragetyp auswählen -->
+  <mat-form-field>
+    <mat-label>Fragetyp auswählen</mat-label>
+    <mat-select [(ngModel)]="newQuestion.answerType">
+      <mat-option value="checkbox">Checkbox</mat-option>
+      <mat-option value="open">Open</mat-option>
+      <mat-option value="scale">Skala</mat-option>
+    </mat-select>
+  </mat-form-field>
 
-    <mat-form-field>
-        <mat-label>Antwortmöglichkeiten (kommagetrennt)</mat-label>
-        <input matInput [(ngModel)]="newQuestion.options">
-    </mat-form-field>
+  <!-- Frage eingeben -->
+  <mat-form-field>
+    <mat-label>Frage</mat-label>
+    <input matInput [(ngModel)]="newQuestion.text">
+  </mat-form-field>
+
+  <!-- Antwortmöglichkeiten (nur für Checkbox) -->
+  <mat-form-field *ngIf="newQuestion.answerType === 'checkbox'">
+    <mat-label>Antwortmöglichkeiten (kommagetrennt)</mat-label>
+    <input matInput [(ngModel)]="optionsAsString" (ngModelChange)="onOptionsChange($event)">
+  </mat-form-field>
+
+  <!-- Skala (nur für Scale) -->
+  <mat-form-field *ngIf="newQuestion.answerType === 'scale'">
+    <mat-label>Skalenwert (z.B. 0 - 100)</mat-label>
+    <input matInput type="number" [(ngModel)]="newQuestion.scaleValue" min="0" max="100">
+  </mat-form-field>
+
+  <!-- Offene Antwort (optional, je nach Anwendung) -->
+  <mat-form-field *ngIf="newQuestion.answerType === 'open'">
+    <mat-label>Beispielfeld (optional)</mat-label>
+    <input matInput placeholder="z. B. Beispielantwort" [(ngModel)]="optionsAsString" (ngModelChange)="onOptionsChange($event)">
+  </mat-form-field>
 </mat-dialog-content>
 
 <div mat-dialog-actions align="end">
-    <button mat-button (click)="onCancel()">Abbrechen</button>
-    <button mat-button (click)="onSave()" cdkFocusInitial>Speichern</button>
+  <button mat-button (click)="onCancel()">Abbrechen</button>
+  <button mat-button (click)="onSave()" cdkFocusInitial>Speichern</button>
 </div>

@@ -1,13 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
-
+import { ChangeDetectionStrategy, signal } from '@angular/core';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { DataService } from '../../services/data.service';
 import { SurveyDialogComponent } from '../../components/survey-dialog-box/survey-dialog.component';
-import { SurveyQuestionBoxComponent } from '../../components/survey-question-box/survey-question-box.component';
+import { SurveyQuestionResultBoxComponent } from '../../components/survey-question-result-box/survey-question-result-box.component';
 import { Survey } from '../../models/survey.model';
+import { MatAccordion } from '@angular/material/expansion';
+
 
 @Component({
   selector: 'app-survey-page',
@@ -16,13 +19,18 @@ import { Survey } from '../../models/survey.model';
     RouterModule,
     MatButtonModule,
     MatIcon,
-    SurveyQuestionBoxComponent
+    SurveyQuestionResultBoxComponent,
+    MatDialogModule,
+    SurveyDialogComponent,
+    MatExpansionModule,
+    MatAccordion
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './survey-page.component.html',
   styleUrls: ['./survey-page.component.scss']
 })
 export class SurveyPageComponent implements OnInit {
-  surveys: Survey[] = [
+  completedSurveys: Survey[] = [
     {
       title: 'Product Satisfaction',
       questions: [
@@ -72,25 +80,47 @@ export class SurveyPageComponent implements OnInit {
     }
   ];
 
-  constructor(private dataService: DataService, public dialog: MatDialog) {}
+  draftSurveys: Survey[] = [];
+  ongoingSurveys: Survey[] = [];
+
+  constructor(private dataService: DataService, private dialog: MatDialog) {}
+  panelOpenState = signal(false);
 
   ngOnInit(): void {
-    // vorübergehend NICHT das Backend nutzen:
+    // For now, don't load from backend
     // this.dataService.getSurveyList().subscribe((surveys: Survey[]) => {
     //   console.log('Surveys loaded:', surveys);
-    //   this.surveys = surveys;
+    //   this.ongoingSurveys = surveys; // Or split based on status
     // });
-  
-    console.log('Mocked survey:', this.surveys);
+
+    console.log('Mocked survey data:', this.ongoingSurveys);
   }
 
   openDialog(): void {
-    const dialogRef = this.dialog.open(SurveyDialogComponent);
+    const dialogRef = this.dialog.open(SurveyDialogComponent, {
+      width: '600px',
+      disableClose: true,
+      data: {}
+    });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.dataService.addSurvey(result);
-        this.surveys.push(result);
+        // Assuming the new survey has a "status" field
+        console.log('New survey created:', result);
+
+        switch (result.status) {
+          case 'ongoing':
+            this.ongoingSurveys.push(result);
+            break;
+          case 'draft':
+            this.draftSurveys.push(result);
+            break;
+          case 'completed':
+            this.completedSurveys.push(result);
+            break;
+          default:
+            this.ongoingSurveys.push(result);
+        }
       }
     });
   }
