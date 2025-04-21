@@ -27,8 +27,15 @@ export class ApiService {
   }
 
   createEvent(eventData: any): Observable<any> {
-    console.log('in apiservice: ', eventData);
     return this.http.post(`${this.baseUrl}/events/create`, eventData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }
+
+  deleteEvent(eventId: string) {
+    return this.http.delete(`${this.baseUrl}/events/my-events/${eventId}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }

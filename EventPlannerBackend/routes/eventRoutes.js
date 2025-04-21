@@ -229,6 +229,76 @@ router.get('/my-events/:id', authMiddleware, async(req, res) => {
     }
 });
 
+//delete event and connected data from id
+router.delete('/my-events/:id', authMiddleware, async(req, res) => {
+    const eventId = req.params.id;
+    const userId = req.user;
+
+    //check if user is owner
+    db.query(`
+        SELECT * FROM event_management.user_event WHERE event_id = ? AND user_id = ? AND owner = 1`,
+    [eventId, userId],
+    (err, events) => {
+        if(err) return res.statur(500).json({ error: err.message });
+        else if (!events.length) return res.status(404).json({ error: "No Events found for user and id" });
+
+        //First find connected QR-code entries
+        db.query(`
+            SELECT qr_id FROM event_management.event WHERE event_id = ?`,
+        [eventId], (err, eventQR) => {
+            if(err) return res.status(500).json({ error: err.message });
+            const qrId = eventQR[0]?.qr_id;
+
+            //Delete connected user_event entry
+            db.query(`
+                DELETE FROM event_management.user_event WHERE event_id = ?`,
+            [eventId], (err) => {
+                if(err) return res.status(500).json({ error: err.message });
+
+                //Delete Event entry
+                db.query(`
+                    DELETE FROM event_management.event WHERE event_id = ?`,
+                [eventId], (err) => {
+                    if(err) return res.status(500).json({ error: err.message });
+
+                    //Delete QR code
+                    if(qrId) {
+                        db.query(`
+                            DELETE FROM event_management.qr_code WHERE qr_id = ?`,
+                        [qrId], (err) => {
+                            if(err) console.error("QR deletion failes: ", err.message );
+                        });
+                    }
+
+                    //optionally delete Venue (if not user anywhere else)
+                    db.query(`
+                        SELECT venue_id FROM event_management.event WHERE event_id = ?`,
+                    [eventId], (err, eventVenue) => {
+                        if(err) return res.status(500).json({ error: err.message });
+                        
+                        const venueId = eventVenue[0]?.venue_id;
+
+                        if(venueId) {
+                            db.query(`
+                                SELECT COUNT(*) as count FROM event_management.event WHERE venue_id = ?`,
+                            [venueId], (err, venueCount) => {
+                                if(!err && venueCount[0].count === 0){
+                                    db.query(`
+                                        DELETE FROM event_management.venue WHERE venue_id = ?`,
+                                    [venueId], (err) => {
+                                        if(err) console.error("Failed to delete Venue: ", err.message);
+                                    });
+                                }
+                            });  
+                        }
+                    });
+                    return res.json({ sucess: true, message: "Event deleted" });
+                });
+            });
+        });
+    });
+});
+
 // event information after scanning qr (link + token) // !! Venue not in !!
 router.get('/public-event/:eventId', async (req, res) => {
     try {

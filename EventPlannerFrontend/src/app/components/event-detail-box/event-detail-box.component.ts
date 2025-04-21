@@ -5,6 +5,7 @@ import {MatButtonModule} from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-event-detail-box',
@@ -15,7 +16,7 @@ import { RouterLink } from '@angular/router';
 export class EventDetailBoxComponent implements OnInit{
   event: any;
 
-  constructor(private route: ActivatedRoute, private apiService:ApiService) {}
+  constructor(private route: ActivatedRoute, private apiService:ApiService, private router: Router) {}
 
   ngOnInit(): void {
       const eventId = this.route.snapshot.paramMap.get('id');
@@ -27,5 +28,16 @@ export class EventDetailBoxComponent implements OnInit{
           console.error('Error fetching event details', error);
         });
       }
+  }
+
+  deleteEvent(eventId: number){
+    const eventIdString = eventId + '';
+    this.apiService.deleteEvent(eventIdString).subscribe((response) => {
+      console.log('Event deleted succesfully', response);
+    }, (error) => {
+      console.log('Deleting Event Failed', error);
+    });
+
+    this.router.navigate(['/landing-page']);
   }
 }
