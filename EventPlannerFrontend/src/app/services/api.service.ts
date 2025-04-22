@@ -34,6 +34,14 @@ export class ApiService {
     });
   }
 
+  deleteEvent(eventId: string) {
+    return this.http.delete(`${this.baseUrl}/events/my-events/${eventId}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }
+
   getEvents(): Observable<any> {
     return this.http.get(`${this.baseUrl}/events/my-events`, {
       headers: {
@@ -44,6 +52,14 @@ export class ApiService {
 
   getEventById(eventId: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/events/my-events/${eventId}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }
+
+  createSurvey(surveyData: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/events/survey/create`, surveyData, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
