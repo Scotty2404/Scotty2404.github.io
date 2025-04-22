@@ -4,15 +4,30 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatCard } from '@angular/material/card';
+import { CommonModule } from '@angular/common';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCalendar } from '@angular/material/datepicker'; 
+
+interface EventItem {
+  title: string;
+  date: Date;
+  type: 'zugesagt' | 'selbst';
+}
 
 @Component({
   selector: 'app-calendar-page',
   imports: [
+    CommonModule,
     MatDatepickerModule,
     MatFormFieldModule,
     MatInputModule,
     MatNativeDateModule,
-    MatCard
+    MatCard,
+    MatListModule,
+    MatIconModule,
+    MatCalendar,
+    
   ],
   templateUrl: './calendar-page.component.html',
   styleUrl: './calendar-page.component.scss'
@@ -20,34 +35,26 @@ import { MatCard } from '@angular/material/card';
 export class CalendarPageComponent {
   selectedDate = new Date();
 
-  // Beispielhafte Event-Liste
-  events = [
-    { date: new Date(2025, 4, 20), type: 'created' },
-    { date: new Date(2025, 4, 22), type: 'invited' },
-    { date: new Date(2025, 4, 25), type: 'created' },
+  events: EventItem[] = [
+    {
+      title: 'Geburtstag Oma',
+      date: new Date('2025-04-25'),
+      type: 'zugesagt'
+    },
+    {
+      title: 'Meine Hochzeit',
+      date: new Date('2025-04-27'),
+      type: 'selbst'
+    }
   ];
 
-  getEventType(date: Date): string | null {
-    const found = this.events.find(
-      e =>
-        e.date.getFullYear() === date.getFullYear() &&
-        e.date.getMonth() === date.getMonth() &&
-        e.date.getDate() === date.getDate()
-      
+  getEventsForSelectedDate(): EventItem[] {
+    return this.events.filter(event =>
+      event.date.toDateString() === this.selectedDate.toDateString()
     );
-    return found ? found.type : null;
   }
 
-  dateClass = (d: Date): string => {
-    const eventType = this.getEventType(d);
-    switch (eventType) {
-      case 'created':
-        return 'event-created';
-      case 'invited':
-        return 'event-invited';
-      default:
-        return '';
-    }
-  };
-  
+  getColor(type: 'zugesagt' | 'selbst'): string {
+    return type === 'zugesagt' ? '#4CAF50' : '#2196F3';
+  }
 }
