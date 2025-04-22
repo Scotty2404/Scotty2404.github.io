@@ -13,6 +13,22 @@ if (!fs.existsSync(qrCodeDir)) {
     fs.mkdirSync(qrCodeDir, { recursive: true });
 }
 
+// Ensure directory for image uploads exists
+const uploadeDir = path.join(__dirname, '../public/uploads');
+if(!fs.existsSync(uploadeDir)) {
+    fs.mkdirSync(uploadeDir, { recursive: true });
+}
+
+// Helper funktion to structure async funktions
+function queryAsync(sql, params) {
+    return new Promise((resolve, reject) => {
+        db.query(sql, params, (err, result) => {
+            if(err) reject(err);
+            else resolve(result);
+        });
+    });
+}
+
 // Function to generate a secure access token for an event
 function generateEventAccessToken(eventId, userId) {
     return jwt.sign(
@@ -37,6 +53,7 @@ router.post('/create', authMiddleware, async (req, res) => {
             startdate, 
             enddate, 
             max_guests,
+            image,
             survey_id
         } = req.body;
         
@@ -68,13 +85,13 @@ router.post('/create', authMiddleware, async (req, res) => {
         } else {
             return res.status(400).json({ error: "Either venue object or venue_id must be provided" });
         }
-        
+
         // Function to create event once we have the venue ID
         function createEventWithVenue(venueId) {
             // Insert event into the database first to get the event ID
             db.query(
-                'INSERT INTO event_management.event (title, description, venue_id, playlist_id, startdate, enddate, max_guests, active, survey_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                [title, description, venueId, playlist_id, startdate, enddate, max_guests, 1, survey_id],
+                'INSERT INTO event_management.event (title, description, venue_id, playlist_id, startdate, enddate, max_guests, image, active, survey_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                [title, description, venueId, playlist_id, startdate, enddate, max_guests, image, 1, survey_id],
                 async (err, result) => {
                     if (err) {
                         return res.status(500).json({ error: err.message });
@@ -228,6 +245,76 @@ router.get('/my-events/:id', authMiddleware, async(req, res) => {
     }
 });
 
+//delete event and connected data from id
+router.delete('/my-events/:id', authMiddleware, async(req, res) => {
+    const eventId = req.params.id;
+    const userId = req.user;
+
+    //check if user is owner
+    db.query(`
+        SELECT * FROM event_management.user_event WHERE event_id = ? AND user_id = ? AND owner = 1`,
+    [eventId, userId],
+    (err, events) => {
+        if(err) return res.statur(500).json({ error: err.message });
+        else if (!events.length) return res.status(404).json({ error: "No Events found for user and id" });
+
+        //First find connected QR-code entries
+        db.query(`
+            SELECT qr_id FROM event_management.event WHERE event_id = ?`,
+        [eventId], (err, eventQR) => {
+            if(err) return res.status(500).json({ error: err.message });
+            const qrId = eventQR[0]?.qr_id;
+
+            //Delete connected user_event entry
+            db.query(`
+                DELETE FROM event_management.user_event WHERE event_id = ?`,
+            [eventId], (err) => {
+                if(err) return res.status(500).json({ error: err.message });
+
+                //Delete Event entry
+                db.query(`
+                    DELETE FROM event_management.event WHERE event_id = ?`,
+                [eventId], (err) => {
+                    if(err) return res.status(500).json({ error: err.message });
+
+                    //Delete QR code
+                    if(qrId) {
+                        db.query(`
+                            DELETE FROM event_management.qr_code WHERE qr_id = ?`,
+                        [qrId], (err) => {
+                            if(err) console.error("QR deletion failes: ", err.message );
+                        });
+                    }
+
+                    //optionally delete Venue (if not user anywhere else)
+                    db.query(`
+                        SELECT venue_id FROM event_management.event WHERE event_id = ?`,
+                    [eventId], (err, eventVenue) => {
+                        if(err) return res.status(500).json({ error: err.message });
+                        
+                        const venueId = eventVenue[0]?.venue_id;
+
+                        if(venueId) {
+                            db.query(`
+                                SELECT COUNT(*) as count FROM event_management.event WHERE venue_id = ?`,
+                            [venueId], (err, venueCount) => {
+                                if(!err && venueCount[0].count === 0){
+                                    db.query(`
+                                        DELETE FROM event_management.venue WHERE venue_id = ?`,
+                                    [venueId], (err) => {
+                                        if(err) console.error("Failed to delete Venue: ", err.message);
+                                    });
+                                }
+                            });  
+                        }
+                    });
+                    return res.json({ sucess: true, message: "Event deleted" });
+                });
+            });
+        });
+    });
+});
+
 // event information after scanning qr (link + token) // !! Venue not in !!
 router.get('/public-event/:eventId', async (req, res) => {
     try {
@@ -269,6 +356,141 @@ router.get('/public-event/:eventId', async (req, res) => {
         );
     } catch (err) {
         console.error("Route error:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// create survey
+router.post('/survey/create', authMiddleware, async (req, res) => {
+    let surveyId;
+    try {
+        const { 
+            description,
+            questions
+        } = req.body;
+
+        if(!Array.isArray(questions)){
+            return res.status(400).json({ message: 'Invalid request body.' });
+        }
+
+        // Insert event into the database first to get the survey ID
+        const surveyResult = await queryAsync(`
+            INSERT INTO event_management.survey ( description, active) VALUES (?, 1)`,
+            [description]
+        );
+
+        const surveyId = surveyResult.insertId;
+
+        for(const question of questions) {
+            const qResult = await queryAsync(
+                'INSERT INTO event_management.question ( question_text) VALUES (?)',
+                [question.question_text]
+            );
+
+            const questionId = qResult.insertId;
+
+            await queryAsync(
+                'INSERT INTO event_management.survey_question (survey_id, question_id) VALUES (?, ?)',
+                [surveyId, questionId]
+            );
+
+            for(const answerText of question.offered_answer) {
+                const aResult = await queryAsync(
+                    'INSERT INTO event_management.offeredanswers (answer_text) VALUES (?)',
+                    [answerText]
+                );
+
+                const answerId = aResult.insertId;
+
+                await queryAsync (
+                    'INSERT INTO event_management.question_offeredanswers (question_id, offered_answers_id) VALUES (?, ?)',
+                    [questionId, answerId]
+                );
+            }
+        }
+
+        const survey = await queryAsync(
+            `SELECT s.*, q.question_id, q.question_text, o.offered_answers_id, o.answer_text
+            FROM event_management.survey s
+             LEFT JOIN event_management.survey_question x ON s.survey_id = x.survey_id
+             LEFT JOIN event_management.question q ON x.question_id = q.question_id
+             LEFT JOIN event_management.question_offeredanswers y ON q.question_id = y.question_id
+             LEFT JOIN event_management.offeredanswers o ON y.offered_answers_id = o.offered_answers_id
+
+            WHERE s.survey_id = ?`,
+            [surveyId]
+        );
+
+        console.log(survey);
+
+        res.json(survey[0] || { message: "No survey Data found." });
+        /*
+        db.query(
+            'INSERT INTO event_management.survey ( description, active) VALUES (?, 1)',
+            [description, 1],
+            async (err, result) => {
+                if (err) {
+                    return res.status(500).json({ error: err.message });
+                }
+
+                surveyId = result.insertId;
+                
+                // save questions
+                for (const question of questions) {
+                    db.query(`
+                        INSERT INTO event_management.question (question_text) VALUES (?)`,
+                    [question.question_text], async (err, result) => {
+                        if(err) {
+                            return res.status(500).json({ error: err.message });
+                        }
+
+                        const questionId = result.insertId;
+
+                        // relationship survey <=> question
+                        db.query(`
+                            INSERT INTO event_management.survey_question (survey_id, question_id) VALUES (?, ?)`,
+                        [surveyId, questionId]);
+
+                        // offered answers
+                        for (const answerText of question.offered_answer) {
+                            console.log(answerText);
+                            db.query(`
+                                INSERT INTO event_management.offeredanswers (answer_text) VALUES (?)`,
+                            [answerText], async (err, result) => {
+                                if(err) {
+                                    return res.status(500).json({ error: err.message });
+                                }
+                                const answerId = result.insertId;
+
+                                // relationship offeredAnswer <=> question
+                                db.query(`
+                                    INSERT INTO event_management.question_offeredanswers (question_id, offered_answers_id) VALUES (?, ?)`,
+                                [questionId, answerId]);
+                            });
+                        }
+                        
+                    });
+                }
+                db.query(`
+                    SELECT s.*, q.question_id, q.question_text, o.offered_answers_id, o.answer_text
+                    FROM event_management.survey s
+                    LEFT JOIN event_management.survey_question x ON s.survey_id = x.survey_id
+                    LEFT JOIN event_management.question q ON x.question_id = q.question_id
+                    LEFT JOIN event_management.question_offeredanswers y ON q.question_id = y.question_id
+                    LEFT JOIN event_management.offeredanswers o ON y.offered_answers_id = o.offered_answers_id
+
+                    WHERE s.survey_id = ?
+                `, [surveyId], (err, surveys) => {
+                    if (err) {
+                        return res.status(500).json({ error: err.message });
+                    }
+                    console.log(surveys[0]);
+                    res.json(surveys[0]);
+                });
+            }
+        );*/
+
+    } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
