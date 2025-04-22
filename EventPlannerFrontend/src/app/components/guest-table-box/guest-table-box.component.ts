@@ -12,16 +12,17 @@ import { MatInput } from '@angular/material/input';
 import { MatCard } from '@angular/material/card';
 import { NgIf } from '@angular/common';
 import { CommonModule } from '@angular/common';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-guest-table-box',
-  imports: [MatFormFieldModule, MatCard, MatInput, MatInputModule, MatTableModule, MatSortModule, MatPaginatorModule, MatIcon, MatButtonModule, MatCardModule, MatIconModule, CommonModule],
+  imports: [MatFormFieldModule, MatCard, MatInput, MatInputModule, MatTableModule, MatSortModule, MatPaginatorModule, MatIcon, MatButtonModule, MatCardModule, MatIconModule, CommonModule, MatTooltip],
   templateUrl: './guest-table-box.component.html',
   styleUrl: './guest-table-box.component.scss'
 })
 export class GuestTableBoxComponent implements AfterViewInit {
   @Input() data: any[] = []; // Daten kommen von der Page-Component
-  displayedColumns: string[] = ['firstname', 'lastname', 'mail', 'info', 'commitment'];
+  displayedColumns: string[] = ['firstname', 'lastname', 'mail', 'info', 'commitment', 'delete'];
   dataSource!: MatTableDataSource<any>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -49,6 +50,18 @@ export class GuestTableBoxComponent implements AfterViewInit {
       default: return '';
     }
   }
+
+  confirmDelete(row: any) {
+    const confirmed = confirm(`Willst du ${row.firstname} ${row.lastname} wirklich von deinem Event ausladen?`);
+    if (confirmed) {
+      const index = this.dataSource.data.indexOf(row);
+      if (index !== -1) {
+        this.dataSource.data.splice(index, 1);
+        this.dataSource.data = [...this.dataSource.data];
+      }
+    }
+  }
+  
   
 
   

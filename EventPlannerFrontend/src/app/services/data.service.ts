@@ -13,9 +13,9 @@ eventList = [
 ];
 
 guestList = [
-  { firstname: 'Hans', lastname: 'Müller', mail: 'hans.mueller@example.com', info: 'hallo', commitment: 'yes' },
+  { firstname: 'Hans', lastname: 'Müller', mail: 'hans.mueller@example.com', info: 'auch ewas kurzes kann hier hin, klappt alles', commitment: 'yes' },
   { firstname: 'Lisa', lastname: 'Schmidt', mail: 'lisa.schmidt@example.com', info: 'hi', commitment: 'no' },
-  { firstname: 'Peter', lastname: 'Meier', mail: 'peter.meier@example.com', info: 'test', commitment: 'maybe' }
+  { firstname: 'Peter', lastname: 'Meier', mail: 'peter.meier@example.com', info: 'test', commitment: 'yes' }
 ];
 
   constructor() { }

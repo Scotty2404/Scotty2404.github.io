@@ -3,46 +3,36 @@
 
     
 
-        <div class="breadcrumb">
-            <p>
-                <a [routerLink]="['/start']" class="breadcrumb-link">Home</a> / 
-                Gästeliste
-            </p>
-        </div>
+    <div class="breadcrumb">
+        <p>
+            <a [routerLink]="['/start']" class="breadcrumb-link">Home</a> /Gästeliste
+        </p>
+    </div>
 
 
         
-        <div class="title">
-
+    <div class="title">
         <button mat-icon-button [routerLink]="['/start']" class="btn-back">
-            <mat-icon>arrow_back</mat-icon>
+                <mat-icon>arrow_back</mat-icon>
         </button>
-       
         <h1>Userübersicht</h1>
-        </div>
+    </div>
 
-
-
-
-
-    
 
     <div class="content-container">
-
-        
 
             @if(isLoaded){
 
                 
-<div>
-                <div class="table-btn">
-                    <button mat-fab extended (click)="openDialog()"><mat-icon>add</mat-icon> Gast hinzufügen</button>
+                <div>
+                    <div class="table-btn">
+                        <button mat-fab extended (click)="openDialog()"><mat-icon>add</mat-icon> Gast hinzufügen</button>
+                    </div>
+
+                    <div class="table-container">
+                        <app-guest-table-box [data]="guests"></app-guest-table-box>
+                    </div>
                 </div>
-
-                <div class="table-container">
-
-                <app-guest-table-box [data]="guests"></app-guest-table-box>
-            </div></div>
               }
         
               @else {
