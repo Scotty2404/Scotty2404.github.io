@@ -247,10 +247,30 @@ export class AddEventPageComponent {
   }
 
   onSubmit() {
-    if (this.eventForm.valid) {
-      this.saveEvent();
+  const questionsValid = this.surveyFormGroups.every((q) => {
+    const type = q.get('answerType')?.value;
+    const answers = q.get('answers') as FormArray;
+
+    if (type === 'text') {
+      return true; // Freitext braucht keine Antworten
     }
+
+    if (type === 'scale') {
+      const min = q.get('minValue')?.value;
+      const max = q.get('maxValue')?.value;
+      return min !== null && max !== null;
+    }
+
+    return answers.length > 0 && answers.controls.every(a => a.value && a.value.trim() !== '');
+  });
+
+  if (this.eventForm.valid && questionsValid) {
+    this.saveEvent();
+  } else {
+    console.warn('Formular ungültig oder Fragen nicht korrekt ausgefüllt');
   }
+}
+
 
   get surveyFormGroups(): FormGroup[] {
   return this.survey.controls as FormGroup[];
