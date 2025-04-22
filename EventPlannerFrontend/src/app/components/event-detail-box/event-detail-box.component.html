@@ -4,18 +4,15 @@
 
         <div>
 
-            <h3>Geburtstags feier</h3>
+            <h3>Birthday Party</h3>
 
         </div>
 
         <div>
 
-            <img src="https://c8.alamy.com/compde/m5a77e/party-feier-hintergrund-mit-party-time-nachricht-auf-einem-leuchtkasten-m5a77e.jpg" style="width: 100%;">
+            <img src="https://th.bing.com/th/id/R.f9b9ad9915667f06919e14cd6283d400?rik=cMxMtEwb7UOXtQ&riu=http%3a%2f%2fwww.pixelstalk.net%2fwp-content%2fuploads%2f2016%2f04%2fHappy-birthday-photos-pictures-HD.jpg&ehk=45RKUSf8er8Q4zZh%2b20nb9kyBaduK1SZbTDylsofIxI%3d&risl=&pid=ImgRaw&r=0" style="width: 100%;">
 
         </div>
-
-       
-
        
 
     </div>
@@ -26,27 +23,37 @@
 
         <div>
 
-            <h3> title </h3>
+            <div class="title-status">
+                <h3 class="title-main">Geburtstagsfeier Maurice 24.03.2025</h3>
 
-            <hr>
+            <div class="option-status">
+                <mat-radio-group aria-label="Wähle den Status">
+                  <mat-radio-button value="aktiv" checked>Aktiv</mat-radio-button>
+                  <mat-radio-button value="inaktiv">Inaktiv</mat-radio-button>
+                </mat-radio-group>
+            </div>
 
-            <p>info</p>
+            </div>
 
+            <p> Am 24.03.2025 findet deine Geburtstagsfeier statt. Du hast deine Einladung per E-Mail am 24.01.2025 an deine Gäste geschickt.</p>
+            <p> Die Feier beginnt um 18:00 Uhr in der L'Osteria am Altmarkt Dresden und wird danach zu dir nach Hause verlegt.</p>
+            <p> Im folgenden kannst du deine Feier bearbeiten, löschen und die Gästeliste der zugesagten Personen einsehen.</p>
+
+        </div>
+
+        <div class="countdown-container">
+            <h3>Countdown bis zu deiner Geburtstagsparty: 🎉 00 Tage 00 Stunden 00 Minuten 00 Sekunden 🎉</h3>
         </div>
 
  
 
         <div class="button-box">
 
- 
-
             <button mat-flat-button>zur Gästeliste</button>
-
- 
+            <button mat-flat-button [routerLink]="['/wishlist']">zur Wunschliste</button>
+            <button mat-flat-button [routerLink]="['/to-do-list']">zur To-Do-Liste</button>
 
             <div>
-
- 
 
                 <button mat-mini-fab aria-label="Example icon button with a menu icon" style="margin-right: 20px;">
 
@@ -54,20 +61,13 @@
 
                 </button>
 
- 
-
-                <button mat-mini-fab aria-label="Example icon button with a menu icon">
+                <button mat-mini-fab aria-label="Example icon button with a menu icon" style="margin-right: 20px;">
 
                     <mat-icon>delete</mat-icon>
 
                 </button>
 
             </div>
-
- 
-
         </div>
-
     </div>
-
 </div>

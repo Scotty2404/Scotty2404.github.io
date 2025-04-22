@@ -8,6 +8,8 @@ import { EventEditPageComponent } from './pages/event-edit-page/event-edit-page.
 import { AddEventPageComponent } from './pages/add-event-page/add-event-page.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { EventPageComponent } from './pages/event-page/event-page.component';
+import { EventWishlistPageComponent } from './pages/event-wishlist-page/event-wishlist-page.component';
+import { EventToDoListPageComponent } from './pages/event-to-do-list-page/event-to-do-list-page.component';
 
 export const routes: Routes = [
     { 
@@ -20,7 +22,9 @@ export const routes: Routes = [
             { path: 'imprint', component: ImprintPageComponent },
             { path: 'eventedit', component: EventEditPageComponent },
             { path: 'addevent', component: AddEventPageComponent },
-            { path: 'event', component: EventPageComponent }
+            { path: 'event', component: EventPageComponent },
+            { path: 'wishlist', component: EventWishlistPageComponent },
+            { path: 'to-do-list', component: EventToDoListPageComponent }
 
         ] 
 
