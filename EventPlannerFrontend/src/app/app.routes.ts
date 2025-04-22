@@ -8,9 +8,12 @@ import { EventEditPageComponent } from './pages/event-edit-page/event-edit-page.
 import { AddEventPageComponent } from './pages/add-event-page/add-event-page.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { EventPageComponent } from './pages/event-page/event-page.component';
+import { EventWishlistPageComponent } from './pages/event-wishlist-page/event-wishlist-page.component';
+import { EventToDoListPageComponent } from './pages/event-to-do-list-page/event-to-do-list-page.component';
 import { GuestTablePageComponent } from './pages/guest-table-page/guest-table-page.component';
 import { QrEventPageComponent } from './pages/qr-event-page/qr-event-page.component';
 import { QrSurveyPageComponent } from './pages/qr-survey-page/qr-survey-page.component';
+
 
 export const routes: Routes = [
     { 
@@ -23,6 +26,9 @@ export const routes: Routes = [
             { path: 'imprint', component: ImprintPageComponent },
             { path: 'eventedit', component: EventEditPageComponent },
             { path: 'addevent', component: AddEventPageComponent },
+            { path: 'event', component: EventPageComponent }, //event:id ??
+            { path: 'wishlist', component: EventWishlistPageComponent },
+            { path: 'to-do-list', component: EventToDoListPageComponent },
             { path: 'guesttable', component: GuestTablePageComponent },
             { path: 'event/:id', component: EventPageComponent }
         ] 
