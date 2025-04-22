@@ -57,4 +57,12 @@ export class ApiService {
       }
     });
   }
+
+  createSurvey(surveyData: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/events/survey/create`, surveyData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }
 }

@@ -17,6 +17,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatRadioButton } from '@angular/material/radio';
 import { MatIcon } from '@angular/material/icon';
 import { SurveyQuestionBoxComponent } from '../../components/survey-question-box/survey-question-box.component';
+import { response } from 'express';
 
 
 
@@ -139,7 +140,7 @@ export class AddEventPageComponent {
     return question?.get('answers') as FormArray;
   }
   
-  private transformEventData() {
+  private transformEventData(surveyId: number) {
     const formData = this.eventForm.value;
 
     let startdate, enddate, eventVenue;
@@ -168,7 +169,6 @@ export class AddEventPageComponent {
 
     //Image setzten !Achtung custom images werden noch nicht berücksichtigt!
     const imageURL = formData.image;
-    console.log(imageURL);
 
     return {
       title: formData.title,
@@ -178,22 +178,50 @@ export class AddEventPageComponent {
       enddate: enddate,
       max_guests: formData.guestCount,
       image: imageURL,
+      survey_id: surveyId,
     }
   }
 
+  private transfromSurveyData() {
+    const fromData = this.eventForm.value;
+
+    const survey = {
+      description: 'Hier wird später die Art der Umfrage hinterlegt',
+      questions: fromData.survey.map((q: any) => ({
+        question_text: q.question,
+        offered_answer: q.answers
+      }))
+    };
+
+    console.log(survey)
+    return survey;
+  }
+
   saveEvent(){
-    console.log(this.transformEventData());
-    this.apiService.createEvent(this.transformEventData()).subscribe((response) => {
-      console.log('Event saved successfully', response);
-    }, (error) => {
-      console.log('Saving Event Failed', error);
-    })
+    let surveyId = -1;
+    this.apiService.createSurvey(this.transfromSurveyData()).subscribe({
+      next: (surveyResponse) => {
+        console.log(surveyResponse);
+        surveyId = surveyResponse.survey_id;
+        console.log(this.transformEventData(surveyId));
+
+        this.apiService.createEvent(this.transformEventData(surveyId)).subscribe({ 
+          next: (response) => {
+            console.log('Event saved successfully', response);
+            this.router.navigate(['/landing-page']);
+          }, error: (error) => {
+            console.log('Saving Event Failed', error);
+          }
+        });
+      }, error: (error) => {
+        console.log('Saving survey failed', error);
+      }
+    });
   }
 
   onSubmit() {
     if (this.eventForm.valid) {
       this.saveEvent();
-      this.router.navigate(['/landing-page']);
     }
   }
 
