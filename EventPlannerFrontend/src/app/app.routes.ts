@@ -10,6 +10,7 @@ import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { EventPageComponent } from './pages/event-page/event-page.component';
 import { GuestTablePageComponent } from './pages/guest-table-page/guest-table-page.component';
 import { QrEventPageComponent } from './pages/qr-event-page/qr-event-page.component';
+import { QrSurveyPageComponent } from './pages/qr-survey-page/qr-survey-page.component';
 
 export const routes: Routes = [
     { 
@@ -30,5 +31,7 @@ export const routes: Routes = [
     },
     { path: 'login', component: LoginPageComponent },
     { path: 'qr', component: QrEventPageComponent },
+    { path: 'qrSurvey', component: QrSurveyPageComponent },
+
     { path: '**', redirectTo: '' }
 ];

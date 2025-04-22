@@ -5,6 +5,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-qr-event-page',
@@ -14,7 +15,8 @@ import { MatCardModule } from '@angular/material/card';
     MatInputModule,
     MatButtonModule,
     CommonModule,
-    MatCardModule
+    MatCardModule,
+    RouterLink
   ],
   templateUrl: './qr-event-page.component.html',
   styleUrl: './qr-event-page.component.scss'
