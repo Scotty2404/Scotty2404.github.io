@@ -110,8 +110,12 @@ export class AddEventPageComponent {
   addQuestion() {
     const questionGroup = this.fb.group({
       question: ['', Validators.required],
-      answerType: ['einzelauswahl', Validators.required],
-      answers: this.fb.array([this.fb.control('', Validators.required)]),
+      answerType: ['multiple', Validators.required],
+      answers: this.fb.array([
+        this.fb.control('', Validators.required),
+        this.fb.control('', Validators.required)
+      ]),
+      
       minValue: new FormControl(null),
       maxValue: new FormControl(null),
     });
@@ -125,12 +129,14 @@ export class AddEventPageComponent {
         min?.setValidators([Validators.required]);
         max?.setValidators([Validators.required]);
         answers.clear(); // Keine Antworten bei Skala
-      } else if (type === 'multiple' || type === 'einzelauswahl') {
+      } else if (type === 'multiple') {
         min?.clearValidators();
         max?.clearValidators();
         if (answers.length === 0) {
           answers.push(this.fb.control('', Validators.required));
+          answers.push(this.fb.control('', Validators.required));
         }
+        
       } else if (type === 'text') {
         min?.clearValidators();
         max?.clearValidators();
