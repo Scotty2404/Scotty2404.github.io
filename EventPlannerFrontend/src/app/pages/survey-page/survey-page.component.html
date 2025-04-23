@@ -1,44 +1,67 @@
+<!-- Hauptcontainer der Seite -->
 <div class="page-container">
+
+  <!-- Breadcrumb-Navigation oben -->
   <div class="breadcrumb">
     <p>
+      <!-- Link zur Startseite, mit Angular-Routing -->
       <a [routerLink]="['/start']" class="breadcrumb-link">Home</a> /
+      <!-- Aktuelle Position in der Navigation -->
       Umfrage
     </p>
   </div>
 
+  <!-- Seitentitel mit Zurück-Button -->
   <div class="title">
+    <!-- Zurück-Button, führt zur Startseite (Angular Routing) -->
     <button mat-icon-button [routerLink]="['/start']" class="btn-back">
-      <mat-icon>arrow_back</mat-icon>
+      <mat-icon>arrow_back</mat-icon> <!-- Material Icon für den Pfeil -->
     </button>
+    <!-- Titelüberschrift -->
     <h1>Umfragen Übersicht</h1>
   </div>
 
+  <!-- Container für Hauptinhalt -->
   <div class="content-container">
+
+    <!-- Button zum Hinzufügen neuer Umfrage -->
     <div class="table-btn">
+      <!-- Floating Action Button mit "add"-Icon -->
       <button mat-fab extended (click)="openDialog()">
         <mat-icon>add</mat-icon> Umfrage hinzufügen
       </button>
+      <!-- onClick ruft die Methode openDialog() im Component-Code auf -->
     </div>
 
+    <!-- Container für die Umfragetabellen (Accordion) -->
     <div class="table-container">
       <mat-accordion>
-
-        <!-- Abgeschlossene Umfragen -->
+      
+        <!-- Panel für abgeschlossene Umfragen -->
         <mat-expansion-panel (opened)="panelOpenState.set(true)" (closed)="panelOpenState.set(false)">
           <mat-expansion-panel-header>
+            <!-- Überschrift im Panel -->
             <mat-panel-description> Abgeschlossene Umfragen </mat-panel-description>
           </mat-expansion-panel-header>
-          <app-survey-question-result-box [data]="completedSurveys" [showCompleteButton]="false">
+          
+          <!-- Komponente zur Anzeige der Umfrageergebnisse -->
+          <app-survey-question-result-box 
+            [data]="completedSurveys"            
+            [showCompleteButton]="false">        <!-- Blendet "Abschließen"-Button aus -->
           </app-survey-question-result-box>
         </mat-expansion-panel>
 
-        <!-- Laufende Umfragen -->
+        <!-- Panel für laufende Umfragen -->
         <mat-expansion-panel (opened)="panelOpenState.set(true)" (closed)="panelOpenState.set(false)">
           <mat-expansion-panel-header>
             <mat-panel-description> Laufende Umfragen </mat-panel-description>
           </mat-expansion-panel-header>
-          <app-survey-question-result-box [data]="ongoingSurveys" [showCompleteButton]="true"
-            (complete)="completeSurvey($event)">
+          
+          <!-- Komponente zur Anzeige von laufenden Umfragen -->
+          <app-survey-question-result-box 
+            [data]="ongoingSurveys"              
+            [showCompleteButton]="true"          
+            (complete)="completeSurvey($event)"> <!-- Event-Binding: Reaktion auf das Abschließen einer Umfrage -->
           </app-survey-question-result-box>
         </mat-expansion-panel>
 

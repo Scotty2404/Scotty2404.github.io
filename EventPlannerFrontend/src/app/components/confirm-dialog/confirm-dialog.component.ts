@@ -1,27 +1,28 @@
-import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
-import { CommonModule } from '@angular/common';
+import { Component, Inject } from '@angular/core'; 
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'; 
+import { MatButtonModule } from '@angular/material/button'; 
+import { MatDialogModule } from '@angular/material/dialog'; 
+import { CommonModule } from '@angular/common'; 
 
 @Component({
-  selector: 'app-confirm-dialog',
-  standalone: true,
-  templateUrl: './confirm-dialog.component.html',
-  imports: [MatDialogModule, MatButtonModule, CommonModule],
+  selector: 'app-confirm-dialog', 
+  standalone: true, 
+  templateUrl: './confirm-dialog.component.html', 
+  imports: [MatDialogModule, MatButtonModule, CommonModule], 
 })
 
 export class ConfirmDialogComponent {
 
+    // Konstruktor der Komponente
     constructor(private dialogRef: MatDialogRef<ConfirmDialogComponent>) {}
   
-    // Wird aufgerufen, wenn der Benutzer auf "Ja" klickt
+    // Diese Methode wird aufgerufen, wenn der Benutzer auf "Ja" klickt
     onConfirm(): void {
-      this.dialogRef.close(true);  // Dialog mit "true" schließen
+      this.dialogRef.close(true);  // Schließt den Dialog und gibt "true" zurück, was bestätigt, dass die Aktion fortgesetzt werden soll
     }
   
-    // Wird aufgerufen, wenn der Benutzer auf "Abbrechen" klickt
+    // Diese Methode wird aufgerufen, wenn der Benutzer auf "Abbrechen" klickt
     onCancel(): void {
-      this.dialogRef.close(false);  // Dialog mit "false" schließen
+      this.dialogRef.close(false);  // Schließt den Dialog und gibt "false" zurück, was den Abbruch der Aktion signalisiert
     }
-  }
+}

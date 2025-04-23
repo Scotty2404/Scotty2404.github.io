@@ -32,34 +32,46 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
   styleUrls: ['./survey-page.component.scss']
 })
 export class SurveyPageComponent implements OnInit {
+  // Zwei Arrays zur Trennung von laufenden und abgeschlossenen Umfragen
   completedSurveys: Survey[] = [];
   ongoingSurveys: Survey[] = [];
 
-  constructor(private dataService: DataService, private dialog: MatDialog) {}
+  constructor(
+    private dataService: DataService, // Service zum Abrufen von Umfragedaten
+    private dialog: MatDialog // Angular Material Dialog-Service
+  ) {}
+
+  // Signal zur Kontrolle des Expansion Panels (Angular Signals – reaktiver Zustand)
   panelOpenState = signal(false);
 
   ngOnInit(): void {
-    // For now, don't load from backend
-    // this.dataService.getSurveyList().subscribe((surveys: Survey[]) => {
-    //   console.log('Surveys loaded:', surveys);
-    //   this.ongoingSurveys = surveys; // Or split based on status
-    // });
-
+    // Beispielhafte Initialisierung mit Mock-Daten aus dem Service
+    this.ongoingSurveys = this.dataService.surveyList.filter(survey => survey.status === 'ongoing');
+    this.completedSurveys = this.dataService.surveyList.filter(survey => survey.status === 'completed');
     console.log('Mocked survey data:', this.ongoingSurveys);
+
+    // Alternativ: Echte API-Anfrage (auskommentiert)
+    /*
+    this.dataService.getSurveyList().subscribe((surveys: Survey[]) => {
+      this.ongoingSurveys = surveys.filter(survey => survey.status === 'ongoing');
+      this.completedSurveys = surveys.filter(survey => survey.status === 'completed');
+    }, error => {
+      console.error('Fehler beim Laden der Umfragen:', error);
+    });
+    */
   }
 
+  // Öffnet den Dialog zum Erstellen einer neuen Umfrage
   openDialog(): void {
     const dialogRef = this.dialog.open(SurveyDialogComponent, {
       width: '600px',
-      disableClose: true,
-      data: {}
+      disableClose: true, // Dialog kann nicht durch Klicken außerhalb geschlossen werden
+      data: {} // Daten an den Dialog übergeben (aktuell leer)
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // Assuming the new survey has a "status" field
         console.log('New survey created:', result);
-
         switch (result.status) {
           case 'ongoing':
             this.ongoingSurveys.push(result);
@@ -74,14 +86,19 @@ export class SurveyPageComponent implements OnInit {
     });
   }
 
+  // Markiert eine laufende Umfrage als abgeschlossen
   completeSurvey(survey: Survey): void {
-    // Setze Status
-    survey.status = 'completed';
-  
-    // Entferne aus ongoingSurveys
-    this.ongoingSurveys = this.ongoingSurveys.filter(s => s !== survey);
-  
-    // Füge zu completedSurveys hinzu
-    this.completedSurveys.push(survey);
+    this.dataService.getSurveyResult(survey).subscribe({
+      next: (resultSurvey: Survey) => {
+        // Entferne aus laufenden Umfragen
+        this.ongoingSurveys = this.ongoingSurveys.filter(s => s !== survey);
+
+        // Füge in abgeschlossene Umfragen ein
+        this.completedSurveys.push(resultSurvey);
+      },
+      error: (err) => {
+        console.error('Fehler beim Abschließen der Umfrage:', err);
+      }
+    });
   }
 }

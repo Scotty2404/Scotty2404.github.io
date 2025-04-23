@@ -45,36 +45,59 @@ import { MatDialog } from '@angular/material/dialog';
   templateUrl: './survey-question-result-box.component.html',
   styleUrls: ['./survey-question-result-box.component.scss']
 })
-
 export class SurveyQuestionResultBoxComponent {
+  // Eingabedaten: Array von Umfragen, das im Template verwendet wird
   @Input() data: Survey[] = [];
+
+  // Steuerung: Soll der "Abschließen"-Button angezeigt werden?
   @Input() showCompleteButton: boolean = false;
 
+  // Ausgabe-Event: Wird ausgelöst, wenn eine Umfrage abgeschlossen wird
   @Output() complete = new EventEmitter<Survey>();
+
+  // Für die Tab-Gruppierung der Fragetypen
+  selectedAnswerTypeIndex = 0;
 
   constructor(private dialog: MatDialog) {}
 
-  selectedAnswerTypeIndex = 0;
-
+  /**
+   * Öffnet einen Bestätigungsdialog und feuert bei Bestätigung das `complete`-Event
+   */
   completeSurvey(survey: Survey): void {
     console.log('completeSurvey wurde aufgerufen');
-  
+
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '400px',
       disableClose: true
     });
-  
+
     console.log('Dialog wurde geöffnet:', dialogRef);
-  
+
     dialogRef.afterClosed().subscribe(result => {
       console.log('Dialog geschlossen, Ergebnis:', result);
-  
+
       if (result === true) {
         console.log('Benutzer hat bestätigt – Umfrage wird abgeschlossen');
-        this.complete.emit(survey);
+        this.complete.emit(survey); // Event an Parent-Komponente senden
       } else {
         console.log('Benutzer hat abgebrochen – Umfrage wird **nicht** abgeschlossen');
       }
     });
+  }
+
+  /**
+   * Simuliert ein Update der Umfrage-Ergebnisse (z. B. durch Backend-Aktualisierung)
+   */
+  updateSurveyResults(survey: Survey): void {
+    console.log('Aktualisiere Umfrage:', survey.title);
+
+    // Nur Checkbox-Ergebnisse werden simuliert
+    survey.questions.forEach((question) => {
+      if (question.answerType === 'checkbox' && question.optionPercentages) {
+        question.optionPercentages = question.optionPercentages.map(() => Math.floor(Math.random() * 100));
+      }
+    });
+
+    console.log('Aktualisierte Umfrage:', JSON.stringify(survey, null, 2));
   }
 }
