@@ -105,3 +105,18 @@ mat-slider {
   flex: 1;
   height: 12px;
 }
+
+.survey-box {
+  position: relative;
+}
+
+.card-header {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 1;
+}
+
+.green-icon {
+  color: green;
+}

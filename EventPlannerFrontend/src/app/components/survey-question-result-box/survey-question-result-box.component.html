@@ -1,57 +1,69 @@
 <mat-card *ngFor="let survey of data" class="survey-box">
-    <mat-card-title>{{ survey.title }}</mat-card-title>
-    <mat-card-content>
-  
-      <mat-tab-group [(selectedIndex)]="selectedAnswerTypeIndex">
 
-        <mat-tab label="Checkbox">
-          <ng-container *ngFor="let question of survey.questions">
-            <div *ngIf="question.answerType === 'checkbox'" class="question-row">
-              <div class="question">{{ question.text }}</div>
-              <div class="answer checkbox-result">
-                <div *ngFor="let option of question.options; let i = index" class="option-row">
-                  <div class="option-label">{{ option }}</div>
-                  <div class="option-percentage">{{ question.optionPercentages?.[i] || 0 }}%</div>
-                  <mat-progress-bar
-                    mode="determinate"
-                    [value]="question.optionPercentages?.[i] || 0"
-                    class="option-bar">
-                  </mat-progress-bar>
-                </div>
+  <div class="card-header">
+    <!-- Nur anzeigen, wenn showCompleteButton true ist -->
+    <button *ngIf="showCompleteButton" mat-icon-button (click)="completeSurvey(survey)" matTooltip="Umfrage abschließen">
+      <mat-icon style="color: green;">check_circle</mat-icon>
+    </button>
+
+    <!-- Wenn die Umfrage abgeschlossen ist -->
+    <mat-icon *ngIf="!showCompleteButton" color="primary" matTooltip="Abgeschlossen">done_all</mat-icon>
+  </div>
+
+  <!-- Titel der Umfrage -->
+  <mat-card-title>{{ survey.title }}</mat-card-title>
+
+  <mat-card-content>
+    <mat-tab-group [(selectedIndex)]="selectedAnswerTypeIndex">
+
+      <!-- Checkbox-Fragen -->
+      <mat-tab label="Checkbox">
+        <ng-container *ngFor="let question of survey.questions">
+          <div *ngIf="question.answerType === 'checkbox'" class="question-row">
+            <div class="question">{{ question.text }}</div>
+            <div class="answer checkbox-result">
+              <div *ngFor="let option of question.options; let i = index" class="option-row">
+                <div class="option-label">{{ option }}</div>
+                <div class="option-percentage">{{ question.optionPercentages?.[i] || 0 }}%</div>
+                <mat-progress-bar mode="determinate" [value]="question.optionPercentages?.[i] || 0" class="option-bar">
+                </mat-progress-bar>
               </div>
             </div>
-          </ng-container>
-        </mat-tab>
-  
-        <mat-tab label="Open">
-          <ng-container *ngFor="let question of survey.questions">
-            <div *ngIf="question.answerType === 'open'" class="question-row">
-              <div class="question">{{ question.text }}</div>
-              <div class="answer">
-                <mat-list role="list">
-                  <ng-container *ngFor="let answer of question.answerField">
-                    <mat-list-item role="listitem">{{ answer }}</mat-list-item>
-                  </ng-container>
-                </mat-list>
-              </div>
+          </div>
+        </ng-container>
+      </mat-tab>
+
+      <!-- Open-Fragen -->
+      <mat-tab label="Open">
+        <ng-container *ngFor="let question of survey.questions">
+          <div *ngIf="question.answerType === 'open'" class="question-row">
+            <div class="question">{{ question.text }}</div>
+            <div class="answer">
+              <mat-list role="list">
+                <ng-container *ngFor="let answer of question.answerField">
+                  <mat-list-item role="listitem">{{ answer }}</mat-list-item>
+                </ng-container>
+              </mat-list>
             </div>
-          </ng-container>
-        </mat-tab>
-  
-        <mat-tab label="Scale">
-          <ng-container *ngFor="let question of survey.questions">
-            <div *ngIf="question.answerType === 'scale'" class="question-row">
-              <div class="question">{{ question.text }}</div>
-              <div class="answer scale">
-                <mat-slider min="0" max="100" step="10">
-                    <input matSliderThumb [value]="question.answerPercentage" disabled />
-                </mat-slider>
-                <div>{{ question.answerPercentage }}%</div>
-              </div>
+          </div>
+        </ng-container>
+      </mat-tab>
+
+      <!-- Skalen-Fragen -->
+      <mat-tab label="Scale">
+        <ng-container *ngFor="let question of survey.questions">
+          <div *ngIf="question.answerType === 'scale'" class="question-row">
+            <div class="question">{{ question.text }}</div>
+            <div class="answer scale">
+              <mat-slider min="0" max="100" step="1">
+                <input matSliderThumb [value]="question.answerPercentage" disabled />
+              </mat-slider>
+              <div>{{ question.answerPercentage }}%</div>
             </div>
-          </ng-container>
-        </mat-tab>
-      </mat-tab-group>
-  
-    </mat-card-content>
-  </mat-card>
+          </div>
+        </ng-container>
+      </mat-tab>
+
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>

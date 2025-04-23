@@ -10,6 +10,7 @@ import { SurveyDialogComponent } from '../../components/survey-dialog-box/survey
 import { SurveyQuestionResultBoxComponent } from '../../components/survey-question-result-box/survey-question-result-box.component';
 import { Survey } from '../../models/survey.model';
 import { MatAccordion } from '@angular/material/expansion';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 
 @Component({
@@ -25,62 +26,13 @@ import { MatAccordion } from '@angular/material/expansion';
     MatExpansionModule,
     MatAccordion
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './survey-page.component.html',
   styleUrls: ['./survey-page.component.scss']
 })
 export class SurveyPageComponent implements OnInit {
-  completedSurveys: Survey[] = [
-    {
-      title: 'Product Satisfaction',
-      questions: [
-        {
-          text: 'How satisfied are you with the product?',
-          answerType: 'scale',
-          answerPercentage: 75
-        },
-        {
-          text: 'How is your day?',
-          answerType: 'scale',
-          answerPercentage: 50
-        },
-        {
-          text: 'Which features do you use regularly?',
-          answerType: 'checkbox',
-          options: ['Search', 'Favorites', 'Notifications'],
-          optionPercentages: [50, 40, 75]
-        },
-        {
-          text: 'What would you improve?',
-          answerType: 'open',
-          answerField: ['make a playlist', 'no cake', 'no children']
-        }
-      ]
-    },
-    {
-      title: 'Website Feedback',
-      questions: [
-        {
-          text: 'How user-friendly is our website?',
-          answerType: 'scale',
-          answerPercentage: 60
-        },
-        {
-          text: 'Which sections do you visit most?',
-          answerType: 'checkbox',
-          options: ['Home', 'Blog', 'Contact', 'Shop'],
-          optionPercentages: [50, 43, 85, 71]
-        },
-        {
-          text: 'Any suggestions for improvement?',
-          answerType: 'open',
-          answerField: ['answer1', 'answer2']
-        }
-      ]
-    }
-  ];
-
-  draftSurveys: Survey[] = [];
+  completedSurveys: Survey[] = [];
   ongoingSurveys: Survey[] = [];
 
   constructor(private dataService: DataService, private dialog: MatDialog) {}
@@ -112,9 +64,6 @@ export class SurveyPageComponent implements OnInit {
           case 'ongoing':
             this.ongoingSurveys.push(result);
             break;
-          case 'draft':
-            this.draftSurveys.push(result);
-            break;
           case 'completed':
             this.completedSurveys.push(result);
             break;
@@ -123,5 +72,16 @@ export class SurveyPageComponent implements OnInit {
         }
       }
     });
+  }
+
+  completeSurvey(survey: Survey): void {
+    // Setze Status
+    survey.status = 'completed';
+  
+    // Entferne aus ongoingSurveys
+    this.ongoingSurveys = this.ongoingSurveys.filter(s => s !== survey);
+  
+    // Füge zu completedSurveys hinzu
+    this.completedSurveys.push(survey);
   }
 }

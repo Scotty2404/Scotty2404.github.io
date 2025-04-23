@@ -11,9 +11,9 @@
   <mat-form-field>
     <mat-label>Fragetyp auswählen</mat-label>
     <mat-select [(ngModel)]="newQuestion.answerType">
-      <mat-option value="checkbox">Checkbox</mat-option>
-      <mat-option value="open">Open</mat-option>
-      <mat-option value="scale">Skala</mat-option>
+      <mat-option value="checkbox">Checkbox Frage</mat-option>
+      <mat-option value="open">Offene Frage</mat-option>
+      <mat-option value="scale">Skalierungsfrage</mat-option>
     </mat-select>
   </mat-form-field>
 
@@ -24,10 +24,16 @@
   </mat-form-field>
 
   <!-- Antwortmöglichkeiten (nur für Checkbox) -->
-  <mat-form-field *ngIf="newQuestion.answerType === 'checkbox'">
-    <mat-label>Antwortmöglichkeiten (kommagetrennt)</mat-label>
+  <mat-form-field *ngIf="newQuestion.answerType === 'checkbox'" appearance="fill">
+    <mat-label>Antwortmöglichkeiten mit Kommas getrennt</mat-label>
     <input matInput [(ngModel)]="optionsAsString" (ngModelChange)="onOptionsChange($event)">
+    <mat-hint>Gib mindestens zwei Optionen durch Kommas getrennt ein.</mat-hint>
   </mat-form-field>
+  
+  <!-- Fehleranzeige unterhalb des Eingabefelds -->
+  <div *ngIf="showOptionError" style="color: red; font-size: 0.9rem; margin-bottom: 10px;">
+    Bitte gib mindestens zwei gültige Antwortmöglichkeiten an.
+  </div>
 
   <!-- Skala (nur für Scale) -->
   <mat-form-field *ngIf="newQuestion.answerType === 'scale'">
@@ -35,14 +41,30 @@
     <input matInput type="number" [(ngModel)]="newQuestion.scaleValue" min="0" max="100">
   </mat-form-field>
 
-  <!-- Offene Antwort (optional, je nach Anwendung) -->
+  <!-- Offene Antwort (optional) -->
   <mat-form-field *ngIf="newQuestion.answerType === 'open'">
-    <mat-label>Beispielfeld (optional)</mat-label>
-    <input matInput placeholder="z. B. Beispielantwort" [(ngModel)]="optionsAsString" (ngModelChange)="onOptionsChange($event)">
+    <mat-label>Antwortfeld</mat-label>
+    <input matInput placeholder="" [(ngModel)]="optionsAsString" (ngModelChange)="onOptionsChange($event)" disabled>
   </mat-form-field>
+
+  <!-- Bereits hinzugefügte Fragen anzeigen -->
+  <div *ngIf="survey.questions.length > 0" class="question-list">
+    <h3>Bereits hinzugefügte Fragen</h3>
+    <mat-list>
+      <mat-list-item *ngFor="let question of survey.questions; let i = index">
+        <span>{{ i + 1 }}. {{ question.text }} ({{ question.answerType }})</span>
+        <button mat-icon-button color="warn" (click)="removeQuestion(i)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-list-item>
+    </mat-list>
+  </div>
 </mat-dialog-content>
 
 <div mat-dialog-actions align="end">
+  <button mat-button (click)="onNextQuestion()">Frage hinzufügen</button>
   <button mat-button (click)="onCancel()">Abbrechen</button>
-  <button mat-button (click)="onSave()" cdkFocusInitial>Speichern</button>
+  <button mat-button (click)="onSave()" [disabled]="survey.questions.length === 0" cdkFocusInitial>
+    Speichern
+  </button>
 </div>

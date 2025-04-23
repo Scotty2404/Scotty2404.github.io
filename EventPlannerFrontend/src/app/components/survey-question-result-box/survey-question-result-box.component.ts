@@ -1,5 +1,4 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -17,6 +16,8 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatListModule } from '@angular/material/list';
 import { Survey } from '../../models/survey.model';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 
 
@@ -38,15 +39,42 @@ import { Survey } from '../../models/survey.model';
             MatInputModule,
             MatSliderModule,
             MatProgressBarModule,
-            MatListModule
+            MatListModule,
+            ConfirmDialogComponent
   ],
   templateUrl: './survey-question-result-box.component.html',
   styleUrls: ['./survey-question-result-box.component.scss']
 })
 
 export class SurveyQuestionResultBoxComponent {
-  @Input() data: Survey[] = []; 
-  
+  @Input() data: Survey[] = [];
+  @Input() showCompleteButton: boolean = false;
+
+  @Output() complete = new EventEmitter<Survey>();
+
+  constructor(private dialog: MatDialog) {}
+
   selectedAnswerTypeIndex = 0;
 
+  completeSurvey(survey: Survey): void {
+    console.log('completeSurvey wurde aufgerufen');
+  
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      disableClose: true
+    });
+  
+    console.log('Dialog wurde geöffnet:', dialogRef);
+  
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Dialog geschlossen, Ergebnis:', result);
+  
+      if (result === true) {
+        console.log('Benutzer hat bestätigt – Umfrage wird abgeschlossen');
+        this.complete.emit(survey);
+      } else {
+        console.log('Benutzer hat abgebrochen – Umfrage wird **nicht** abgeschlossen');
+      }
+    });
+  }
 }

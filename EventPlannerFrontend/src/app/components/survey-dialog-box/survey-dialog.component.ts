@@ -35,8 +35,14 @@ import { MatSelectModule } from '@angular/material/select';
 
 export class SurveyDialogComponent {
   survey = { title: '', questions: [] as Question[] };
-  newQuestion: Question = { text: '', answerType: 'checkbox', options: [], optionPercentages: [] };
+  newQuestion: Question = {
+    text: '',
+    answerType: 'checkbox',
+    options: [],
+    optionPercentages: []
+  };
   optionsAsString = '';
+  showOptionError = false;
   constructor(public dialogRef: MatDialogRef<SurveyDialogComponent>) {}
 
   onOptionsChange(value: string): void {
@@ -44,6 +50,43 @@ export class SurveyDialogComponent {
       .split(',')
       .map(opt => opt.trim())
       .filter(Boolean);
+  }
+
+  onNextQuestion(): void {
+    if (!this.newQuestion.text.trim()) return;
+  
+    // Checkbox-Fragen brauchen mindestens 2 Optionen
+    if (
+      this.newQuestion.answerType === 'checkbox' &&
+      (!this.newQuestion.options || this.newQuestion.options.length < 2)
+    ) {
+      this.showOptionError = true;
+      return;
+    }
+  
+    // Reset Fehleranzeige
+    this.showOptionError = false;
+  
+    if (this.newQuestion.answerType === 'scale' && this.newQuestion.scaleValue == null) return;
+  
+    if (this.newQuestion.answerType === 'scale') {
+      this.newQuestion.answerPercentage = this.newQuestion.scaleValue;
+    }
+  
+    this.survey.questions.push({ ...this.newQuestion });
+  
+    // Reset
+    this.newQuestion = {
+      text: '',
+      answerType: 'checkbox',
+      options: [],
+      optionPercentages: []
+    };
+    this.optionsAsString = '';
+  }
+
+  removeQuestion(index: number): void {
+    this.survey.questions.splice(index, 1);
   }
   
   onCancel(): void {
