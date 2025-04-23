@@ -47,7 +47,7 @@
       </mat-form-field>
     </div>
 
-    <div *ngIf="questionForm.get('answerType')?.value === 'open'" formArrayName="answers">
+    <div *ngIf="questionForm.get('answerType')?.value === 'text'" formArrayName="answers">
         
         <mat-form-field appearance="outline" style="width: 40%;">
             <mat-label>Antwort</mat-label>
