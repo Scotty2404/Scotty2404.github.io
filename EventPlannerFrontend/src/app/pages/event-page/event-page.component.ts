@@ -3,6 +3,7 @@ import { NgFor } from '@angular/common';
 import { MatButton, MatButtonModule } from '@angular/material/button';
 import { EventDetailBoxComponent } from '../../components/event-detail-box/event-detail-box.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-event-page',
