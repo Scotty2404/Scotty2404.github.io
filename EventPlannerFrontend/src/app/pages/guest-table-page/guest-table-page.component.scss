@@ -1,13 +1,14 @@
 @import '../../styles/colors.scss';
 
-.page-container {
+.body {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    height: auto;
-    min-height: calc(100vh - 150px);
+    align-items: center;
 }
 
+.breadcrumb {
+    width: 100%;
+}
 
 
 .breadcrumb-link {
@@ -31,6 +32,7 @@
     color: $secondarycolor;
     display: flex;
     gap: 10px;
+    width: 100%;
 }
 
 .title h1 {
@@ -38,17 +40,12 @@
     margin: 0px;
 }
 
-
-.title h1 {
-    font-weight: normal;
-    margin: 0px;
-}
 
 .content-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 150px;
+    margin-bottom: 200px;
     gap: 10px;
 }
 

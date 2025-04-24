@@ -18,6 +18,7 @@ import { MatRadioButton } from '@angular/material/radio';
 import { MatIcon } from '@angular/material/icon';
 import { SurveyQuestionBoxComponent } from '../../components/survey-question-box/survey-question-box.component';
 import { response } from 'express';
+import { RouterLink } from '@angular/router';
 
 
 
@@ -36,7 +37,8 @@ import { response } from 'express';
     ReactiveFormsModule,
     MatRadioButton,
     MatIcon,
-    SurveyQuestionBoxComponent
+    SurveyQuestionBoxComponent,
+    RouterLink
   ],
   templateUrl: './add-event-page.component.html',
   styleUrl: './add-event-page.component.scss'
@@ -45,12 +47,16 @@ export class AddEventPageComponent {
   eventForm: FormGroup;
   selectedFile: File | null = null;
   previewImage: string | null = null;
+  isLoaded = true;
+  isFailed = false;
 
   standardImages = [
     '/auswahl/hochzeit.jpg',
     '/auswahl/geburtstag.avif',
     '/auswahl/jugendweihe.jpg',
   ];
+
+
 
   constructor(private fb: FormBuilder, private apiService: ApiService, private router: Router) {
     this.eventForm = this.fb.group({
