@@ -1,1 +1,152 @@
-<p>funktioniert</p>
+<body class="body">
+    <div class="breadcrumb">
+        <p>
+            <a [routerLink]="['/start']" class="breadcrumb-link">Home </a>
+            <a [routerLink]="['/start']" class="breadcrumb-link">/Event</a> /Edit Event
+        </p>
+    </div>
+    
+    <div class="title">
+            <button mat-icon-button [routerLink]="['/start']" class="btn-back">
+                    <mat-icon>arrow_back</mat-icon>
+            </button>
+            <h1>Event bearbeiten</h1>
+    </div>
+        
+    
+    
+    <div class="content-container">
+    
+        @if(isLoaded){
+    
+            <div class="content">
+                <mat-card class="mat-card">
+                    <mat-card-title>Geben Sie die Event Daten an (*Pflichtfelder)</mat-card-title>
+                    <mat-card-content>
+                        <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
+                            <!-- Titel -->
+                            <mat-form-field appearance="outline">
+                                <mat-label>Titel</mat-label>
+                                <input matInput formControlName="title" required />
+                            </mat-form-field>
+                          
+                            <!-- Datum -->
+                            <mat-form-field appearance="outline">
+                                <mat-label>Datum</mat-label>
+                                <input matInput [matDatepicker]="picker" formControlName="date" required />
+                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
+                            </mat-form-field>
+                        
+                        
+                                <!-- Uhrzeit Auswahl -->
+                                <mat-radio-group formControlName="timeOption" style="margin-bottom: 20px;">
+                                <mat-radio-button value="ganztags">Ganztägig</mat-radio-button>
+                                <mat-radio-button value="startzeit">Nur Startzeit</mat-radio-button>
+                                <mat-radio-button value="start_endzeit">Start- und Endzeit</mat-radio-button>
+                                </mat-radio-group>
+                        
+                                <!-- Startzeit -->
+                                <mat-form-field *ngIf="eventForm.get('timeOption')?.value !== 'ganztags'" appearance="outline">
+                                    <mat-label>Startzeit</mat-label>
+                                    <input matInput type="time" formControlName="startTime" required />
+                                </mat-form-field>
+                        
+                                <!-- Endzeit -->
+                                <mat-form-field *ngIf="eventForm.get('timeOption')?.value === 'start_endzeit'" appearance="outline">
+                                    <mat-label>Endzeit</mat-label>
+                                    <input matInput type="time" formControlName="endTime" required />
+                                </mat-form-field>
+                        
+                                
+                                <!-- Straße -->
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Straße</mat-label>
+                                    <input matInput formControlName="street" required />
+                                </mat-form-field>
+                          
+                                <!-- Ort -->
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Ort</mat-label>
+                                    <input matInput formControlName="city" required />
+                                </mat-form-field>
+                          
+                                <!-- Postleitzahl -->
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Postleitzahl</mat-label>
+                                    <input matInput type="number" formControlName="postalCode" required />
+                                </mat-form-field>
+                          
+                          
+                                <!-- Beschreibung -->
+                                <mat-form-field appearance="outline">
+                                  <mat-label>Beschreibung</mat-label>
+                                  <textarea matInput formControlName="description" required></textarea>
+                                </mat-form-field>
+                          
+                                <!-- Bildauswahl -->
+                                <p>Bild auswählen:</p>
+                                <div class="image-selection-container">
+                                    <mat-radio-group formControlName="image">
+                                        <mat-radio-button *ngFor="let img of standardImages" [value]="img">
+                                            <img [src]="img" class="selection-img" />
+                                        </mat-radio-button>
+                        
+                                        <!-- Hochgeladenes Bild als auswählbare Option -->
+                                        <mat-radio-button *ngIf="previewImage && !standardImages.includes(previewImage)" [value]="previewImage">
+                                            <img [src]="previewImage" class="selection-img" />
+                                        </mat-radio-button>
+                                    </mat-radio-group>
+                                </div>
+                          
+                                <!-- Bild hochladen -->
+                                <div class="file-upload-container">
+                                    <button mat-raised-button color="accent" (click)="fileInput.click()">
+                                        <mat-icon>upload</mat-icon> Bild hochladen
+                                    </button>
+                                    <input #fileInput type="file" hidden (change)="onFileSelected($event)" accept="image/*" />
+                                </div>
+                          
+                                <!-- Gästeanzahl (optional) -->
+                                <mat-form-field appearance="outline">
+                                  <mat-label>Gästeanzahl (optional)</mat-label>
+                                  <input matInput type="number" formControlName="guestCount" />
+                                </mat-form-field>
+                        
+                                
+                          
+                                <!-- Speicher-Button -->
+                                <button class="save-btn" mat-raised-button color="primary" type="submit" [disabled]="eventForm.invalid">
+                                  Event speichern
+                                </button>
+                        </form>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+                    
+            }
+            
+            @else {
+            
+                @if(isFailed) {
+                        
+                    <div class="loading-container">
+                        fehler
+                    </div>
+                }
+            
+                @else { 
+                        <div class="loading-container">
+                            loading
+                        </div>
+                }
+            
+            }
+    
+            
+    
+        
+    </div>
+    
+    
+    </body>  
