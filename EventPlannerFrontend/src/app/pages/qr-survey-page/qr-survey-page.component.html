@@ -1,20 +1,27 @@
 
 <mat-card class="mat-card">
 <form [formGroup]="surveyForm" (ngSubmit)="onSubmit()" >
+
+
     <!-- Checkbox-Frage -->
     <mat-card class="survey-card">
       <mat-card-title class="survey-title">Welche Features findest du hilfreich?</mat-card-title>
       <mat-card-content>
         <div formArrayName="checkboxes">
           <div *ngFor="let option of checkboxOptions; let i = index">
-            <mat-checkbox [formControl]="checkboxes.controls[i]" class="survey-checkbox">
-              {{ option }}
-            </mat-checkbox>
+            <mat-checkbox
+        
+        [checked]="checkboxes.controls[i].value"
+        (change)="onSingleCheckboxChange(i)"
+        class="survey-checkbox">
+        {{ option }}
+      </mat-checkbox>
           </div>
         </div>
         
       </mat-card-content>
     </mat-card>
+
     
     <!-- Offene Frage -->
     <mat-card class="survey-card">
@@ -42,7 +49,7 @@
   
     <!-- Absenden -->
     <div>
-      <button mat-raised-button color="accent" type="submit" >Absenden</button>
+      <button mat-raised-button color="accent" type="submit" [disabled]="surveyForm.invalid" >Absenden</button>
     </div>
   </form>
   </mat-card>
