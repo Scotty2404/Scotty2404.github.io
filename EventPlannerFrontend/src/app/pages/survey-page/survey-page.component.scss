@@ -12,6 +12,11 @@
   background-position: center;
 }
 
+.mat-drawer-content {
+  height: 78vh;
+  overflow: auto;
+}
+
 .breadcrumb-link {
   color: $secondarycolor;
   text-decoration: none;
