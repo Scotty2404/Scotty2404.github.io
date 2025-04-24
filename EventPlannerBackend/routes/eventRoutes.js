@@ -226,10 +226,12 @@ router.get('/my-events/:id', authMiddleware, async(req, res) => {
 
         // Query events where the Ids match
         db.query(`
-            SELECT e.*, v.street, v.city, v.postal_code
+            SELECT e.*, v.street, v.city, v.postal_code, v.google_maps_link, q.qr_image, u.firstname, u.lastname
             FROM event_management.event e
             JOIN event_management.user_event ue ON e.event_id = ue.event_id
             LEFT JOIN event_management.venue v ON e.venue_id = v.venue_id
+            LEFT JOIN event_management.qr_code q ON e.qr_id = q.qr_id
+            LEFT JOIN event_management.user u ON ue.user_id = u.user_id
             WHERE ue.user_id = ? AND ue.owner = 1 AND e.event_id = ?
         `, [userId, eventId], (err, events) => {
             if(err) {

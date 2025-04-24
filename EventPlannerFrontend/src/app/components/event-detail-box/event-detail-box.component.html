@@ -23,7 +23,7 @@
 
         <div>
 
-            <h3 class="title-main"> {{ event.title }} {{ event.startdate }} </h3>
+            <h3 class="title-main"> {{ event.title }} </h3>
 
             <div class="option-status">
                 <mat-radio-group aria-label="Wähle den Status">
@@ -32,21 +32,19 @@
                 </mat-radio-group>
             </div>
 
-            </div>
-
             <p>{{ event.description }}</p>
 
         </div>
 
         <div class="countdown-container">
-            <h3>Countdown bis zu {{ event.title }}: 🎉 00 Tage 00 Stunden 00 Minuten 00 Sekunden 🎉</h3> //countdown implementieren
+            <h3>Countdown bis zu {{ event.title }}: 🎉 {{ countdown }}🎉</h3> 
         </div>
 
  
 
         <div class="button-box">
 
-            <button mat-flat-button [routerLink]="['/guesttable]">zur Gästeliste</button>
+            <button mat-flat-button [routerLink]="['/guesttable']">zur Gästeliste</button>
             <button mat-flat-button [routerLink]="['/wishlist']">zur Wunschliste</button>
             <button mat-flat-button [routerLink]="['/to-do-list']">zur To-Do-Liste</button>
 
