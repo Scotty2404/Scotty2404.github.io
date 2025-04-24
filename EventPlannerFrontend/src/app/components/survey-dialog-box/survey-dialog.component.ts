@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { MatList } from '@angular/material/list';
 import { MatListItem } from '@angular/material/list';
 import { MatIcon } from '@angular/material/icon';
-import { Survey, Question } from '../../models/survey.model';
+import { Question } from '../../models/survey.model';
 import { MatSelectModule } from '@angular/material/select';
 
 

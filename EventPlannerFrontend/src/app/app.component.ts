@@ -6,6 +6,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatDialogModule } from '@angular/material/dialog';
+import { ReactiveFormsModule } from '@angular/forms'; 
 
 @Component({
   selector: 'app-root',
@@ -19,6 +20,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatListModule,
     MatButtonModule,
     MatDialogModule,
+    ReactiveFormsModule
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'] 
