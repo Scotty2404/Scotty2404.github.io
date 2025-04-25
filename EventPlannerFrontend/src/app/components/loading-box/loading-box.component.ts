@@ -8,5 +8,5 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
   styleUrl: './loading-box.component.scss'
 })
 export class LoadingBoxComponent {
-
 }
+
