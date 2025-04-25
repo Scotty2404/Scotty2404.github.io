@@ -82,4 +82,12 @@ export class ApiService {
       }
     });
   }
+
+  getEventFromQrCode(eventId: string, token: string) {
+    return this.http.get(`${this.baseUrl}/events/public-event/${eventId}`, {
+      params: {
+        token: token
+      }
+    });
+  }
 }

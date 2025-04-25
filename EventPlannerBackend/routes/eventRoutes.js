@@ -226,7 +226,7 @@ router.get('/my-events/:id', authMiddleware, async(req, res) => {
 
         // Query events where the Ids match
         db.query(`
-            SELECT e.*, v.street, v.city, v.postal_code, v.google_maps_link, q.qr_image, u.firstname, u.lastname
+            SELECT e.*, v.street, v.city, v.postal_code, v.google_maps_link, q.qr_image, q.url, u.firstname, u.lastname
             FROM event_management.event e
             JOIN event_management.user_event ue ON e.event_id = ue.event_id
             LEFT JOIN event_management.venue v ON e.venue_id = v.venue_id
@@ -330,9 +330,10 @@ router.get('/public-event/:eventId', async (req, res) => {
         // Check if the event exists with this token
         // Properly join the tables using qr_id
         db.query(
-            `SELECT e.event_id, e.title, e.startdate, e.enddate, e.description, e.access_token, q.access_token as qr_access_token
+            `SELECT e.event_id, e.title, e.startdate, e.enddate, e.description, e.image, e.access_token, v.street, v.city, v.postal_code, v.google_maps_link, q.access_token as qr_access_token
              FROM event e
              LEFT JOIN qr_code q ON e.qr_id = q.qr_id
+             LEFT JOIN event_management.venue v ON e.venue_id = v.venue_id
              WHERE e.event_id = ? AND (e.access_token = ? OR q.access_token = ?)`,
             [eventId, token, token],
             (err, events) => {
@@ -352,7 +353,11 @@ router.get('/public-event/:eventId', async (req, res) => {
                     title: event.title, 
                     startdate: event.startdate,
                     enddate: event.enddate,
-                    description: event.description
+                    description: event.description,
+                    image: event.image,
+                    street: event.street,
+                    city: event.city,
+                    postalCode: event.postal_code
                 });
             }
         );

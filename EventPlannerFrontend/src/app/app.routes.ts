@@ -26,7 +26,7 @@ export const routes: Routes = [
             { path: 'imprint', component: ImprintPageComponent },
             { path: 'eventedit', component: EventEditPageComponent },
             { path: 'addevent', component: AddEventPageComponent },
-            { path: 'event', component: EventPageComponent }, //event:id ??
+            { path: 'event', component: EventPageComponent },
             { path: 'wishlist', component: EventWishlistPageComponent },
             { path: 'to-do-list', component: EventToDoListPageComponent },
             { path: 'guesttable/:id', component: GuestTablePageComponent },
@@ -36,7 +36,7 @@ export const routes: Routes = [
         
     },
     { path: 'login', component: LoginPageComponent },
-    { path: 'qr', component: QrEventPageComponent },
+    { path: 'eventplannerfrontend/event/:id', component: QrEventPageComponent },
     { path: 'qrSurvey', component: QrSurveyPageComponent },
 
     { path: '**', redirectTo: '' }
