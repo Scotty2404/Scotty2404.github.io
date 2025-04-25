@@ -28,7 +28,7 @@ export const routes: Routes = [
             { path: 'eventedit', component: EventEditPageComponent },
             { path: 'addevent', component: AddEventPageComponent },
             { path: 'event', component: EventPageComponent },
-            { path: 'survey', component: SurveyPageComponent }
+            { path: 'survey', component: SurveyPageComponent },
             { path: 'wishlist', component: EventWishlistPageComponent },
             { path: 'to-do-list', component: EventToDoListPageComponent },
             { path: 'guesttable/:id', component: GuestTablePageComponent },
