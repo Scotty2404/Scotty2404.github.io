@@ -29,7 +29,7 @@ export const routes: Routes = [
             { path: 'event', component: EventPageComponent }, //event:id ??
             { path: 'wishlist', component: EventWishlistPageComponent },
             { path: 'to-do-list', component: EventToDoListPageComponent },
-            { path: 'guesttable', component: GuestTablePageComponent },
+            { path: 'guesttable/:id', component: GuestTablePageComponent },
             { path: 'event/:id', component: EventPageComponent }
         ] 
 

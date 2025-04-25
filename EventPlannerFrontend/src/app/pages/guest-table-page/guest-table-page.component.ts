@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { GuestTableBoxComponent } from '../../components/guest-table-box/guest-table-box.component';
-import { DataService } from '../../services/data.service';
 import { MatDialog } from '@angular/material/dialog';
 import { GuestTableDialogComponent } from '../../components/guest-table-dialog/guest-table-dialog.component';
 import { MatButtonModule } from '@angular/material/button';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-guest-table-page',
@@ -16,13 +16,15 @@ import { MatIconModule } from '@angular/material/icon';
 export class GuestTablePageComponent implements OnInit{
 
   guests: any[] = [];
-  isLoaded = true;
+  eventId: any;
+  isLoaded = false;
   isFailed = false;
 
-  constructor(private dataService: DataService, public dialog: MatDialog) {}
+  constructor(private apiService: ApiService, public dialog: MatDialog, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
-    this.guests = this.dataService.getGuestList();
+    this.eventId = this.route.snapshot.paramMap.get('id');
+    this.loadGuests();
   }
 
   openDialog(): void {
@@ -32,9 +34,40 @@ export class GuestTablePageComponent implements OnInit{
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.dataService.addGuest(result);
-        this.guests = [...this.dataService.getGuestList()];
+        const transformResult = this.transformResult(result);
+        this.apiService.addGuestToEvent(transformResult, this.eventId).subscribe({
+          next: (res) => {
+            console.log('Guest added: ', res);
+            this.loadGuests();
+          }, error: (error) => {
+            console.log('Adding Guest to Event Failed ', error);
+            this.isFailed = true;
+          }
+        });
       }
     });
+  }
+
+  loadGuests(){
+    this.apiService.getGuestsForEvent(this.eventId!).subscribe((data) => {
+      console.log(data);
+      this.guests = data;
+      this.isLoaded = true;
+    }, (error) => {
+      console.error('Error fetching guests for Event', error);
+      this.isFailed = true;
+    });
+
+  }
+
+  transformResult(result: any) {
+    return {
+      type: 'extra',
+      confirmation: result.confirmation === 'yes' ? 1 : 0,
+      guest: {
+        firstname: result.firstname,
+        lastname: result.lastname,
+      },
+    };
   }
 }

@@ -65,4 +65,21 @@ export class ApiService {
       }
     });
   }
+
+  getGuestsForEvent(eventId: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/events/${eventId}/guests`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }
+
+  addGuestToEvent(guestData: any, eventId: string): Observable<any> {
+    console.log('adding guest: ', guestData);
+    return this.http.post(`${this.baseUrl}/events/${eventId}/guests/add`, guestData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }
 }

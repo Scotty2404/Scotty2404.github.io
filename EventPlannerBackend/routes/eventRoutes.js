@@ -364,7 +364,6 @@ router.get('/public-event/:eventId', async (req, res) => {
 
 // create survey
 router.post('/survey/create', authMiddleware, async (req, res) => {
-    let surveyId;
     try {
         const { 
             description,
@@ -426,74 +425,85 @@ router.post('/survey/create', authMiddleware, async (req, res) => {
         console.log(survey);
 
         res.json(survey[0] || { message: "No survey Data found." });
-        /*
-        db.query(
-            'INSERT INTO event_management.survey ( description, active) VALUES (?, 1)',
-            [description, 1],
-            async (err, result) => {
-                if (err) {
-                    return res.status(500).json({ error: err.message });
-                }
-
-                surveyId = result.insertId;
-                
-                // save questions
-                for (const question of questions) {
-                    db.query(`
-                        INSERT INTO event_management.question (question_text) VALUES (?)`,
-                    [question.question_text], async (err, result) => {
-                        if(err) {
-                            return res.status(500).json({ error: err.message });
-                        }
-
-                        const questionId = result.insertId;
-
-                        // relationship survey <=> question
-                        db.query(`
-                            INSERT INTO event_management.survey_question (survey_id, question_id) VALUES (?, ?)`,
-                        [surveyId, questionId]);
-
-                        // offered answers
-                        for (const answerText of question.offered_answer) {
-                            console.log(answerText);
-                            db.query(`
-                                INSERT INTO event_management.offeredanswers (answer_text) VALUES (?)`,
-                            [answerText], async (err, result) => {
-                                if(err) {
-                                    return res.status(500).json({ error: err.message });
-                                }
-                                const answerId = result.insertId;
-
-                                // relationship offeredAnswer <=> question
-                                db.query(`
-                                    INSERT INTO event_management.question_offeredanswers (question_id, offered_answers_id) VALUES (?, ?)`,
-                                [questionId, answerId]);
-                            });
-                        }
-                        
-                    });
-                }
-                db.query(`
-                    SELECT s.*, q.question_id, q.question_text, o.offered_answers_id, o.answer_text
-                    FROM event_management.survey s
-                    LEFT JOIN event_management.survey_question x ON s.survey_id = x.survey_id
-                    LEFT JOIN event_management.question q ON x.question_id = q.question_id
-                    LEFT JOIN event_management.question_offeredanswers y ON q.question_id = y.question_id
-                    LEFT JOIN event_management.offeredanswers o ON y.offered_answers_id = o.offered_answers_id
-
-                    WHERE s.survey_id = ?
-                `, [surveyId], (err, surveys) => {
-                    if (err) {
-                        return res.status(500).json({ error: err.message });
-                    }
-                    console.log(surveys[0]);
-                    res.json(surveys[0]);
-                });
-            }
-        );*/
 
     } catch (err) {
         res.status(500).json({ error: err.message });
+    }
+});
+
+// Get Guests for Event from EventId
+router.get('/:eventId/guests', authMiddleware, async(req, res) => {
+    console.log('fetching guests for Event');
+    try {
+        const eventId = req.params.eventId;
+
+        db.query(`
+            SELECT u.firstname AS guest_firstname, u.lastname AS guest_lastname, u.email, ue.confirmation, ue.owner
+            FROM event_management.user_event ue
+            JOIN event_management.user u ON u.user_id = ue.user_id
+            LEFT JOIN event_management.extra_guests eg ON eg.event_id = ue.event_id
+            WHERE ue.event_id = ?
+            UNION
+            SELECT  eg.firstname AS guest_firstname, eg.lastname AS guest_lastname, NULL as email, 1 AS confirmation, 0 AS OWNER
+            FROM event_management.extra_guests eg
+            WHERE eg.event_id = ?
+            `, [eventId, eventId], (err, guests) => {
+                if(err) {
+                    return res.status(500).json({ error: err.message });
+                }
+
+                res.json(guests);
+            });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Adding guest to an event
+router.post('/:eventId/guests/add', authMiddleware, async (req, res) => {
+    console.log('adding guest');
+    const eventId = req.params.eventId;
+    const userId = req.user;
+    const { type, confirmation, guest } = req.body;
+    try {
+        if(type === 'user') {
+            console.log('inserting user...');
+            const exists = await queryAsync(`
+                SELECT * FROM event_management.user_event WHERE user_id = ? AND event_id = ?`,
+            [userId, eventId]);
+
+            if(exists.length > 0) {
+                return res.status(400).json({ message: 'User already exists on Eent'});
+            }
+
+            await queryAsync(`
+                INSERT INTO event_management.user_event (user_id, event_id, confirmation, owner) VALUES (?, ?, ?, 0)`,
+            [userId, eventId, confirmation]);
+
+            return res.status(201).json({ message: 'Added User to Event' });
+        } else if (type === 'extra') {
+            console.log('inserting extra...');
+            const { firstname, lastname } = guest;
+
+            const exists = await queryAsync(`
+                SELECT * FROM event_management.extra_guests WHERE user_id = ? AND firstname = ? AND lastname = ?`,
+            [userId, eventId, firstname, lastname]);
+
+            if(exists.length > 0 ){
+                return res.status(400).json({ message: 'Extra guest already exists on Eent'});
+            }
+
+            await queryAsync(`
+                INSERT INTO event_management.extra_guests (user_id, event_id, firstname, lastname) VALUES (?, ?, ?, ?)`,
+            [userId, eventId, firstname, lastname]);
+
+            return res.status(201).json({ message: 'Added Extra-Guest to Event' });
+        } else {
+            return res.status(400).json({ message: 'Guest Type invalid' });
+        }
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Error while inserting guest to Event' });
     }
 });
 
