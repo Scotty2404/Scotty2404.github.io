@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, FormArray, AbstractControl, FormControl } from '@angular/forms';
 
 import { ApiService } from '../../services/api.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgModule } from '@angular/core';
 
 import { MatCardModule } from '@angular/material/card';
@@ -17,7 +17,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatRadioButton } from '@angular/material/radio';
 import { MatIcon } from '@angular/material/icon';
 import { SurveyQuestionBoxComponent } from '../../components/survey-question-box/survey-question-box.component';
-import { response } from 'express';
 import { RouterLink } from '@angular/router';
 
 
@@ -49,28 +48,70 @@ export class EventEditPageComponent implements OnInit {
     '/auswahl/geburtstag.avif',
     '/auswahl/jugendweihe.jpg',
   ];
-  isLoaded = true;
+  eventId: any;
+  event: any;
+  sampleEvent: any;
+  isLoaded = false;
   isFailed = false;
 
-
-  // Beispielhafte Eventdaten zum Testen
-  sampleEvent = {
-    title: 'Geburtstagsfeier',
-    date: '2025-05-10',
-    timeOption: 'start_endzeit',
-    startTime: '18:00',
-    endTime: '23:00',
-    street: 'Musterstraße 12',
-    city: 'Musterstadt',
-    postalCode: 12345,
-    description: 'Eine tolle Party mit Freunden!',
-    image: '/auswahl/hochzeit.jpg',
-    guestCount: 20,
-  };
-
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private apiService: ApiService, private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit(): void {
+    this.loadEvent();
+  }
+
+  loadEvent() {
+    this.eventId = this.route.snapshot.paramMap.get('id');
+    this.apiService.getEventById(this.eventId).subscribe((eventData) => {
+      console.log('event fetched successfully: ', eventData);
+      this.event = eventData;
+      this.sampleEvent = this.transformFormerEventData();
+      this.initField();
+      this.isLoaded = true;
+    }, (error) => {
+      console.error('Error fetching event', error);
+      this.isFailed = true;
+    });
+  }
+
+  transformFormerEventData() {
+    // Zeit formatieren
+    let date;
+    let timeOption;
+    let startTime;
+    let endTime;
+
+    const startdate = new Date(this.event.startdate);
+    const enddate = new Date(this.event.enddate);
+
+    if(startdate === enddate) {
+      timeOption = 'startzeit';
+    } else if (enddate.toLocaleTimeString('de-DE') === '23:59:59') {
+      timeOption = 'ganztags';
+    } else {
+      timeOption = 'start_endzeit';
+    }
+
+    startTime = startdate.toLocaleTimeString('de-DE');
+    endTime = enddate.toLocaleTimeString('de-DE');
+    date = startdate.toDateString();
+
+    return {
+      title: this.event.title,
+      date: date,
+      timeOption: timeOption,
+      startTime: startTime,
+      endTime: endTime,
+      street: this.event.street,
+      city: this.event.city,
+      postalCode: this.event.postal_code,
+      description: this.event.description,
+      image: this.event.image,
+      guestCount: this.event.max_guests,
+    }
+  }
+
+  initField(){
     this.eventForm = this.fb.group({
       title: [this.sampleEvent.title, Validators.required],
       date: [new Date(this.sampleEvent.date), Validators.required],
@@ -93,6 +134,54 @@ export class EventEditPageComponent implements OnInit {
   }
   }
 
+  private transformEventData() {
+    const formData = this.eventForm.value;
+
+    let startdate, enddate, eventVenue;
+
+    //Start- und Endzeit setzen
+    const eventDate = new Date(formData.date);
+    const formattedDate = eventDate.toISOString().split('T')[0];
+
+    if(formData.timeOption === 'ganztags') {
+      startdate = `${formattedDate}T00:00:00`;
+      enddate = `${formattedDate}T23:59:59`;
+    } else if(formData.timeOption === 'startzeit') {
+      startdate = `${formattedDate}T${formData.startTime}:00`;
+      enddate = `${formattedDate}T23:59:59`;
+    } else if (formData.timeOption === 'start_endzeit') {
+      startdate = `${formattedDate}T${formData.startTime}:00`;
+      enddate = `${formattedDate}T${formData.endTime}:00`;
+    }
+
+    //Encoded Adress für google Maps link erzeugen
+    const address = `${formData.street}, ${formData.city}, ${formData.postal_code}`;
+    const encodedAddress = encodeURIComponent(address);
+    const googleMapsLink = `https://www.google.com/maps/embed/place?q=${encodedAddress}`; //no api key for embeded google maps links
+
+    //Venue Setzten
+    eventVenue = {
+      street: formData.street,
+      city: formData.city,
+      postal_code: formData.postalCode,
+      google_maps_link: googleMapsLink,
+    };
+    
+    //Image setzten !Achtung custom images werden noch nicht berücksichtigt!
+    const imageURL = formData.image;
+
+    return {
+      title: formData.title,
+      description: formData.description,
+      startdate: startdate,
+      enddate: enddate,
+      max_guests: formData.guestCount,
+      image: imageURL,
+      venue_id: this.event.venue_id,
+      venue: eventVenue,
+    }
+  }
+
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
@@ -107,8 +196,15 @@ export class EventEditPageComponent implements OnInit {
 
   onSubmit() {
     if (this.eventForm.valid) {
-      console.log('Bearbeitetes Event:', this.eventForm.value);
-      // hier würde man später ein API-Update machen
+      this.apiService.editEvent(this.transformEventData(), this.eventId).subscribe({
+        next: (response) => {
+          console.log('Event changed successfully', response);
+          this.router.navigate(['/event/' + this.eventId]);
+        }, error: (error) => {
+          console.log('Edeting event failed', error);
+        }
+      });
+      console.log('Bearbeitetes Event:', this.transformEventData());
     }
   }
 }

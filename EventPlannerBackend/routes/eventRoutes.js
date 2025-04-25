@@ -247,6 +247,53 @@ router.get('/my-events/:id', authMiddleware, async(req, res) => {
     }
 });
 
+// Edit Event by Id
+router.post('/my-events/:id/edit', authMiddleware, async(req, res) => {
+    try{
+        const eventId = req.params.id;
+        const userId = req.user;
+        const eventData = req.body;
+
+        const { 
+            title, 
+            description, 
+            startdate, 
+            enddate, 
+            max_guests, 
+            image,
+            venue_id,
+            venue: {street, city, postal_code, google_maps_link},
+        } = eventData;
+
+        // update event Data
+        db.query(`
+            UPDATE event_management.event 
+            SET title = ?, description = ?, startdate = ?, enddate = ?,  max_guests = ?, image = ? 
+            WHERE event_id = ?
+            `
+            , [title, description, startdate, enddate, max_guests, image, eventId], (err, result) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            }
+
+            //update venue data
+            db.query(`
+                UPDATE event_management.venue
+                SET street = ?, city = ?, postal_code = ?, google_maps_link = ?
+                WHERE venue_id = ?
+                `, [street, city, postal_code, google_maps_link, venue_id], (err, venueResult) => {
+                    if(err) {
+                        return res.status(500).json({ error: err.message });
+                    }
+                    res.json({ message: "Event and Venue changed successfully" });
+                });
+            });
+        
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 //delete event and connected data from id
 router.delete('/my-events/:id', authMiddleware, async(req, res) => {
     const eventId = req.params.id;

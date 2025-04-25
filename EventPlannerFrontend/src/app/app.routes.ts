@@ -25,7 +25,7 @@ export const routes: Routes = [
             { path: 'calendar', component: CalendarPageComponent },
             { path: 'contact', component: ContactPageComponent },
             { path: 'imprint', component: ImprintPageComponent },
-            { path: 'eventedit', component: EventEditPageComponent },
+            { path: 'eventedit/:id', component: EventEditPageComponent },
             { path: 'addevent', component: AddEventPageComponent },
             { path: 'event', component: EventPageComponent },
             { path: 'survey', component: SurveyPageComponent },
