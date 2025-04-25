@@ -1,0 +1,93 @@
+<mat-card *ngFor="let survey of data" class="survey-box">
+  <!-- Iteriert über die Umfragen in 'data' und erstellt für jede ein Material Card -->
+
+  <div class="card-header">
+    <!-- Wenn der Button zum Abschließen sichtbar sein soll (z.B. für laufende Umfragen) -->
+    <button *ngIf="showCompleteButton"
+            mat-icon-button
+            (click)="completeSurvey(survey)"
+            matTooltip="Umfrage abschließen">
+      <mat-icon style="color: green;">check_circle</mat-icon>
+    </button>
+
+    <!-- Wenn keine Aktion mehr notwendig ist, d.h. Umfrage ist abgeschlossen -->
+    <mat-icon *ngIf="!showCompleteButton"
+              color="primary"
+              matTooltip="Abgeschlossen">
+      done_all
+    </mat-icon>
+
+    <!-- Button zum Aktualisieren der Umfrageergebnisse -->
+    <button mat-icon-button
+            (click)="updateSurveyResults(survey)"
+            matTooltip="Aktualisieren">
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </div>
+
+  <!-- Titel der Umfrage wird angezeigt -->
+  <mat-card-title>{{ survey.title }}</mat-card-title>
+
+  <mat-card-content>
+    <!-- Tab-Steuerung für verschiedene Antworttypen -->
+    <mat-tab-group [(selectedIndex)]="selectedAnswerTypeIndex">
+
+      <!-- Tab für Checkbox-Fragen -->
+      <mat-tab label="Checkbox">
+        <ng-container *ngFor="let question of survey.questions">
+          <!-- Zeigt nur Fragen vom Typ 'checkbox' an -->
+          <div *ngIf="question.answerType === 'checkbox'" class="question-row">
+            <div class="question">{{ question.text }}</div>
+            <div class="answer checkbox-result">
+              <!-- Optionen mit Prozentangabe und Fortschrittsbalken -->
+              <div *ngFor="let option of question.options; let i = index" class="option-row">
+                <div class="option-label">{{ option }}</div>
+                <div class="option-percentage">{{ question.optionPercentages?.[i] || 0 }}%</div>
+                <mat-progress-bar mode="determinate"
+                                  [value]="question.optionPercentages?.[i] || 0"
+                                  class="option-bar">
+                </mat-progress-bar>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </mat-tab>
+
+      <!-- Tab für offene Fragen -->
+      <mat-tab label="Open">
+        <ng-container *ngFor="let question of survey.questions">
+          <!-- Zeigt nur Fragen vom Typ 'open' an -->
+          <div *ngIf="question.answerType === 'open'" class="question-row">
+            <div class="question">{{ question.text }}</div>
+            <div class="answer">
+              <!-- Listet alle eingetragenen Antworten auf -->
+              <mat-list role="list">
+                <ng-container *ngFor="let answer of question.answerField">
+                  <mat-list-item role="listitem">{{ answer }}</mat-list-item>
+                </ng-container>
+              </mat-list>
+            </div>
+          </div>
+        </ng-container>
+      </mat-tab>
+
+      <!-- Tab für Skalenfragen -->
+      <mat-tab label="Scale">
+        <ng-container *ngFor="let question of survey.questions">
+          <!-- Zeigt nur Fragen vom Typ 'scale' an -->
+          <div *ngIf="question.answerType === 'scale'" class="question-row">
+            <div class="question">{{ question.text }}</div>
+            <div class="answer scale">
+              <!-- Schieberegler (Slider) zeigt den durchschnittlichen Wert an -->
+              <mat-slider min="0" max="100" step="1">
+                <input matSliderThumb [value]="question.answerPercentage" disabled />
+              </mat-slider>
+              <div>{{ question.answerPercentage }}%</div>
+            </div>
+          </div>
+        </ng-container>
+      </mat-tab>
+
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>

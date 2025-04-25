@@ -21,3 +21,4 @@ describe('LoadingFailedBoxComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+

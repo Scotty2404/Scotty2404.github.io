@@ -7,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrl: './loading-failed-box.component.scss'
 })
 export class LoadingFailedBoxComponent {
-
 }
+
