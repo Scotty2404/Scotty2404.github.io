@@ -38,7 +38,7 @@ export const routes: Routes = [
         
     },
     { path: 'login', component: LoginPageComponent },
-    { path: 'eventplannerfrontend/event/:id', component: QrEventPageComponent },
+    { path: 'EventPlannerFrontend/event/:id', component: QrEventPageComponent },
     { path: 'qrSurvey', component: QrSurveyPageComponent },
 
     { path: '**', redirectTo: '' }

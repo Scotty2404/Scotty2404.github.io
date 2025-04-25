@@ -129,15 +129,6 @@ export class QrEventPageComponent implements OnInit{
     const isYes = this.attending === 'yes';
     const message = isYes ? 'Du hast erfolgreich zugesagt!' : 'Deine Absage wurde erfolgreich zugeschickt.';
   
-    this.dialog.open(QrDialogComponent, {
-      data: {
-        title: isYes ? '🎉 Zusage gespeichert' : '❌ Absage gespeichert',
-        message: message,
-        attending: this.attending,
-        surveyAvailable: this.surveyAvailable
-      }
-    });
-  
     if (this.attending === 'yes') {
       if(this.guest.password === null){
         this.submitWithoutPassword(this.guest, 'extra', 1);
@@ -148,12 +139,19 @@ export class QrEventPageComponent implements OnInit{
       }
       this.responseMessage = 'Du hast erfolgreich zugesagt!';
     } else if (this.attending === 'no') {
+      this.submitWithPassword(this.guest, 'user', 0);
       console.log('Absage');
       this.responseMessage = 'Deine Absage wurde gespeichert.';
     }
-    alert('Antwort wurde übermittelt. Danke!');
-    this.responseSubmitted = true;
-    this.responseMessage = message;
+
+    this.dialog.open(QrDialogComponent, {
+      data: {
+        title: isYes ? '🎉 Zusage gespeichert' : '❌ Absage gespeichert',
+        message: message,
+        attending: this.attending,
+        surveyAvailable: this.surveyAvailable
+      }
+    });
   }
   
 }

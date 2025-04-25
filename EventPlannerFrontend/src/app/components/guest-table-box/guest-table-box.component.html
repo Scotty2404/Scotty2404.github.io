@@ -30,15 +30,15 @@
       <ng-container matColumnDef="info">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Info </th>
         <td mat-cell *matCellDef="let row" class="comment-cell" matTooltip="{{row.info}}">
-          {{row.info}}
+          info not supportet in backend
         </td>
       </ng-container>
 
       <ng-container matColumnDef="commitment">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Zusage? </th>
         <td mat-cell *matCellDef="let row">
-          <mat-icon *ngIf="row.commitment === '1'" class="green">check_circle</mat-icon>
-          <mat-icon *ngIf="row.commitment === '0'" class="red">cancel</mat-icon>
+          <mat-icon *ngIf="row.confirmation === 1" class="green">check_circle</mat-icon>
+          <mat-icon *ngIf="row.confirmation === 0" class="red">cancel</mat-icon>
         </td>
       </ng-container>
 
