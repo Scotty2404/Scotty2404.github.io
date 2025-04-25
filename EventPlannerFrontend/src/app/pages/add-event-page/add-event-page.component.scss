@@ -6,15 +6,52 @@
   align-items: center;
 }
 
+.breadcrumb {
+    display: flex;
+    width: 100%;
+}
+
+
+.breadcrumb-link {
+    color: $secondarycolor;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.breadcrumb-link:hover {
+    color: $secondarycolor;
+    text-decoration: underline 1.5px;
+    cursor: pointer;
+}
+
+.breadcrumb p {
+    font-size: 1.1em;
+    margin: 10px 0;
+}
+
 .title {
-  display: flex;
-  align-items: left;
-  width: 100%;
-  color: $secondarycolor;
+    color: $secondarycolor;
+    display: flex;
+    gap: 10px;
+    width: 100%;
 }
 
 .title h1 {
-  font-weight: 200;
+    font-weight: normal;
+    margin: 0px;
+}
+
+
+.title h1 {
+    font-weight: normal;
+    margin: 0px;
+}
+
+.content-container {
+    display: flex;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    width: 100%;
 }
 
 .content {
