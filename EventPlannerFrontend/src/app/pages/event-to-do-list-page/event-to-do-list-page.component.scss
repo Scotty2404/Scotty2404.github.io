@@ -1,0 +1,103 @@
+@import '../../styles/colors.scss';
+
+.box-service {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 50rem;
+  min-height: 18.75rem;
+  border-radius: 0.625rem;
+  box-shadow: 0px 0.25rem 0.9375rem rgba(0, 0, 0, 0.1);
+  margin: 1.25rem auto;
+  position: relative;
+  padding: 1.5625rem;
+  background: #ffffff;
+  align-items: center;
+}
+
+.back-button button{
+  background-color: $secondarycolor;
+}
+
+.title {
+  text-align: center;
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 1.5625rem;
+}
+
+.add-item {
+  display: flex;
+  gap: 0.9375rem;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 37.5rem;
+}
+
+.add-item mat-form-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.add-item .larger-input {
+  width: 100%;
+}
+
+.add-item .larger-input mat-form-field {
+  height: 5rem;
+  width: 100%;
+}
+
+.add-item .larger-input input {
+  height: 2.2rem;
+  font-size: 1rem;
+  padding: 0.625rem;
+  width: calc(100% - 1rem); /* Sicherstellen, dass der Input nicht zu breit ist */
+  box-sizing: border-box; /* Verhindert, dass Padding die Breite beeinflusst */
+}
+
+.add-item button {
+  white-space: nowrap;
+  background-color: $secondarycolor;
+}
+
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5625rem;
+  background: #fff;
+  border-radius: 0.3125rem;
+  overflow: hidden;
+}
+
+table th, table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+table th {
+  background-color: #f8f8f8;
+  font-weight: bold;
+  text-align: center;
+}
+
+.todo-list-display {
+    margin-top: 20px;
+    padding: 10px;
+    border-top: 1px solid #ccc;
+  
+    .todo-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 0;
+  
+      button {
+        margin-left: 10px;
+      }
+    }
+  }
+  

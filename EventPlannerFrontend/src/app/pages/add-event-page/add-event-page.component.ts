@@ -199,11 +199,17 @@ export class AddEventPageComponent {
       enddate = `${formattedDate}T${formData.endTime}:00`;
     }
 
+    //Encoded Adress für google Maps link erzeugen
+    const address = `${formData.street}, ${formData.city}, ${formData.postal_code}`;
+    const encodedAddress = encodeURIComponent(address);
+    const googleMapsLink = `https://www.google.com/maps/embed/place?q=${encodedAddress}`; //no api key for embeded google maps links
+
     //Venue Setzten
     eventVenue = {
       street: formData.street,
       city: formData.city,
       postal_code: formData.postalCode,
+      google_maps_link: googleMapsLink,
     };
 
     //Image setzten !Achtung custom images werden noch nicht berücksichtigt!

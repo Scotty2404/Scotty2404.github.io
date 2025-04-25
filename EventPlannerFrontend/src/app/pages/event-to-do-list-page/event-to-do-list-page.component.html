@@ -1,0 +1,39 @@
+<div class="status-container">
+    <div class="back-button">
+      <button mat-flat-button [routerLink]="['/event']">⬅️ zurück zur Statusübersicht</button>
+    </div>
+  
+    <div class="box-service">
+      <h3 class="title">Meine To-Do-Liste</h3>
+  
+      <div class="add-item centered">
+        <mat-form-field class="full-width larger-input">
+          <input matInput placeholder="Neue Aufgabe" [(ngModel)]="newTodo" />
+        </mat-form-field>
+        <button mat-flat-button (click)="addTodo()">Hinzufügen</button>
+      </div>
+  
+      <table>
+        <thead>
+          <tr>
+            <th>To-Do</th>
+            <th>Aktionen</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let todo of todos; let i = index">
+            <td>{{ todo.text }}</td>
+            <td>
+              <button mat-button color="warn" (click)="deleteTodo(i)">Löschen</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+  
+      <!-- Debug-Hilfe -->
+      <p>Aktuelle Todos: {{ todos.length }}</p>
+      <div *ngFor="let todo of todos">[Debug] {{ todo.text }}</div>
+    </div>
+  </div>
+  
+  

@@ -13,9 +13,6 @@
             <img [src]="event.image" style="width: 100%;">
 
         </div>
-
-       
-
        
 
     </div>
@@ -26,25 +23,32 @@
 
         <div>
 
-            <h3> {{ event.startdate }} </h3>
+            <h3 class="title-main"> {{ event.title }} </h3>
 
-            <hr>
+            <div class="option-status">
+                <mat-radio-group aria-label="Wähle den Status">
+                  <mat-radio-button value="aktiv" checked>Aktiv</mat-radio-button>
+                  <mat-radio-button value="inaktiv">Inaktiv</mat-radio-button>
+                </mat-radio-group>
+            </div>
 
             <p>{{ event.description }}</p>
 
+        </div>
+
+        <div class="countdown-container">
+            <h3>Countdown bis zu {{ event.title }}: 🎉 {{ countdown }}🎉</h3> 
         </div>
 
  
 
         <div class="button-box">
 
-            <button routerLink="/guesttable" mat-flat-button>zur Gästeliste</button>
-
- 
+            <button mat-flat-button [routerLink]="['/guesttable/' + event.event_id]">zur Gästeliste</button>
+            <button mat-flat-button [routerLink]="['/wishlist']">zur Wunschliste</button>
+            <button mat-flat-button [routerLink]="['/to-do-list']">zur To-Do-Liste</button>
 
             <div>
-
- 
 
                 <button mat-mini-fab aria-label="Example icon button with a menu icon" style="margin-right: 20px;">
 
@@ -52,20 +56,14 @@
 
                 </button>
 
- 
-
                 <button mat-mini-fab aria-label="Example icon button with a menu icon" (click)="deleteEvent(event.event_id)">
+
 
                     <mat-icon>delete</mat-icon>
 
                 </button>
 
             </div>
-
- 
-
         </div>
-
     </div>
-
 </div>

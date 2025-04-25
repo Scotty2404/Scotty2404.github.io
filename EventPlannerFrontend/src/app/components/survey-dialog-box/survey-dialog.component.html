@@ -1,0 +1,80 @@
+<!-- Titel des Dialogs -->
+<h2 mat-dialog-title>Neue Umfrage hinzufügen</h2>
+
+<mat-dialog-content>
+  <!-- Eingabefeld für den Titel der Umfrage -->
+  <mat-form-field>
+    <mat-label>Titel der Umfrage</mat-label>
+    <input matInput [(ngModel)]="survey.title">
+  </mat-form-field>
+
+  <!-- Auswahlfeld für den Fragetyp -->
+  <mat-form-field>
+    <mat-label>Fragetyp auswählen</mat-label>
+    <mat-select [(ngModel)]="newQuestion.answerType">
+      <mat-option value="checkbox">Checkbox Frage</mat-option>
+      <mat-option value="open">Offene Frage</mat-option>
+      <mat-option value="scale">Skalierungsfrage</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Eingabefeld für den Fragetext -->
+  <mat-form-field>
+    <mat-label>Frage</mat-label>
+    <input matInput [(ngModel)]="newQuestion.text">
+  </mat-form-field>
+
+  <!-- Eingabe von Antwortmöglichkeiten (nur bei Checkbox-Fragen sichtbar) -->
+  <mat-form-field *ngIf="newQuestion.answerType === 'checkbox'" appearance="fill">
+    <mat-label>Antwortmöglichkeiten mit Kommas getrennt</mat-label>
+    <input matInput [(ngModel)]="optionsAsString" (ngModelChange)="onOptionsChange($event)">
+    <mat-hint>Gib mindestens zwei Optionen durch Kommas getrennt ein.</mat-hint>
+  </mat-form-field>
+
+  <!-- Fehlermeldung bei unzureichender Eingabe von Checkbox-Optionen -->
+  <div *ngIf="showOptionError" style="color: red; font-size: 0.9rem; margin-bottom: 10px;">
+    Bitte gib mindestens zwei gültige Antwortmöglichkeiten an.
+  </div>
+
+  <!-- Eingabefeld für Skalenwert (nur sichtbar bei Skalierungsfragen) -->
+  <mat-form-field *ngIf="newQuestion.answerType === 'scale'">
+    <mat-label>Skalenwert (z.B. 0 - 100)</mat-label>
+    <input matInput type="number" [(ngModel)]="newQuestion.scaleValue" min="0" max="100">
+  </mat-form-field>
+
+  <!-- "Antwortfeld" wird bei offenen Fragen angezeigt, ist jedoch deaktiviert -->
+  <mat-form-field *ngIf="newQuestion.answerType === 'open'">
+    <mat-label>Antwortfeld</mat-label>
+    <input matInput placeholder="" [(ngModel)]="optionsAsString" (ngModelChange)="onOptionsChange($event)" disabled>
+  </mat-form-field>
+
+  <!-- Liste der bereits hinzugefügten Fragen -->
+  <div *ngIf="survey.questions.length > 0" class="question-list">
+    <h3>Bereits hinzugefügte Fragen</h3>
+    <mat-list>
+      <mat-list-item *ngFor="let question of survey.questions; let i = index">
+        <!-- Frage anzeigen mit Typ -->
+        <span>{{ i + 1 }}. {{ question.text }} ({{ question.answerType }})</span>
+
+        <!-- Löschen-Button für jeweilige Frage -->
+        <button mat-icon-button color="warn" (click)="removeQuestion(i)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-list-item>
+    </mat-list>
+  </div>
+</mat-dialog-content>
+
+<!-- Aktionen am unteren Rand des Dialogs -->
+<div mat-dialog-actions align="end">
+  <!-- Neue Frage hinzufügen (bleibt im Dialog) -->
+  <button mat-button (click)="onNextQuestion()">Frage hinzufügen</button>
+
+  <!-- Dialog schließen ohne Speichern -->
+  <button mat-button (click)="onCancel()">Abbrechen</button>
+
+  <!-- Umfrage speichern, nur aktiv wenn mindestens eine Frage vorhanden -->
+  <button mat-button (click)="onSave()" [disabled]="survey.questions.length === 0" cdkFocusInitial>
+    Speichern
+  </button>
+</div>
