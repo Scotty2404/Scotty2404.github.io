@@ -3,3 +3,4 @@ eventRoutesNotIn.js
 EventPlannerBackend/testconnectiondb.js
 EventPlannerBackend/.env
 EventPlannerBackend/public/
+dist/
