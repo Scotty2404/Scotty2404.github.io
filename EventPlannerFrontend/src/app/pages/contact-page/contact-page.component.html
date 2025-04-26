@@ -1,54 +1,223 @@
-<!-- Container für die Karten (Kontaktperson & Formular) -->
-<div class="scroll-container">
+<div class="page-container">
 
-  <!-- Karte mit Kontaktinformationen -->
-  <mat-card class="contact-card">
-    <mat-card-title class="card-title">Kontaktperson</mat-card-title>
-    <mat-card-content>
-      <!-- Statische Kontaktdaten -->
-      <p><strong>Name:</strong> Julia Weber</p>
-      <p><strong>Position:</strong> Veranstaltungskoordination</p>
-      <p><strong>E-Mail:</strong> julia.weber&#64;example.com</p>
-      <p><strong>Telefon:</strong> +49 123 4567890</p>
-    </mat-card-content>
-  </mat-card>
+  <div class="breadcrumb">
+    <p>
+      <a [routerLink]="['/start']" class="breadcrumb-link">Home</a> /
+      Kontakt
+    </p>
+  </div>
 
-  <!-- Karte mit dem Kontaktformular -->
-  <mat-card class="contact-form-card">
-    <mat-card-title class="card-title">Kontaktformular</mat-card-title>
+  <div class="title">
+    <button mat-icon-button [routerLink]="['/start']" class="btn-back">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>Kontakt</h1>
+  </div>
 
-    <!-- Angular Reactive Form - bei Absenden wird onSubmit() aufgerufen -->
-    <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="example-form">
+  <div class="content-container">
 
-      <!-- Eingabefeld für Name -->
-      <mat-form-field appearance="outline" class="example-full-width">
-        <mat-label>Dein Name</mat-label>
-        <input matInput formControlName="name" placeholder="Max Mustermann">
-      </mat-form-field>
+    @if(isLoaded){
+    <div class="edit-container">
+      <mat-card class="mat-card"><!-- Gesamt-Container für die Seite -->
+        <div class="page-container">
 
-      <!-- Eingabefeld für E-Mail-Adresse -->
-      <mat-form-field appearance="outline" class="example-full-width">
-        <mat-label>Deine E-Mail-Adresse</mat-label>
-        <input matInput formControlName="email" placeholder="max@example.com">
-      </mat-form-field>
+          <!-- Breadcrumb-Navigation (Pfadnavigation oben) -->
+          <div class="breadcrumb">
+            <p>
+              <!-- Link zurück zur Startseite -->
+              <a [routerLink]="['/start']" class="breadcrumb-link">Home</a> / Kontakt
+            </p>
+          </div>
 
-      <!-- Eingabefeld für Betreff -->
-      <mat-form-field appearance="outline" class="example-full-width">
-        <mat-label>Betreff</mat-label>
-        <input matInput placeholder="Worum geht es?" formControlName="subject">
-      </mat-form-field>
+          <!-- Seitentitel mit Zurück-Button -->
+          <div class="title">
+            <button mat-icon-button [routerLink]="['/start']" class="btn-back">
+              <!-- Icon "Pfeil zurück" -->
+              <mat-icon>arrow_back</mat-icon>
+            </button>
+            <h1>Kontakt</h1> <!-- Hauptüberschrift -->
+          </div>
 
-      <!-- Eingabefeld für Nachricht (mehrzeilig) -->
-      <mat-form-field appearance="outline" class="example-full-width">
-        <mat-label>Nachricht</mat-label>
-        <textarea matInput rows="6" placeholder="Deine Nachricht..." formControlName="message"></textarea>
-      </mat-form-field>
+          <!-- Haupt-Content Bereich -->
+          <div class="content-container">
 
-      <!-- Absende-Button, deaktiviert wenn das Formular ungültig ist -->
-      <button mat-raised-button color="primary" type="submit" [disabled]="contactForm.invalid">
-        Absenden
-      </button>
+            <!-- Angular If-Abfrage: Ist die Seite geladen? -->
+            @if(isLoaded){
+            <div class="edit-container">
 
-    </form>
-  </mat-card>
-</div>
+              <!-- Card Container (Material Design) -->
+              <mat-card class="mat-card">
+
+                <!-- ---------- Kontaktinformationen Card ---------- -->
+                <mat-card class="contact-card">
+                  <mat-card-title class="card-title">Kontaktperson</mat-card-title> <!-- Titel der Card -->
+                  <mat-card-content>
+                    <mat-list role="list"> <!-- Material Design Liste -->
+
+                      <!-- Name -->
+                      <mat-list-item>
+                        <span matListItemTitle>Name</span>
+                        <span matListItemLine>Julia Weber</span>
+                      </mat-list-item>
+
+                      <!-- Position -->
+                      <mat-list-item>
+                        <span matListItemTitle>Position</span>
+                        <span matListItemLine>Veranstaltungskoordination</span>
+                      </mat-list-item>
+
+                      <!-- E-Mail -->
+                      <mat-list-item>
+                        <span matListItemTitle>E-Mail</span>
+                        <span matListItemLine>julia.weber&#64;example.com</span> <!-- @ maskiert -->
+                      </mat-list-item>
+
+                      <!-- Telefon -->
+                      <mat-list-item>
+                        <span matListItemTitle>Telefon</span>
+                        <span matListItemLine>+49 123 4567890</span>
+                      </mat-list-item>
+
+                    </mat-list>
+                  </mat-card-content>
+                </mat-card>
+                <!-- ---------- Ende Kontaktinformationen Card ---------- -->
+
+                <!-- ---------- Kontaktformular Card ---------- -->
+                <mat-card class="contact-form-card">
+                  <mat-card-title class="card-title">Kontaktformular</mat-card-title> <!-- Titel der Card -->
+
+                  <!-- Formular (Reactive Form Binding) -->
+                  <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="example-form">
+
+                    <!-- Name-Eingabefeld -->
+                    <mat-form-field appearance="outline" class="example-full-width">
+                      <mat-label>Dein Name</mat-label>
+                      <input matInput formControlName="name" placeholder="Max Mustermann">
+                    </mat-form-field>
+
+                    <!-- E-Mail-Eingabefeld -->
+                    <mat-form-field appearance="outline" class="example-full-width">
+                      <mat-label>Deine E-Mail-Adresse</mat-label>
+                      <input matInput formControlName="email" placeholder="max@example.com">
+                    </mat-form-field>
+
+                    <!-- Betreff-Eingabefeld -->
+                    <mat-form-field appearance="outline" class="example-full-width">
+                      <mat-label>Betreff</mat-label>
+                      <input matInput placeholder="Worum geht es?" formControlName="subject">
+                    </mat-form-field>
+
+                    <!-- Nachrichtenfeld (Textarea) -->
+                    <mat-form-field appearance="outline" class="example-full-width">
+                      <mat-label>Nachricht</mat-label>
+                      <textarea matInput rows="6" placeholder="Deine Nachricht..." formControlName="message"></textarea>
+                    </mat-form-field>
+
+                    <!-- Absende-Button -->
+                    <button mat-raised-button color="primary" type="submit" [disabled]="contactForm.invalid">
+                      Absenden
+                    </button>
+
+                  </form>
+                </mat-card>
+                <!-- ---------- Ende Kontaktformular Card ---------- -->
+
+              </mat-card> <!-- Ende des äußeren Card-Containers -->
+            </div>
+            }
+            @else {
+            <!-- Wenn nicht geladen, aber Fehler vorhanden -->
+            @if(isFailed) {
+            <div class="loading-container">
+              Fehler
+            </div>
+            }
+            <!-- Wenn noch am Laden -->
+            @else {
+            <div class="loading-container">
+              Loading...
+            </div>
+            }
+            }
+
+          </div> <!-- Ende Content-Container -->
+        </div> <!-- Ende Page-Container -->
+
+
+        <!-- Karte mit Kontaktinformationen -->
+        <mat-card class="contact-card">
+          <mat-card-title class="card-title">Kontaktperson</mat-card-title>
+          <mat-card-content>
+            <mat-list role="list">
+              <mat-list-item>
+                <span matListItemTitle>Name</span>
+                <span matListItemLine>Julia Weber</span>
+              </mat-list-item>
+              <mat-list-item>
+                <span matListItemTitle>Position</span>
+                <span matListItemLine>Veranstaltungskoordination</span>
+              </mat-list-item>
+              <mat-list-item>
+                <span matListItemTitle>E-Mail</span>
+                <span matListItemLine>julia.weber&#64;example.com</span>
+              </mat-list-item>
+              <mat-list-item>
+                <span matListItemTitle>Telefon</span>
+                <span matListItemLine>+49 123 4567890</span>
+              </mat-list-item>
+            </mat-list>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Karte mit dem Kontaktformular -->
+        <mat-card class="contact-form-card">
+          <mat-card-title class="card-title">Kontaktformular</mat-card-title>
+
+          <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="example-form">
+            <mat-form-field appearance="outline" class="example-full-width">
+              <mat-label>Dein Name</mat-label>
+              <input matInput formControlName="name" placeholder="Max Mustermann">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="example-full-width">
+              <mat-label>Deine E-Mail-Adresse</mat-label>
+              <input matInput formControlName="email" placeholder="max@example.com">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="example-full-width">
+              <mat-label>Betreff</mat-label>
+              <input matInput placeholder="Worum geht es?" formControlName="subject">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="example-full-width">
+              <mat-label>Nachricht</mat-label>
+              <textarea matInput rows="6" placeholder="Deine Nachricht..." formControlName="message"></textarea>
+            </mat-form-field>
+
+            <button mat-raised-button color="primary" type="submit" [disabled]="contactForm.invalid">
+              Absenden
+            </button>
+
+          </form>
+        </mat-card>
+
+
+      </mat-card>
+    </div>
+    }
+    @else {
+    @if(isFailed) {
+    <div class="loading-container">
+      Fehler
+    </div>
+    }
+    @else {
+    <div class="loading-container">
+      Loading...
+    </div>
+    }
+    }
+
+  </div>
+</div>>

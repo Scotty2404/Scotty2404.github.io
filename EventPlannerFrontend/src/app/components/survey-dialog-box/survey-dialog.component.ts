@@ -12,14 +12,14 @@ import { MatIcon } from '@angular/material/icon';
 import { Question } from '../../models/survey.model';
 import { MatSelectModule } from '@angular/material/select';
 
-
+// Definiert die SurveyDialog-Komponente
 @Component({
-  selector: 'app-survey-dialog',
-  standalone: true, // Wenn du Standalone-Komponenten verwendest
-  imports: [
+  selector: 'app-survey-dialog', // Der Selector, der im HTML verwendet wird, um diese Komponente einzufügen.
+  standalone: true, // Gibt an, dass diese Komponente eine Standalone-Komponente ist und keine Abhängigkeiten von anderen Modulen benötigt.
+  imports: [  // Importierte Module für das Styling und die Funktionalität der Komponente
     MatDialogModule,
     MatFormFieldModule,
-    CommonModule, // Verwende CommonModule statt BrowserModule
+    CommonModule, // Bietet grundlegende Angular-Funktionen
     ReactiveFormsModule,
     MatInputModule,
     MatButtonModule,
@@ -29,93 +29,120 @@ import { MatSelectModule } from '@angular/material/select';
     MatIcon,
     MatSelectModule
   ],
-  templateUrl: './survey-dialog.component.html',
-  styleUrls: ['./survey-dialog.component.scss']
+  templateUrl: './survey-dialog.component.html',  // Der Pfad zur HTML-Vorlage für den Dialog
+  styleUrls: ['./survey-dialog.component.scss']  // Der Pfad zu den Styles für den Dialog
 })
 export class SurveyDialogComponent {
-  // Initialisiere die Umfrage-Objekte
-  survey = { title: '', questions: [] as Question[] };  // Umfrage mit Titel und leeren Fragen.
-  newQuestion: Question = {  // Eine neue Frage, die vom Benutzer erstellt wird.
-    text: '',
-    answerType: 'checkbox',  // Standard-Fragetyp ist 'checkbox'.
-    options: [],  // Optionen für Checkbox-Fragen.
-    optionPercentages: []  // Prozentwerte der Optionen (z. B. für Skalierungsfragen).
-  };
-  optionsAsString = '';  // Zwischenspeicher für die Optionen als String (z. B. 'Option1, Option2').
-  showOptionError = false;  // Fehleranzeige für ungültige Optionen.
+  // Initialisierung des Umfrage-Objekts mit einem leeren Titel und einer leeren Fragenliste
+  survey = { title: '', questions: [] as Question[] };  
 
-  constructor(public dialogRef: MatDialogRef<SurveyDialogComponent>) {}  // DialogRef für das Schließen des Dialogs.
+  // Definition einer neuen Frage, die im Dialog bearbeitet wird.
+  newQuestion: Question = {  
+    text: '',  // Fragetext
+    answerType: 'checkbox',  // Standard-Fragetyp: 'checkbox'
+    options: [],  // Optionen für die Frage, wenn sie eine Checkbox-Frage ist.
+    optionPercentages: []  // Prozentuale Verteilung der Optionen (nur relevant für Skalierungsfragen)
+  };
+
+  // Variable, um die Optionen als String zu speichern und später in ein Array zu konvertieren
+  optionsAsString = '';  
+
+  // Variablen, um Fehler zu verfolgen, die bei der Eingabe auftreten (für Checkboxen, Skalen und den Fragetext)
+  showOptionError = false;
+  showScaleError = false;
+  showTextError = false;
+
+  constructor(public dialogRef: MatDialogRef<SurveyDialogComponent>) {}  // Referenz zum Dialog, um ihn zu schließen.
 
   // Diese Methode wird aufgerufen, wenn sich der Options-String ändert.
   onOptionsChange(value: string): void {
-    // Wandelt die Optionen (kommagetrennt) in ein Array um und entfernt überflüssige Leerzeichen.
+    // Der String wird in ein Array von Optionen umgewandelt und überschüssige Leerzeichen werden entfernt.
     this.newQuestion.options = value
-      .split(',')
-      .map(opt => opt.trim())
-      .filter(Boolean);  // Entfernt leere Strings.
+      .split(',')  // Der String wird an den Kommas aufgeteilt.
+      .map(opt => opt.trim())  // Entfernt führende und abschließende Leerzeichen von jedem Element.
+      .filter(Boolean);  // Filtert leere Optionen heraus (z. B. nach doppeltem Komma).
   }
 
   // Diese Methode wird aufgerufen, wenn der Benutzer eine neue Frage hinzufügen möchte.
   onNextQuestion(): void {
-    if (!this.newQuestion.text.trim()) return;  // Verhindert das Hinzufügen von leeren Fragen.
-  
-    // Checkbox-Fragen benötigen mindestens zwei Optionen
-    if (
-      this.newQuestion.answerType === 'checkbox' &&
-      (!this.newQuestion.options || this.newQuestion.options.length < 2)
-    ) {
-      this.showOptionError = true;  // Zeigt eine Fehlermeldung an, wenn nicht genügend Optionen vorhanden sind.
+    let hasError = false;
+
+    // Überprüfen, ob der Fragetext leer ist (diese Überprüfung gilt auch für offene Fragen)
+    if (!this.newQuestion.text || this.newQuestion.text.trim() === '') {
+      this.showTextError = true;
+      hasError = true;
+    } else {
+      this.showTextError = false;
+    }
+
+    // Überprüfen, ob bei einer Checkbox-Frage mindestens zwei gültige Optionen angegeben wurden
+    if (this.newQuestion.answerType === 'checkbox') {
+      this.newQuestion.options = this.newQuestion.options || [];  // Sicherstellen, dass Optionen vorhanden sind
+      const validOptions = this.newQuestion.options.filter(option => option && option.trim() !== '');  // Entfernen von leeren Optionen
+      if (validOptions.length < 2) {  // Mindestens zwei Optionen sind erforderlich
+        this.showOptionError = true;
+        hasError = true;
+      } else {
+        this.showOptionError = false;
+        this.newQuestion.options = validOptions;  // Gültige Optionen speichern
+      }
+    }
+
+    // Überprüfen, ob bei einer Skalenfrage der Skalenwert gesetzt wurde
+    if (this.newQuestion.answerType === 'scale') {
+      if (this.newQuestion.scaleValue == null) {
+        this.showScaleError = true;
+        hasError = true;
+      } else {
+        this.showScaleError = false;
+        this.newQuestion.optionPercentages = [this.newQuestion.scaleValue];  // Skalenwert speichern
+      }
+    }
+
+    // Wenn ein Fehler aufgetreten ist, breche die Methode ab
+    if (hasError) {
       return;
     }
-  
-    // Fehleranzeige zurücksetzen, falls die Optionen gültig sind.
-    this.showOptionError = false;
-  
-    // Skalenfragen müssen einen Wert enthalten.
-    if (this.newQuestion.answerType === 'scale' && this.newQuestion.scaleValue == null) return;
-  
-    // Für Skalenfragen den Antwortwert speichern.
-    if (this.newQuestion.answerType === 'scale') {
-      this.newQuestion.answerPercentage = this.newQuestion.scaleValue;
-    }
-  
-    // Füge die neue Frage der Umfrage hinzu.
+
+    // Frage zur Umfrage hinzufügen
     this.survey.questions.push({ ...this.newQuestion });
-  
-    // Setze die Eingabewerte zurück.
+
+    // Zurücksetzen der Eingabefelder für die nächste Frage
     this.newQuestion = {
       text: '',
       answerType: 'checkbox',
       options: [],
       optionPercentages: []
     };
-    this.optionsAsString = '';  // Leere den String für die Optionen.
+    this.optionsAsString = '';
   }
 
-  // Diese Methode wird aufgerufen, um eine Frage aus der Umfrage zu entfernen.
+  // Diese Methode wird aufgerufen, wenn der Benutzer eine Frage aus der Umfrage entfernen möchte.
   removeQuestion(index: number): void {
-    this.survey.questions.splice(index, 1);  // Entferne die Frage an der angegebenen Index-Position.
-  }
-  
-  // Schließe den Dialog ohne etwas zu speichern.
-  onCancel(): void {
-    this.dialogRef.close();  // Schließe den Dialog.
+    this.survey.questions.splice(index, 1);  // Entfernen der Frage an der angegebenen Position im Array
   }
 
-  // Speichere die Umfrage, wenn alle Fragen hinzugefügt wurden.
+  // Diese Methode wird aufgerufen, wenn der Benutzer den Dialog ohne Speichern schließen möchte.
+  onCancel(): void {
+    this.dialogRef.close();  // Dialog schließen, ohne etwas zu speichern
+  }
+
+  // Diese Methode speichert die Umfrage und übergibt sie beim Schließen des Dialogs.
   onSave(): void {
-    // Überprüfe, ob bei Checkbox-Fragen Optionen vorhanden sind, falls nicht, setze sie auf ein leeres Array.
+    // Sicherstellen, dass bei Checkbox-Fragen Optionen vorhanden sind, wenn keine vorhanden sind, setze sie auf ein leeres Array
     if (this.newQuestion.answerType === 'checkbox') {
       this.newQuestion.options = this.newQuestion.options || [];
     }
 
-    // Für Skalierungsfragen den Skalenwert speichern.
+    // Für Skalierungsfragen speichern wir den Skalenwert, wenn er nicht null ist
     if (this.newQuestion.answerType === 'scale' && this.newQuestion.scaleValue != null) {
-      this.newQuestion.answerPercentage = this.newQuestion.scaleValue;
+      this.newQuestion.optionPercentages = [this.newQuestion.scaleValue];
     }
 
-    // Füge die letzte Frage der Umfrage hinzu.
+    // Die letzte Frage zur Umfrage hinzufügen
     this.survey.questions.push(this.newQuestion);
-    this.dialogRef.close(this.survey);  // Schließe den Dialog und übergib die Umfrage.
+
+    // Dialog schließen und die Umfrage übergeben
+    this.dialogRef.close(this.survey);
   }
 }
