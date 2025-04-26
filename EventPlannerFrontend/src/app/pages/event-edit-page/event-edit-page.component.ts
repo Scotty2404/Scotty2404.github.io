@@ -42,7 +42,8 @@ import { RouterLink } from '@angular/router';
 })
 export class EventEditPageComponent implements OnInit {
   eventForm!: FormGroup;
-  previewImage = '';
+  previewImage: string | null = null;
+  selectedFile: File | null = null;
   standardImages = [
     '/auswahl/hochzeit.jpg',
     '/auswahl/geburtstag.avif',
@@ -92,9 +93,15 @@ export class EventEditPageComponent implements OnInit {
       timeOption = 'start_endzeit';
     }
 
-    startTime = startdate.toLocaleTimeString('de-DE');
-    endTime = enddate.toLocaleTimeString('de-DE');
+    startTime = startdate.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit'});
+    endTime = enddate.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit'});
     date = startdate.toDateString();
+
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.previewImage = this.event.image.result; // Bild als Base64 speichern
+    };
 
     return {
       title: this.event.title,
@@ -106,7 +113,7 @@ export class EventEditPageComponent implements OnInit {
       city: this.event.city,
       postalCode: this.event.postal_code,
       description: this.event.description,
-      image: this.event.image,
+      image: this.previewImage,
       guestCount: this.event.max_guests,
     }
   }
@@ -141,7 +148,11 @@ export class EventEditPageComponent implements OnInit {
 
     //Start- und Endzeit setzen
     const eventDate = new Date(formData.date);
-    const formattedDate = eventDate.toISOString().split('T')[0];
+    const year = eventDate.getFullYear();
+    const month = (eventDate.getMonth() + 1).toString().padStart(2, '0');
+    const day = eventDate.getDate().toString().padStart(2, '0');
+    
+    const formattedDate = `${year}-${month}-${day}`;
 
     if(formData.timeOption === 'ganztags') {
       startdate = `${formattedDate}T00:00:00`;
@@ -157,7 +168,7 @@ export class EventEditPageComponent implements OnInit {
     //Encoded Adress für google Maps link erzeugen
     const address = `${formData.street}, ${formData.city}, ${formData.postal_code}`;
     const encodedAddress = encodeURIComponent(address);
-    const googleMapsLink = `https://www.google.com/maps/embed/place?q=${encodedAddress}`; //no api key for embeded google maps links
+    const googleMapsLink = `https://www.google.com/maps/place?q=${encodedAddress}`; //no api key for embeded google maps links
 
     //Venue Setzten
     eventVenue = {
@@ -168,28 +179,34 @@ export class EventEditPageComponent implements OnInit {
     };
     
     //Image setzten !Achtung custom images werden noch nicht berücksichtigt!
-    const imageURL = formData.image;
+    let image;
+    this.selectedFile ? image = this.selectedFile : image = formData.image;
 
-    return {
-      title: formData.title,
-      description: formData.description,
-      startdate: startdate,
-      enddate: enddate,
-      max_guests: formData.guestCount,
-      image: imageURL,
-      venue_id: this.event.venue_id,
-      venue: eventVenue,
-    }
+    const resultData = new FormData();
+
+    resultData.append('title', formData.title);
+    resultData.append('description', formData.description);
+    resultData.append('venue', JSON.stringify(eventVenue));
+    resultData.append('venue_id', this.event.venue_id);
+    resultData.append('startdate', startdate!);
+    resultData.append('enddate', enddate!);
+    resultData.append('max_guests', formData.guestCount.toString());
+    resultData.append('image', image);
+
+    return resultData;
   }
 
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
+      this.selectedFile = file;
       const reader = new FileReader();
-      reader.onload = () => {
-        this.previewImage = reader.result as string;
-        this.eventForm.patchValue({ image: this.previewImage });
+      
+      reader.onload = (e: any) => {
+        this.previewImage = e.target.result; // Bild als Base64 speichern
+        this.eventForm.patchValue({ image: this.previewImage }); // Bild direkt auswählen
       };
+      
       reader.readAsDataURL(file);
     }
   }
@@ -204,7 +221,6 @@ export class EventEditPageComponent implements OnInit {
           console.log('Edeting event failed', error);
         }
       });
-      console.log('Bearbeitetes Event:', this.transformEventData());
     }
   }
 }

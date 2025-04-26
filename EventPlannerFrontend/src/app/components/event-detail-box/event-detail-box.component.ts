@@ -11,15 +11,31 @@ import { RouterOutlet } from '@angular/router';
 import { RouterLink } from '@angular/router';
 import { Router } from '@angular/router';
 import { interval, Subscription } from 'rxjs';
+import { LoadingBoxComponent } from '../loading-box/loading-box.component';
+import { LoadingFailedBoxComponent } from '../loading-failed-box/loading-failed-box.component';
 
 @Component({
   selector: 'app-event-detail-box',
-  imports: [ MatIconModule, MatDividerModule, MatButtonModule, MatCheckboxModule, MatRadioModule, RouterModule, RouterOutlet, RouterLink],
+  imports: [ 
+    MatIconModule, 
+    MatDividerModule, 
+    MatButtonModule, 
+    MatCheckboxModule, 
+    MatRadioModule, 
+    RouterModule, 
+    RouterOutlet, 
+    RouterLink,
+    LoadingBoxComponent,
+    LoadingFailedBoxComponent
+  ],
 
   templateUrl: './event-detail-box.component.html',
   styleUrl: './event-detail-box.component.scss'
 })
 export class EventDetailBoxComponent implements OnInit, OnDestroy{
+  isLoaded = false;
+  isFailed = false;
+
   event: any;
   countdown: String = '';
   private timerSubscription!: Subscription;
@@ -32,8 +48,10 @@ export class EventDetailBoxComponent implements OnInit, OnDestroy{
       this.apiService.getEventById(eventId).subscribe((data) => {
         console.log(data);
         this.event = data;
+        this.isLoaded = true;
       }, (error) => {
         console.error('Error fetching event details', error);
+        this.isFailed = true;
       });
     }
 

@@ -101,7 +101,7 @@
                           
                                 <!-- Bild hochladen -->
                                 <div class="file-upload-container">
-                                    <button mat-raised-button color="accent" (click)="fileInput.click()">
+                                    <button mat-raised-button type="button" color="accent" (click)="fileInput.click()">
                                         <mat-icon>upload</mat-icon> Bild hochladen
                                     </button>
                                     <input #fileInput type="file" hidden (change)="onFileSelected($event)" accept="image/*" />

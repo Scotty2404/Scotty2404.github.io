@@ -84,7 +84,6 @@ router.post('/create', authMiddleware, upload.single('image'), async (req, res) 
         }
 
         // First, create the venue if provided
-        console.log(venue);
         let venueId = null;
         if (venue) {
             const { street, city, postal_code, google_maps_link } = venue;
@@ -273,13 +272,13 @@ router.get('/my-events/:id', authMiddleware, async(req, res) => {
 });
 
 // Edit Event by Id
-router.post('/my-events/:id/edit', authMiddleware, async(req, res) => {
+router.post('/my-events/:id/edit', authMiddleware, upload.single('image'), async(req, res) => {
     try{
         const eventId = req.params.id;
         const userId = req.user;
         const eventData = req.body;
 
-        const { 
+        let { 
             title, 
             description, 
             startdate, 
@@ -287,8 +286,20 @@ router.post('/my-events/:id/edit', authMiddleware, async(req, res) => {
             max_guests, 
             image,
             venue_id,
-            venue: {street, city, postal_code, google_maps_link},
+            venue,
         } = eventData;
+
+        // parse venue to json
+        venue = JSON.parse(req.body.venue);
+
+        const { street, city, postal_code, google_maps_link } = venue;
+
+        // is image file or path
+        if (req.file) {
+            image = '/uploads/' + req.file.filename;
+        } else if (image) {
+            image = image;
+        }
 
         // update event Data
         db.query(`
