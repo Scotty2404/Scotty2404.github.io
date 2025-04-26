@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>Neuen Gast hinzufügen</h2>
+<mat-dialog-content>
+  <mat-form-field>
+    <mat-label>Vorname</mat-label>
+    <input matInput [(ngModel)]="guest.guest_firstname">
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Nachname</mat-label>
+    <input matInput [(ngModel)]="guest.guest_lastname">
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Email</mat-label>
+    <input matInput [(ngModel)]="guest.email">
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Info</mat-label>
+    <input matInput [(ngModel)]="guest.info">
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Zusage</mat-label>
+    <mat-select [(ngModel)]="guest.confirmation">
+      <mat-option value="1">Ja</mat-option>
+      <mat-option value="0">Nein</mat-option>
+    </mat-select>
+  </mat-form-field>
+</mat-dialog-content>
+
+<div mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">Abbrechen</button>
+    <button mat-button (click)="onSave()" cdkFocusInitial>Speichern</button>
+</div>
+  

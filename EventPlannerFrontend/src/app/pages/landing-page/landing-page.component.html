@@ -15,10 +15,10 @@
 
             <div class="col" *ngFor="let event of eventList">
                 <app-event-box 
-                    [eventName]="event.eventName" 
+                    [eventName]="event.title" 
                     [eventTitle]="event.eventTitle" 
-                    [eventInfo]="event.eventInfo"
-                    [routerLink]="['/event']">
+                    [eventInfo]="event.description"
+                    [routerLink]="'/event/' + event.event_id">
                 </app-event-box>
             </div>
 
@@ -42,13 +42,13 @@
         @if(isFailed) {
             
             <div class="loading-container">
-                loading
+                <app-loading-failed-box></app-loading-failed-box>
             </div>
         }
 
         @else { 
             <div class="loading-container">
-                fehler
+                <app-loading-box></app-loading-box>
             </div>
         }
 
