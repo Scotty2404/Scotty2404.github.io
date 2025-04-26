@@ -547,7 +547,7 @@ router.post('/:eventId/guests/add', authMiddleware, async (req, res) => {
             SELECT
                 (SELECT COUNT(*)
                 FROM (
-                    SELECT user_id FROM event_management.user_event WHERE event_id = ?
+                    SELECT user_id FROM event_management.user_event WHERE event_id = ? AND confirmation = 1 AND owner = 0
                     UNION ALL
                     SELECT extra_guests_id FROM event_management.extra_guests WHERE event_id = ?
                 ) AS combined) AS current_guests,
