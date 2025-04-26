@@ -30,7 +30,7 @@
       <ng-container matColumnDef="info">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Info </th>
         <td mat-cell *matCellDef="let row" class="comment-cell" matTooltip="{{row.info}}">
-          info not supportet in backend
+          {{ row.guest_info }}
         </td>
       </ng-container>
 

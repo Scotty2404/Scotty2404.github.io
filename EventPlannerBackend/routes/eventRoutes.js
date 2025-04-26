@@ -515,14 +515,14 @@ router.get('/:eventId/guests', authMiddleware, async(req, res) => {
         const eventId = req.params.eventId;
 
         db.query(`
-            SELECT u.firstname AS guest_firstname, u.lastname AS guest_lastname, u.email, ue.confirmation, ue.owner
+            SELECT u.firstname AS guest_firstname, u.lastname AS guest_lastname, u.email, ue.confirmation, ue.owner, NULL AS guest_info
             FROM event_management.user_event ue
             JOIN event_management.user u ON u.user_id = ue.user_id
-            LEFT JOIN event_management.extra_guests eg ON eg.event_id = ue.event_id
-            WHERE ue.event_id = ?
+            WHERE ue.event_id = ? AND ue.owner = 0
             UNION
-            SELECT  eg.firstname AS guest_firstname, eg.lastname AS guest_lastname, NULL as email, 1 AS confirmation, 0 AS OWNER
+            SELECT  eg.firstname AS guest_firstname, eg.lastname AS guest_lastname, NULL as email, 1 AS confirmation, 0 AS OWNER, CONCAT(u.firstname, ' ', u.lastname) AS guest_info
             FROM event_management.extra_guests eg
+            LEFT JOIN event_management.user u ON u.user_id = eg.user_id
             WHERE eg.event_id = ?
             `, [eventId, eventId], (err, guests) => {
                 if(err) {
