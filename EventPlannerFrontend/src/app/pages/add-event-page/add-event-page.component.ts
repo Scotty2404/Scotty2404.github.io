@@ -52,8 +52,8 @@ export class AddEventPageComponent {
 
   standardImages = [
     '/auswahl/hochzeit.jpg',
-    '/auswahl/geburtstag.avif',
-    '/auswahl/jugendweihe.jpg',
+    '/public/auswahl/geburtstag.avif',
+    '/public/auswahl/jugendweihe.jpg',
   ];
 
 
@@ -213,18 +213,21 @@ export class AddEventPageComponent {
     };
 
     //Image setzten !Achtung custom images werden noch nicht berücksichtigt!
-    const imageURL = formData.image;
+    let image;
+    this.selectedFile ? image = this.selectedFile : image = formData.image;
 
-    return {
-      title: formData.title,
-      description: formData.description,
-      venue: eventVenue,
-      startdate: startdate,
-      enddate: enddate,
-      max_guests: formData.guestCount,
-      image: imageURL,
-      survey_id: surveyId,
-    }
+    const resultData = new FormData();
+
+    resultData.append('title', formData.title);
+    resultData.append('description', formData.description);
+    resultData.append('venue', JSON.stringify(eventVenue));
+    resultData.append('startdate', startdate!);
+    resultData.append('enddate', enddate!);
+    resultData.append('max_guests', formData.guestCount.toString());
+    resultData.append('image', image);
+    resultData.append('survey_id', surveyId.toString());
+
+    return resultData;
   }
 
   private transfromSurveyData() {

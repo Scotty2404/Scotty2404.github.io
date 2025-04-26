@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto'); // For generating secure tokens
 const jwt = require('jsonwebtoken'); // For JWT tokens
+const multer = require('multer');
 const { authMiddleware } = require('./authRoutes');
 
 // Ensure the QR code directory exists
@@ -18,6 +19,18 @@ const uploadeDir = path.join(__dirname, '../public/uploads');
 if(!fs.existsSync(uploadeDir)) {
     fs.mkdirSync(uploadeDir, { recursive: true });
 }
+
+// setup multer for saving files
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, uploadeDir);
+    }, filename: function (req, file, cb) {
+        const generatedFileName = `event-${Date.now()}${path.extname(file.originalname)}`;
+        cb(null, generatedFileName);
+    }
+});
+
+const upload = multer({ storage: storage, });
 
 // Helper funktion to structure async funktions
 function queryAsync(sql, params) {
@@ -43,23 +56,35 @@ function generateEventAccessToken(eventId, userId) {
 }
 
 // Create an event with venue
-router.post('/create', authMiddleware, async (req, res) => {
+router.post('/create', authMiddleware, upload.single('image'), async (req, res) => {
     try {
-        const { 
+        console.log(req.file);
+        let { 
             title, 
             description, 
             venue,
             playlist_id, 
             startdate, 
             enddate, 
-            max_guests,
             image,
+            max_guests,
             survey_id
         } = req.body;
-        
         const userId = req.user;
 
+
+        // parse venue to json
+        venue = JSON.parse(req.body.venue);
+
+        // is image file or path
+        if (req.file) {
+            image = '/uploads/' + req.file.filename;
+        } else if (image) {
+            image = image;
+        }
+
         // First, create the venue if provided
+        console.log(venue);
         let venueId = null;
         if (venue) {
             const { street, city, postal_code, google_maps_link } = venue;
@@ -518,6 +543,21 @@ router.post('/:eventId/guests/add', authMiddleware, async (req, res) => {
     const userId = req.user;
     const { type, confirmation, guest } = req.body;
     try {
+        const validateCapacity = await queryAsync(`
+            SELECT
+                (SELECT COUNT(*)
+                FROM (
+                    SELECT user_id FROM event_management.user_event WHERE event_id = ?
+                    UNION ALL
+                    SELECT extra_guests_id FROM event_management.extra_guests WHERE event_id = ?
+                ) AS combined) AS current_guests,
+                (SELECT max_guests FROM event_management.event WHERE event_id = ?) AS max_guests`,
+            [eventId, eventId, eventId]);
+        const { current_guests, max_guests } = validateCapacity[0];
+        if(current_guests >= max_guests ) {
+            return res.status(400).json({ message: 'Maximal guest capacity reached'});
+        }
+
         if(type === 'user') {
             console.log('inserting user...');
             const exists = await queryAsync(`
