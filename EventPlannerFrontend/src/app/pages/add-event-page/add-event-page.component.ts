@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, FormArray, AbstractControl, FormControl } from '@angular/forms';
 
@@ -20,8 +20,6 @@ import { SurveyQuestionBoxComponent } from '../../components/survey-question-box
 import { response } from 'express';
 
 
-
-
 @Component({
   selector: 'app-add-event-page',
   imports: [
@@ -41,7 +39,8 @@ import { response } from 'express';
   templateUrl: './add-event-page.component.html',
   styleUrl: './add-event-page.component.scss'
 })
-export class AddEventPageComponent {
+
+export class AddEventPageComponent implements OnInit {
   eventForm: FormGroup;
   selectedFile: File | null = null;
   previewImage: string | null = null;
@@ -71,7 +70,7 @@ export class AddEventPageComponent {
     // Uhrzeit validieren
     this.eventForm.get('timeOption')?.valueChanges.subscribe((value) => {
       if (value === 'ganztags') {
-        this.eventForm.get('startTime')?.setValidators([]);
+        this.eventForm.get('startTime')?.clearValidators();
         this.eventForm.get('endTime')?.setValidators([]);
       } else if (value === 'startzeit') {
         this.eventForm.get('startTime')?.setValidators([Validators.required]);
@@ -106,15 +105,19 @@ export class AddEventPageComponent {
     return this.eventForm.get('survey') as FormArray;
   }
 
-  // Neue Frage zur Umfrage hinzufügen
   addQuestion() {
-    this.survey.push(
-      this.fb.group({
-        question: ['', Validators.required],
-        answerType: ['einzelauswahl', Validators.required], // <== NEU: default ist "einzelauswahl"
-        answers: this.fb.array([this.fb.control('', Validators.required)]),
-      })
-    );
+    const questionGroup = this.fb.group({
+      question: ['', Validators.required],
+      answerType: ['multiple', Validators.required],
+      answers: this.fb.array([]),
+      multipleSelection: [false] // Standardmäßig false
+    });
+  
+    // Füge eine leere Antwort für Multiple Choice hinzu
+    const answersArray = questionGroup.get('answers') as FormArray;
+    answersArray.push(this.fb.control('', Validators.required));
+    
+    this.survey.push(questionGroup);
   }
   
 
@@ -184,16 +187,43 @@ export class AddEventPageComponent {
 
   private transfromSurveyData() {
     const fromData = this.eventForm.value;
-
+  
     const survey = {
-      description: 'Hier wird später die Art der Umfrage hinterlegt',
-      questions: fromData.survey.map((q: any) => ({
-        question_text: q.question,
-        offered_answer: q.answers
-      }))
+      title: `Umfrage für ${fromData.title}`,
+      description: 'Event-Umfrage',
+      questions: fromData.survey.map((q: any) => {
+        if (q.answerType === 'multiple') {
+          return {
+            question: q.question,
+            answerType: 'multiple',
+            answers: q.answers,
+            multipleSelection: q.multipleSelection || false // Verwende den tatsächlichen Wert
+          };
+        } else if (q.answerType === 'scale') {
+          return {
+            question: q.question,
+            answerType: 'scale',
+            answers: [],
+            minValue: 1,
+            maxValue: 5
+          };
+        } else if (q.answerType === 'open') {
+          return {
+            question: q.question,
+            answerType: 'open',
+            answers: [],
+            maxLength: 500
+          };
+        }
+        return {
+          question: q.question,
+          answerType: q.answerType,
+          answers: []
+        };
+      })
     };
-
-    console.log(survey)
+  
+    console.log(survey);
     return survey;
   }
 
@@ -227,6 +257,26 @@ export class AddEventPageComponent {
 
   get surveyFormGroups(): FormGroup[] {
   return this.survey.controls as FormGroup[];
+}
+
+onQuestionTypeChange(index: number) {
+  const questionGroup = (this.eventForm.get('survey') as FormArray).at(index) as FormGroup;
+  const answerType = questionGroup.get('answerType')?.value;
+  const answersArray = questionGroup.get('answers') as FormArray;
+  
+  if (answerType === 'multiple') {
+    // Multiple Choice benötigt mindestens eine Antwort
+    if (answersArray.length === 0) {
+      answersArray.push(this.fb.control('', Validators.required));
+    }
+  } else {
+    // Für andere Fragetypen keine Antworten erforderlich
+    answersArray.clear();
+  }
+}
+
+ngOnInit() {
+  // Leer lassen, aber die Methode muss vorhanden sein wegen OnInit Interface
 }
 
 }

@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -6,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-qr-event-page',
@@ -21,9 +23,10 @@ import { RouterLink } from '@angular/router';
   templateUrl: './qr-event-page.component.html',
   styleUrl: './qr-event-page.component.scss'
 })
-export class QrEventPageComponent {
+export class QrEventPageComponent implements OnInit {
   attending: 'yes' | 'no' | null = null;
-  surveyAvailable = true; // ← vom Backend setzen, falls es eine Umfrage gibt
+  surveyAvailable = false;
+  surveyId: string | null = null;
   responseSubmitted = false;
   responseMessage = '';
 
@@ -35,16 +38,57 @@ export class QrEventPageComponent {
     password: ''
   };
 
-  // Beispiel-Daten für das Event (kannst du natürlich dynamisch laden)
   event = {
-    title: 'Ellis Geburtstag',
-    date: '2025-06-28T15:00:00',
-    image: '/auswahl/hochzeit.jpg',
-    street: 'Hauptstraße 123',
-    zip: '12345',
-    city: 'Beispielstadt',
-    info: 'Ein gemütliches Beisammensein mit Essen, Musik und Spielen.'
+    title: '',
+    date: '',
+    image: '',
+    street: '',
+    zip: '',
+    city: '',
+    info: ''
   };
+
+  constructor(
+    private route: ActivatedRoute,
+    private apiService: ApiService
+  ) {}
+
+  ngOnInit(): void {
+    // Hole Event-ID und Token aus der URL
+    this.route.params.subscribe(params => {
+      const eventId = params['id'];
+      this.route.queryParams.subscribe(queryParams => {
+        const token = queryParams['token'];
+        if (eventId && token) {
+          this.loadEvent(eventId, token);
+        }
+      });
+    });
+  }
+
+  loadEvent(eventId: string, token: string) {
+    this.apiService.getPublicEvent(eventId, token).subscribe({
+      next: (eventData) => {
+        this.event = {
+          title: eventData.title,
+          date: eventData.startdate,
+          image: eventData.image || '/auswahl/hochzeit.jpg',
+          street: eventData.street || '',
+          zip: eventData.zip || '',
+          city: eventData.city || '',
+          info: eventData.description
+        };
+
+        if (eventData.survey_id) {
+          this.surveyAvailable = true;
+          this.surveyId = eventData.survey_id;
+        }
+      },
+      error: (error) => {
+        console.error('Error loading event:', error);
+      }
+    });
+  }
 
   submitResponse() {
     if (this.attending === 'yes') {
@@ -54,7 +98,6 @@ export class QrEventPageComponent {
       console.log('Absage');
       this.responseMessage = 'Deine Absage wurde gespeichert.';
     }
-    alert('Antwort wurde übermittelt. Danke!');
     this.responseSubmitted = true;
   }
 }

@@ -59,10 +59,35 @@ export class ApiService {
   }
 
   createSurvey(surveyData: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/events/survey/create`, surveyData, {
+    return this.http.post(`${this.baseUrl}/surveys/create`, surveyData, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
     });
   }
+
+  getSurvey(surveyId: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/surveys/${surveyId}`);
+  }
+
+  submitSurveyResponse(surveyId: string, answers: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/surveys/${surveyId}/response`, { answers }, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }
+
+  getSurveyResults(surveyId: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/surveys/${surveyId}/results`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }
+
+  getPublicEvent(eventId: string, token: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/events/public-event/${eventId}?token=${token}`);
+  }
+
 }

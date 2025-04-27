@@ -128,6 +128,22 @@
         <button class="save-btn" mat-raised-button color="primary" type="submit" [disabled]="eventForm.invalid">
           Event speichern
         </button>
+
+        <!-- Debug-Informationen -->
+        <div *ngIf="eventForm.invalid" style="color: red; margin-top: 10px;">
+            Formular ist ungültig. Bitte überprüfen Sie:
+            <ul>
+            <li *ngIf="eventForm.get('title')?.invalid">Titel ist erforderlich</li>
+            <li *ngIf="eventForm.get('date')?.invalid">Datum ist erforderlich</li>
+            <li *ngIf="eventForm.get('street')?.invalid">Straße ist erforderlich</li>
+            <li *ngIf="eventForm.get('city')?.invalid">Ort ist erforderlich</li>
+            <li *ngIf="eventForm.get('postalCode')?.invalid">Postleitzahl ist ungültig (5 Ziffern erforderlich)</li>
+            <li *ngIf="eventForm.get('description')?.invalid">Beschreibung ist erforderlich</li>
+            <li *ngIf="eventForm.get('image')?.invalid">Bild ist erforderlich</li>
+            <li *ngIf="eventForm.get('startTime')?.invalid && eventForm.get('timeOption')?.value !== 'ganztags'">Startzeit ist erforderlich</li>
+            <li *ngIf="eventForm.get('endTime')?.invalid && eventForm.get('timeOption')?.value === 'start_endzeit'">Endzeit ist erforderlich</li>
+            </ul>
+        </div>
     </form>
     </mat-card-content>
 </mat-card>
