@@ -208,14 +208,12 @@
     }
     @else {
     @if(isFailed) {
-    <div class="loading-container">
-      Fehler
-    </div>
+    <app-loading-failed-component>
+    </app-loading-failed-component>
     }
     @else {
-    <div class="loading-container">
-      Loading...
-    </div>
+    <app-loading-component>
+    </app-loading-component>
     }
     }
 

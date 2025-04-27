@@ -5,7 +5,7 @@
   <div class="breadcrumb">
     <p>
       <!-- Link zur Startseite (verwendet Angular-Routing mit [routerLink]) -->
-      <a [routerLink]="['/start']" class="breadcrumb-link">Home</a> /
+      <a [routerLink]="['/event/:id']" class="breadcrumb-link">Home</a> /
       <!-- Aktueller Navigationspunkt ohne Link, da User sich bereits hier befindet -->
       Umfrage
     </p>
@@ -90,16 +90,14 @@
 
       @if(isFailed) {
       <!-- Fehleranzeige beim Laden -->
-      <div class="loading-container">
-        fehler
-      </div>
+      <app-loading-failed-component>
+      </app-loading-failed-component>
       }
 
       <!-- Falls weder geladen noch Fehler: Ladezustand -->
-      @else {
-      <div class="loading-container">
-        loading
-      </div>
+      @else {   
+      <app-loading-component>
+      </app-loading-component>
       }
 
     }
