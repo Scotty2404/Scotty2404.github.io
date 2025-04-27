@@ -19,6 +19,8 @@ import { MatIcon } from '@angular/material/icon';
 import { SurveyQuestionBoxComponent } from '../../components/survey-question-box/survey-question-box.component';
 import { response } from 'express';
 import { RouterLink } from '@angular/router';
+import { LoadingBoxComponent } from '../../components/loading-box/loading-box.component';
+import { LoadingFailedBoxComponent } from '../../components/loading-failed-box/loading-failed-box.component';
 
 
 @Component({
@@ -36,7 +38,9 @@ import { RouterLink } from '@angular/router';
     MatRadioButton,
     MatIcon,
     SurveyQuestionBoxComponent,
-    RouterLink
+    RouterLink,
+    LoadingBoxComponent,
+    LoadingFailedBoxComponent
   ],
   templateUrl: './event-edit-page.component.html',
   styleUrl: './event-edit-page.component.scss'

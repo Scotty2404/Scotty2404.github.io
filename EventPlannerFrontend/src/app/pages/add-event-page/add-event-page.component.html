@@ -155,16 +155,16 @@
             @else {
             
                 @if(isFailed) {
-                        
+            
                     <div class="loading-container">
-                        fehler
+                        <app-loading-failed-box></app-loading-failed-box>
                     </div>
                 }
-            
+        
                 @else { 
-                        <div class="loading-container">
-                            loading
-                        </div>
+                    <div class="loading-container">
+                        <app-loading-box></app-loading-box>
+                    </div>
                 }
             
             }
