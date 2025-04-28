@@ -66,7 +66,7 @@ export class EventEditPageComponent implements OnInit {
     endTime: '23:00',
     street: 'Musterstraße 12',
     city: 'Musterstadt',
-    postalCode: 12345,
+    postalCode: '12345',
     description: 'Eine tolle Party mit Freunden!',
     image: '/auswahl/hochzeit.jpg',
     guestCount: 20,
@@ -86,7 +86,7 @@ export class EventEditPageComponent implements OnInit {
       postalCode: [this.sampleEvent.postalCode, Validators.required],
       description: [this.sampleEvent.description, Validators.required],
       image: [this.sampleEvent.image],
-      guestCount: [this.sampleEvent.guestCount],
+      guestCount: [this.sampleEvent.guestCount, Validators.required],
     });
 
     // Nur setzen, wenn das Bild nicht in den Standardbildern ist

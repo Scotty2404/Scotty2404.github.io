@@ -71,7 +71,7 @@ export class AddEventPageComponent {
       postalCode: ['', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
       description: ['', Validators.required],
       image: ['', Validators.required],
-      guestCount: [''],
+      guestCount: ['', Validators.required],
       timeOption: ['ganztags', Validators.required],
       startTime: [''],
       endTime: [''],

@@ -1,103 +1,132 @@
 @import '../../styles/colors.scss';
 
-.box-service {
+.body {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  max-width: 50rem;
-  min-height: 18.75rem;
-  border-radius: 0.625rem;
-  box-shadow: 0px 0.25rem 0.9375rem rgba(0, 0, 0, 0.1);
-  margin: 1.25rem auto;
-  position: relative;
-  padding: 1.5625rem;
-  background: #ffffff;
   align-items: center;
 }
 
-.back-button button{
-  background-color: $secondarycolor;
+.breadcrumb {
+  width: 100%;
+  min-width: 500px;
+}
+
+
+.breadcrumb-link {
+  color: $secondarycolor;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.breadcrumb-link:hover {
+  color: $secondarycolor;
+  text-decoration: underline 1.5px;
+  cursor: pointer;
+}
+
+.breadcrumb p {
+  font-size: 1.1em;
+  margin: 10px 0;
+  
 }
 
 .title {
-  text-align: center;
-  font-size: 1.5em;
-  font-weight: bold;
-  margin-bottom: 1.5625rem;
+  color: $secondarycolor;
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  min-width: 500px;
 }
 
-.add-item {
+.title h1 {
+  font-weight: normal;
+  margin: 0px;
+}
+
+
+.content-container {
   display: flex;
-  gap: 0.9375rem;
+  flex-direction: column;
+  margin-bottom: 200px;
+  margin-top: 30px;
+  justify-content: flex-start;
+}
+
+.mat-card {
+  min-width: 320px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  max-width: 37.5rem;
-}
-
-.add-item mat-form-field {
-  flex: 1;
-  min-width: 0;
-}
-
-.add-item .larger-input {
+  align-items: center;
   width: 100%;
 }
 
-.add-item .larger-input mat-form-field {
-  height: 5rem;
+.mat-card {
+  width: 100%;
+  padding: 20px;
+}
+
+.add-todo {
+  display: flex;
+  flex-direction: row;
+  min-height: 50px;
+  margin-bottom: 20px;
+  justify-content: flex-start;
+  gap: 20px;
   width: 100%;
 }
 
-.add-item .larger-input input {
-  height: 2.2rem;
-  font-size: 1rem;
-  padding: 0.625rem;
-  width: calc(100% - 1rem); /* Sicherstellen, dass der Input nicht zu breit ist */
-  box-sizing: border-box; /* Verhindert, dass Padding die Breite beeinflusst */
+.todo-input {
+  width: 50%;
+  min-width: 250px;
 }
 
-.add-item button {
-  white-space: nowrap;
-  background-color: $secondarycolor;
-}
-
-
-table {
+.todo-list {
   width: 100%;
-  border-collapse: collapse;
-  margin-top: 1.5625rem;
-  background: #fff;
-  border-radius: 0.3125rem;
-  overflow: hidden;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-table th, table td {
-  padding: 0.75rem;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
+mat-list-item {
+  padding: 20px;
 
-table th {
-  background-color: #f8f8f8;
-  font-weight: bold;
-  text-align: center;
-}
+  .todo-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 12px 8px;
+    border-bottom: 1px solid #eee;
 
-.todo-list-display {
-    margin-top: 20px;
-    padding: 10px;
-    border-top: 1px solid #ccc;
-  
-    .todo-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 6px 0;
-  
-      button {
-        margin-left: 10px;
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .checkbox {
+      margin-right: 15px;
+    }
+
+    .todo-text {
+      flex: 1;
+      font-size: 1.1rem;
+      color: #333;
+      transition: all 0.3s ease;
+
+      &.completed {
+        text-decoration: line-through;
+        color: #aaa;
       }
     }
   }
-  
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 50px 0;
+}
