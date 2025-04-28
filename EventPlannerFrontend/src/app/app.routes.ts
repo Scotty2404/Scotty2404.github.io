@@ -25,10 +25,11 @@ export const routes: Routes = [
             { path: 'calendar', component: CalendarPageComponent },
             { path: 'contact', component: ContactPageComponent },
             { path: 'imprint', component: ImprintPageComponent },
-            { path: 'eventedit', component: EventEditPageComponent },
+            { path: 'eventedit/:id', component: EventEditPageComponent },
             { path: 'addevent', component: AddEventPageComponent },
             { path: 'event', component: EventPageComponent },
             { path: 'survey', component: SurveyPageComponent },
+            { path: 'wishlist', component: EventWishlistPageComponent },
             { path: 'to-do-list', component: EventToDoListPageComponent },
             { path: 'guesttable/:id', component: GuestTablePageComponent },
             { path: 'event/:id', component: EventPageComponent }
@@ -37,7 +38,7 @@ export const routes: Routes = [
         
     },
     { path: 'login', component: LoginPageComponent },
-    { path: 'eventplannerfrontend/event/:id', component: QrEventPageComponent },
+    { path: 'EventPlannerFrontend/event/:id', component: QrEventPageComponent },
     { path: 'qrSurvey', component: QrSurveyPageComponent },
 
     { path: '**', redirectTo: '' }

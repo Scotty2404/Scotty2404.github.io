@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto'); // For generating secure tokens
 const jwt = require('jsonwebtoken'); // For JWT tokens
+const multer = require('multer');
 const { authMiddleware } = require('./authRoutes');
 
 // Ensure the QR code directory exists
@@ -18,6 +19,18 @@ const uploadeDir = path.join(__dirname, '../public/uploads');
 if(!fs.existsSync(uploadeDir)) {
     fs.mkdirSync(uploadeDir, { recursive: true });
 }
+
+// setup multer for saving files
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, uploadeDir);
+    }, filename: function (req, file, cb) {
+        const generatedFileName = `event-${Date.now()}${path.extname(file.originalname)}`;
+        cb(null, generatedFileName);
+    }
+});
+
+const upload = multer({ storage: storage, });
 
 // Helper funktion to structure async funktions
 function queryAsync(sql, params) {
@@ -43,23 +56,35 @@ function generateEventAccessToken(eventId, userId) {
 }
 
 // Create an event with venue
-router.post('/create', authMiddleware, async (req, res) => {
+router.post('/create', authMiddleware, upload.single('image'), async (req, res) => {
     try {
-        const { 
+        console.log(req.file);
+        let { 
             title, 
             description, 
             venue,
             playlist_id, 
             startdate, 
             enddate, 
-            max_guests,
             image,
+            max_guests,
             survey_id
         } = req.body;
-        
         const userId = req.user;
 
+
+        // parse venue to json
+        venue = JSON.parse(req.body.venue);
+
+        // is image file or path
+        if (req.file) {
+            image = '/uploads/' + req.file.filename;
+        } else if (image) {
+            image = image;
+        }
+
         // First, create the venue if provided
+        console.log(venue);
         let venueId = null;
         if (venue) {
             const { street, city, postal_code, google_maps_link } = venue;
@@ -244,6 +269,53 @@ router.get('/my-events/:id', authMiddleware, async(req, res) => {
         });
     } catch (err) {
         res.status(500).json({error: err.message });
+    }
+});
+
+// Edit Event by Id
+router.post('/my-events/:id/edit', authMiddleware, async(req, res) => {
+    try{
+        const eventId = req.params.id;
+        const userId = req.user;
+        const eventData = req.body;
+
+        const { 
+            title, 
+            description, 
+            startdate, 
+            enddate, 
+            max_guests, 
+            image,
+            venue_id,
+            venue: {street, city, postal_code, google_maps_link},
+        } = eventData;
+
+        // update event Data
+        db.query(`
+            UPDATE event_management.event 
+            SET title = ?, description = ?, startdate = ?, enddate = ?,  max_guests = ?, image = ? 
+            WHERE event_id = ?
+            `
+            , [title, description, startdate, enddate, max_guests, image, eventId], (err, result) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            }
+
+            //update venue data
+            db.query(`
+                UPDATE event_management.venue
+                SET street = ?, city = ?, postal_code = ?, google_maps_link = ?
+                WHERE venue_id = ?
+                `, [street, city, postal_code, google_maps_link, venue_id], (err, venueResult) => {
+                    if(err) {
+                        return res.status(500).json({ error: err.message });
+                    }
+                    res.json({ message: "Event and Venue changed successfully" });
+                });
+            });
+        
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -443,14 +515,14 @@ router.get('/:eventId/guests', authMiddleware, async(req, res) => {
         const eventId = req.params.eventId;
 
         db.query(`
-            SELECT u.firstname AS guest_firstname, u.lastname AS guest_lastname, u.email, ue.confirmation, ue.owner
+            SELECT u.firstname AS guest_firstname, u.lastname AS guest_lastname, u.email, ue.confirmation, ue.owner, NULL AS guest_info
             FROM event_management.user_event ue
             JOIN event_management.user u ON u.user_id = ue.user_id
-            LEFT JOIN event_management.extra_guests eg ON eg.event_id = ue.event_id
-            WHERE ue.event_id = ?
+            WHERE ue.event_id = ? AND ue.owner = 0
             UNION
-            SELECT  eg.firstname AS guest_firstname, eg.lastname AS guest_lastname, NULL as email, 1 AS confirmation, 0 AS OWNER
+            SELECT  eg.firstname AS guest_firstname, eg.lastname AS guest_lastname, NULL as email, 1 AS confirmation, 0 AS OWNER, CONCAT(u.firstname, ' ', u.lastname) AS guest_info
             FROM event_management.extra_guests eg
+            LEFT JOIN event_management.user u ON u.user_id = eg.user_id
             WHERE eg.event_id = ?
             `, [eventId, eventId], (err, guests) => {
                 if(err) {
@@ -471,6 +543,21 @@ router.post('/:eventId/guests/add', authMiddleware, async (req, res) => {
     const userId = req.user;
     const { type, confirmation, guest } = req.body;
     try {
+        const validateCapacity = await queryAsync(`
+            SELECT
+                (SELECT COUNT(*)
+                FROM (
+                    SELECT user_id FROM event_management.user_event WHERE event_id = ?
+                    UNION ALL
+                    SELECT extra_guests_id FROM event_management.extra_guests WHERE event_id = ?
+                ) AS combined) AS current_guests,
+                (SELECT max_guests FROM event_management.event WHERE event_id = ?) AS max_guests`,
+            [eventId, eventId, eventId]);
+        const { current_guests, max_guests } = validateCapacity[0];
+        if(current_guests >= max_guests ) {
+            return res.status(400).json({ message: 'Maximal guest capacity reached'});
+        }
+
         if(type === 'user') {
             console.log('inserting user...');
             const exists = await queryAsync(`

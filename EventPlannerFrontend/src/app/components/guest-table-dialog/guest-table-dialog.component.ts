@@ -16,7 +16,7 @@ import { MatSelectModule } from '@angular/material/select';
   styleUrl: './guest-table-dialog.component.scss'
 })
 export class GuestTableDialogComponent {
-  guest = { guest_firstname: '', guest_lastname: '', email: '', info: '', confirmation: 'yes' };
+  guest = { firstname: '', lastname: '', email: '', info: '', confirmation: 'yes' };
 
   constructor(
     public dialogRef: MatDialogRef<GuestTableDialogComponent>,

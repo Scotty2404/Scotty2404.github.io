@@ -80,10 +80,7 @@
     <div *ngIf="responseSubmitted" class="confirmation">
         <p><strong>{{ responseMessage }}</strong></p>
       
-        <div *ngIf="attending === 'yes' && surveyAvailable">
-          <p>Der Gastgeber hat eine Umfrage angelegt – du kannst <a routerLink="/qrSurvey">hier teilnehmen</a>.</p>
-            <p>Du kannst dich <a routerLink="/login">hier einloggen</a>, um deine Eventdaten im Kalender zu sehen.</p>
-        </div>
+        
       
         
     </div>
