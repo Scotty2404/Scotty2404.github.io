@@ -5,13 +5,13 @@
   <!-- Eingabefeld für den Titel der Umfrage -->
   <mat-form-field>
     <mat-label>Titel der Umfrage</mat-label>
-    <input matInput [(ngModel)]="survey.title">
+    <input matInput [(ngModel)]="survey.title"> <!-- Bindet den Umfragetitel an die 'survey.title'-Eigenschaft -->
   </mat-form-field>
 
   <!-- Auswahlfeld für den Fragetyp -->
   <mat-form-field>
     <mat-label>Fragetyp auswählen</mat-label>
-    <mat-select [(ngModel)]="newQuestion.answerType">
+    <mat-select [(ngModel)]="newQuestion.answerType"> <!-- Bindet den Fragetyp an die 'newQuestion.answerType'-Eigenschaft -->
       <mat-option value="checkbox">Checkbox Frage</mat-option>
       <mat-option value="open">Offene Frage</mat-option>
       <mat-option value="scale">Skalierungsfrage</mat-option>
@@ -21,32 +21,42 @@
   <!-- Eingabefeld für den Fragetext -->
   <mat-form-field>
     <mat-label>Frage</mat-label>
-    <input matInput [(ngModel)]="newQuestion.text">
+    <input matInput [(ngModel)]="newQuestion.text"> <!-- Bindet den Fragetext an 'newQuestion.text' -->
   </mat-form-field>
 
   <!-- Eingabe von Antwortmöglichkeiten (nur bei Checkbox-Fragen sichtbar) -->
   <mat-form-field *ngIf="newQuestion.answerType === 'checkbox'" appearance="fill">
     <mat-label>Antwortmöglichkeiten mit Kommas getrennt</mat-label>
     <input matInput [(ngModel)]="optionsAsString" (ngModelChange)="onOptionsChange($event)">
-    <mat-hint>Gib mindestens zwei Optionen durch Kommas getrennt ein.</mat-hint>
+    <mat-hint>Gib mindestens zwei Optionen durch Kommas getrennt ein.</mat-hint> <!-- Hinweis zur Eingabe von Antwortmöglichkeiten -->
   </mat-form-field>
 
   <!-- Fehlermeldung bei unzureichender Eingabe von Checkbox-Optionen -->
   <div *ngIf="showOptionError" style="color: red; font-size: 0.9rem; margin-bottom: 10px;">
-    Bitte gib mindestens zwei gültige Antwortmöglichkeiten an.
+    Bitte gib mindestens zwei gültige Antwortmöglichkeiten an. <!-- Fehleranzeige, wenn weniger als zwei Optionen eingegeben wurden -->
   </div>
 
   <!-- Eingabefeld für Skalenwert (nur sichtbar bei Skalierungsfragen) -->
   <mat-form-field *ngIf="newQuestion.answerType === 'scale'">
     <mat-label>Skalenwert (z.B. 0 - 100)</mat-label>
-    <input matInput type="number" [(ngModel)]="newQuestion.scaleValue" min="0" max="100">
+    <input matInput type="number" [(ngModel)]="newQuestion.scaleValue" min="0" max="100"> <!-- Eingabefeld für numerischen Skalenwert -->
   </mat-form-field>
+
+  <!-- Fehleranzeige bei fehlendem Skalenwert -->
+  <div *ngIf="showScaleError" style="color: red; font-size: 0.9rem; margin-bottom: 10px;">
+    Bitte gib einen Skalenwert an. <!-- Fehlermeldung, wenn kein Skalenwert eingegeben wurde -->
+  </div>
 
   <!-- "Antwortfeld" wird bei offenen Fragen angezeigt, ist jedoch deaktiviert -->
   <mat-form-field *ngIf="newQuestion.answerType === 'open'">
     <mat-label>Antwortfeld</mat-label>
-    <input matInput placeholder="" [(ngModel)]="optionsAsString" (ngModelChange)="onOptionsChange($event)" disabled>
+    <input matInput placeholder="" [(ngModel)]="optionsAsString" (ngModelChange)="onOptionsChange($event)" disabled> <!-- Eingabefeld für offene Fragen, aber deaktiviert -->
   </mat-form-field>
+
+  <!-- Fehler bei offenem Fragetext -->
+  <div *ngIf="showTextError" style="color: red; font-size: 0.9rem; margin-bottom: 10px;">
+    Bitte gib eine Frage an. <!-- Fehlermeldung, wenn keine Frage eingegeben wurde -->
+  </div>
 
   <!-- Liste der bereits hinzugefügten Fragen -->
   <div *ngIf="survey.questions.length > 0" class="question-list">
@@ -58,7 +68,7 @@
 
         <!-- Löschen-Button für jeweilige Frage -->
         <button mat-icon-button color="warn" (click)="removeQuestion(i)">
-          <mat-icon>delete</mat-icon>
+          <mat-icon>delete</mat-icon> <!-- Löschen-Icon -->
         </button>
       </mat-list-item>
     </mat-list>
