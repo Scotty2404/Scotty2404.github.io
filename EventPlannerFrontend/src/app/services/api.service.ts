@@ -58,6 +58,14 @@ export class ApiService {
     });
   }
 
+  getInvitedEventsForUser(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/events/my-events/invited`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }
+
   getEventById(eventId: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/events/my-events/${eventId}`, {
       headers: {

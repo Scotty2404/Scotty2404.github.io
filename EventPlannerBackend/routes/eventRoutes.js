@@ -241,6 +241,26 @@ router.get('/my-events', authMiddleware, (req, res) => {
     });
 });
 
+//Get all invted events for logged in user
+router.get('/my-events/invited', authMiddleware, (req, res) => {
+    const userId = req.user;
+    
+    // Query events where the user is the invited
+    db.query(`
+        SELECT e.*, v.street, v.city, v.postal_code, ue.owner, ue.confirmation
+        FROM event_management.event e
+        JOIN event_management.user_event ue ON e.event_id = ue.event_id
+        LEFT JOIN event_management.venue v ON e.venue_id = v.venue_id
+        WHERE ue.user_id = ?
+        ORDER BY e.startdate DESC
+    `, [userId], (err, events) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.json(events);
+    });
+});
+
 // Get Event From EventId
 router.get('/my-events/:id', authMiddleware, async(req, res) => {
     try {
