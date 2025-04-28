@@ -41,5 +41,6 @@ export const routes: Routes = [
     { path: 'eventplannerfrontend/event/:id', component: QrEventPageComponent },
     { path: 'qrSurvey', component: QrSurveyPageComponent },
 
+
     { path: '**', redirectTo: '' }
 ];

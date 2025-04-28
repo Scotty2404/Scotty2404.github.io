@@ -76,8 +76,13 @@
                     <h2>Location:</h2>
                 </div>
                 <div class="maps-standort">
+                    <ng-container *ngIf="event.google_maps_link; else noLink">
                     <a [href]="event.google_maps_link">Route auf der Karte ansehen</a>
-                    <iframe ngIf="event.google_maps_link" [src]="googleMapsUrl" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    <iframe [src]="googleMapsUrl" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </ng-container>
+                <ng-template #noLink>
+                    <p>Die Kartenansicht ist aktuell noch nicht verfügbar.</p>
+                </ng-template>
                 </div>
         </div>
     </div>

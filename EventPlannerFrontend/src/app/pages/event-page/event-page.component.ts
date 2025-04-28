@@ -10,10 +10,11 @@ import { ApiService } from '../../services/api.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCard } from '@angular/material/card';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-event-page',
-  imports: [ NgFor, MatButton, MatButtonModule, EventDetailBoxComponent, RouterLink, MatCheckboxModule, LoadingBoxComponent, LoadingFailedBoxComponent, MatIconModule, MatCard],
+  imports: [ NgFor, MatButton, MatButtonModule, EventDetailBoxComponent, RouterLink, MatCheckboxModule, LoadingBoxComponent, LoadingFailedBoxComponent, MatIconModule, MatCard, CommonModule],
   templateUrl: './event-page.component.html',
   styleUrl: './event-page.component.scss'
 })
