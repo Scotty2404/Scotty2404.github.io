@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgFor } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { MatButton, MatButtonModule } from '@angular/material/button';
 import { EventDetailBoxComponent } from '../../components/event-detail-box/event-detail-box.component';
 import { LoadingBoxComponent } from '../../components/loading-box/loading-box.component';

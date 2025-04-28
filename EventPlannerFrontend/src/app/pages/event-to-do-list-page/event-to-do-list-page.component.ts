@@ -20,9 +20,9 @@ import { MatCardModule } from '@angular/material/card';
   standalone: true,
   imports: [RouterLink, RouterModule, RouterOutlet, MatListModule, MatCardModule, MatButtonModule, MatCheckboxModule, MatInputModule, FormsModule, CommonModule, MatIconModule, MatFormFieldModule, LoadingBoxComponent, LoadingFailedBoxComponent],
   templateUrl: './event-to-do-list-page.component.html',
-  styleUrl: './event-to-do-list-page.component.scss'
+  styleUrls: ['./event-to-do-list-page.component.scss']
 })
-export class EventToDoListPageComponent {
+export class EventToDoListPageComponent implements OnInit {
   isLoaded = true;
   isFailed = false;
 
