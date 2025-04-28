@@ -3,10 +3,10 @@
 .box-service {
     display: flex;
     flex-direction: row;
-    width: 100%;
+    min-width: 1100px;
     max-width: 1200px;
-    min-height: 250px;
-    max-height: 450px;
+    min-height: 300px;
+    max-height: 400px;
     border-radius: 5px;
     box-shadow: 0px 3px 10px silver;
     margin: 20px auto;
@@ -60,13 +60,8 @@
     gap: 10px;
 }
 
-.button-box button {
-    flex: 1; /* Macht alle Buttons gleich groß */
-    background-color: $primarycolor;
-}
-
-.button-box mat-icon {
-    color: white;
+.raised-buttons {
+    margin-right: 10px;
 }
 
 .title-main {

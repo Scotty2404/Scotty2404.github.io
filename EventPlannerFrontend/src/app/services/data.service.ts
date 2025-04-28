@@ -56,12 +56,6 @@ export class DataService {
   // Umfragenliste, die initial leer ist (kann später dynamisch befüllt werden)
   surveyList: Survey[] = [];
 
-guestList = [
-  { firstname: 'Hans', lastname: 'Müller', mail: 'hans.mueller@example.com', info: 'auch ewas kurzes kann hier hin, klappt alles', commitment: 'yes' },
-  { firstname: 'Lisa', lastname: 'Schmidt', mail: 'lisa.schmidt@example.com', info: 'hi', commitment: 'no' },
-  { firstname: 'Peter', lastname: 'Meier', mail: 'peter.meier@example.com', info: 'test', commitment: 'yes' }
-];
-
   constructor() { }
 
   // Gibt die aktuelle Liste der Events zurück
@@ -121,14 +115,4 @@ guestList = [
     // Das Ergebnis wird als Observable zurückgegeben
     return of(resultSurvey);
   }
-}
-getGuestList() {
-  return this.guestList;
-}
-
-addGuest(guest: any) {
-  this.guestList.push(guest);
-}
-
-
 }

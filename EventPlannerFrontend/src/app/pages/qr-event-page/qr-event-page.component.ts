@@ -5,7 +5,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
-import { RouterLink } from '@angular/router';
 import { QrDialogComponent } from '../../components/qr-dialog/qr-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -36,7 +35,7 @@ export class QrEventPageComponent implements OnInit{
   token: any;
   event: any
 
-  constructor(private apiService: ApiService, private route: ActivatedRoute) {}
+  constructor(private apiService: ApiService, private route: ActivatedRoute, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.eventId = this.route.snapshot.paramMap.get('id');
@@ -124,8 +123,6 @@ export class QrEventPageComponent implements OnInit{
       }
     });
   }
-
-  constructor(private dialog: MatDialog) {}
 
   submitResponse() {
     const isYes = this.attending === 'yes';

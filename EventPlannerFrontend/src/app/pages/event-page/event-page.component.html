@@ -1,43 +1,82 @@
-<div class="status-container">
-
-    <div class="title">
-        <h1>Statusübersicht</h1>
-
+<body class="body">
+    <div class="breadcrumb">
+        <p>
+            <a [routerLink]="['/start']" class="breadcrumb-link">Home </a> /Event ansicht
+        </p>
     </div>
+    
+    <div class="title">
+            <button mat-icon-button [routerLink]="['/start']" class="btn-back">
+                    <mat-icon>arrow_back</mat-icon>
+            </button>
+            <h1>Dein Event</h1>
+    </div>
+        
+    
+    
+    <div class="content-container">
+
 
     @if(isLoaded){
+
+        <div class="content">
             
                 <app-event-detail-box>
                 </app-event-detail-box>
 
             <div>                                
-                <div class="kurzinfo-mail">
-                    <h3>Folgender Inhalt wird deinen Gästen per E-Mail zugeschickt:</h3>
+                <div class="event-details-container">
 
-                    <div class="kurzinfo-content">
-                    <div class="einladung-content">
-                    <h4>Einladung zu: {{ event.title }}</h4>
-                    <p> {{ event.firstname }} {{event.lastname}} hat Sie {{ eventTime }} zu {{ event.title}} eingeladen!</p> 
-                    <p>{{ event.description }} </p>
+                    <mat-card>
+                    <h2>Alle Infos zu deinem Event:</h2>
+                  
+                    <div class="event-info">
+                      <h3>{{ event.title }}</h3>
+                      <p>{{ eventTime }} in {{ event.city }}</p>
+                  
+                      <h4>Details:</h4>
+                      <p>{{ event.description }}</p>
+                  
+                      <h4>Gästeanzahl:</h4>
+                      <p>{{ event.max_guests }}</p>
                     </div>
-
-                    <div class="qr-code">
-                        <img [src]="'http://localhost:5000/public' + event.qr_image" alt="QR Code" style="width: 100%;">
-                        <p class="qr-text">Scan = Zu EventAccess</p>
-                    </div>
-
-                    </div>
-                </div>
-
+                </mat-card>
+            </div>
+                  
+                    <div class="qr-code-section">
+                        
+                        <h3>Dein QR-Code:</h3>
+                        <div class="qr-code-container">
+                          <img 
+                            [src]="'http://localhost:5000/public' + event.qr_image" 
+                            alt="QR Code" 
+                            class="qr-code-image"
+                          >
+                          <a 
+                            [href]="'http://localhost:5000/public' + event.qr_image" 
+                            download="Event_QR_Code.png"
+                            class="download-button"
+                          >
+                            <button mat-raised-button color="primary">
+                              <mat-icon>download</mat-icon> Download QR
+                            </button>
+                          </a>
+                        </div>
+                    
+                      </div>
+                      
+                  
+                  
+                <hr>
                 <div class="locations">
                     <h2>Location:</h2>
                 </div>
                 <div class="maps-standort">
-                    <a [href]="event.google_maps_link">Venue auf der Karte ansehen</a>
+                    <a [href]="event.google_maps_link">Route auf der Karte ansehen</a>
                     <iframe [src]="googleMapsUrl" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </div>
         </div>
-        
+    </div>
       }
 
       @else {
@@ -58,3 +97,4 @@
       }
 
 </div>
+</body>

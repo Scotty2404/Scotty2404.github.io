@@ -8,10 +8,12 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCard } from '@angular/material/card';
 
 @Component({
   selector: 'app-event-page',
-  imports: [ NgFor, MatButton, MatButtonModule, EventDetailBoxComponent, RouterLink, MatCheckboxModule, LoadingBoxComponent, LoadingFailedBoxComponent],
+  imports: [ NgFor, MatButton, MatButtonModule, EventDetailBoxComponent, RouterLink, MatCheckboxModule, LoadingBoxComponent, LoadingFailedBoxComponent, MatIconModule, MatCard],
   templateUrl: './event-page.component.html',
   styleUrl: './event-page.component.scss'
 })
