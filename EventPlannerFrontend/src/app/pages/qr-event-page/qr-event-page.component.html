@@ -4,9 +4,9 @@
   
       <div class="event-details">
         <h1>{{ event.title }}</h1>
-        <p><strong>Datum:</strong> {{ event.date | date:'fullDate' }} – {{ event.date | date:'shortTime' }}</p>
-        <p><strong>Adresse:</strong> {{ event.street }}, {{ event.zip }} {{ event.city }}</p>
-        <p><strong>Info:</strong> {{ event.info }}</p>
+        <p><strong>Datum:</strong> {{ event.startdate | date:'fullDate' }} – {{ event.startdate | date:'shortTime' }}</p>
+        <p><strong>Adresse:</strong> {{ event.street }}, {{ event.postalCode }} {{ event.city }}</p>
+        <p><strong>Info:</strong> {{ event.description }}</p>
       </div>
     </div>
   
@@ -64,6 +64,12 @@
       <mat-form-field appearance="fill">
         <mat-label>Email</mat-label>
         <input matInput type="email" [(ngModel)]="guest.mail">
+      </mat-form-field>
+      
+      <p class="password-hint">Möchtest du später alle Infos sehen? Lege ein Passwort fest, um dich auf der Website einzuloggen.</p>
+      <mat-form-field appearance="fill">
+        <mat-label>Passwort (optional)</mat-label>
+        <input matInput type="password" [(ngModel)]="guest.password">
       </mat-form-field>
     </div>
   

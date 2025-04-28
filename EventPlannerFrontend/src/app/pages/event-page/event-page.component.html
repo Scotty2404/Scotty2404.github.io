@@ -1,20 +1,41 @@
 <div class="status-container">
 
     <div class="title">
-        <h1>Status übersicht</h1>
+        <h1>Statusübersicht</h1>
 
     </div>
 
     @if(isLoaded){
             
-        <div class="row">
-        
-
-            <div class="col">
                 <app-event-detail-box>
                 </app-event-detail-box>
-            </div>
 
+            <div>                                
+                <div class="kurzinfo-mail">
+                    <h3>Folgender Inhalt wird deinen Gästen per E-Mail zugeschickt:</h3>
+
+                    <div class="kurzinfo-content">
+                    <div class="einladung-content">
+                    <h4>Einladung zu: {{ event.title }}</h4>
+                    <p> {{ event.firstname }} {{event.lastname}} hat Sie {{ eventTime }} zu {{ event.title}} eingeladen!</p> 
+                    <p>{{ event.description }} </p>
+                    </div>
+
+                    <div class="qr-code">
+                        <img [src]="'http://localhost:5000/public' + event.qr_image" alt="QR Code" style="width: 100%;">
+                        <p class="qr-text">Scan = Zu EventAccess</p>
+                    </div>
+
+                    </div>
+                </div>
+
+                <div class="locations">
+                    <h2>Location:</h2>
+                </div>
+                <div class="maps-standort">
+                    <a [href]="event.google_maps_link">Venue auf der Karte ansehen</a>
+                    <iframe [src]="googleMapsUrl" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
         </div>
         
       }

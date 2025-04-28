@@ -1,0 +1,122 @@
+.survey-box {
+  width: 97%;
+  box-sizing: border-box;
+  padding: 24px;
+  background-color: #f9f9f9;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Arial', sans-serif;
+  text-align: left;
+
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+mat-card {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 10px 0px;
+  padding: 16px;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+mat-card-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.question-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24px;
+}
+
+.question {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-top: 15px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.answer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.scale {
+  align-items: center;
+  gap: 12px;
+}
+
+.scale-result {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.percentage-label {
+  min-width: 40px;
+  font-weight: 500;
+}
+
+mat-form-field {
+  width: 100%;
+  max-width: 400px;
+}
+
+mat-slider {
+  width: 300px;
+}
+
+.checkbox-result {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.option-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.option-label {
+  flex: 0 0 150px;
+  font-weight: 500;
+}
+
+.option-percentage {
+  flex: 0 0 50px;
+  text-align: right;
+  font-size: 0.9rem;
+}
+
+.option-bar {
+  flex: 1;
+  height: 12px;
+}
+
+.survey-box {
+  position: relative;
+}
+
+.card-header {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 1;
+}
+
+.green-icon {
+  color: green;
+}

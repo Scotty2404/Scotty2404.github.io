@@ -11,19 +11,19 @@
         
       <ng-container matColumnDef="firstname">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Vorname </th>
-        <td mat-cell *matCellDef="let row"> {{row.firstname}} </td>
+        <td mat-cell *matCellDef="let row"> {{row.guest_firstname}} </td>
       </ng-container>
 
       <ng-container matColumnDef="lastname">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Nachname </th>
-          <td mat-cell *matCellDef="let row"> {{row.lastname}} </td>
+          <td mat-cell *matCellDef="let row"> {{row.guest_lastname}} </td>
       </ng-container>
   
        
       <ng-container matColumnDef="mail">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Mail </th>
         <td mat-cell *matCellDef="let row">
-          <mat-card class="mail-card"> {{row.mail}} </mat-card>
+          <mat-card class="mail-card"> {{row.email}} </mat-card>
         </td>
       </ng-container>
   
@@ -37,8 +37,8 @@
       <ng-container matColumnDef="commitment">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Zusage? </th>
         <td mat-cell *matCellDef="let row">
-          <mat-icon *ngIf="row.commitment === 'yes'" class="green">check_circle</mat-icon>
-          <mat-icon *ngIf="row.commitment === 'no'" class="red">cancel</mat-icon>
+          <mat-icon *ngIf="row.commitment === '1'" class="green">check_circle</mat-icon>
+          <mat-icon *ngIf="row.commitment === '0'" class="red">cancel</mat-icon>
         </td>
       </ng-container>
 

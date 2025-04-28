@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
+const path = require('path');
 
 const { router: authRoutes } = require('./routes/authRoutes');
 const eventRoutes = require('./routes/eventRoutes');
@@ -9,6 +10,7 @@ const eventRoutes = require('./routes/eventRoutes');
 const app = express();
 app.use(express.json());
 app.use(cors());
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // MySQL Verbindung erstellen
 const db = mysql.createConnection({
