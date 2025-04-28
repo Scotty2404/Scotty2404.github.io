@@ -1,22 +1,92 @@
-<div class="status-container">
-
-    <div class="title">
-        <h1>Status übersicht</h1>
-
+<body>
+    <div class="breadcrumb">
+        <p>
+            <a [routerLink]="['/start']" class="breadcrumb-link">Home </a> /Event ansicht
+        </p>
     </div>
+    
+    <div class="title">
+            <button mat-icon-button [routerLink]="['/start']" class="btn-back">
+                    <mat-icon>arrow_back</mat-icon>
+            </button>
+            <h1>Dein Event</h1>
+    </div>
+        
+    
+    
+    <div class="content-container">
+
 
     @if(isLoaded){
-            
-        <div class="row">
-        
 
-            <div class="col">
+        <div class="content">
+
+            <div class="event-box">
+            
                 <app-event-detail-box>
                 </app-event-detail-box>
+
             </div>
 
+            <div>                                
+                <div class="event-details-container">
+
+                    <mat-card>
+                    <h2>Alle Infos zu deinem Event:</h2>
+                  
+                    <div class="event-info">
+                      <h3>{{ event.title }}</h3>
+                      <p>{{ eventTime }} in {{ event.city }}</p>
+                  
+                      <h4>Details:</h4>
+                      <p>{{ event.description }}</p>
+                  
+                      <h4>Gästeanzahl:</h4>
+                      <p>{{ event.max_guests }}</p>
+                    </div>
+                </mat-card>
+            </div>
+                  
+                    <div class="qr-code-section">
+                        
+                        <h3>Dein QR-Code:</h3>
+                        <div class="qr-code-container">
+                          <img 
+                            [src]="'http://localhost:5000/public' + event.qr_image" 
+                            alt="QR Code" 
+                            class="qr-code-image"
+                          >
+                          <a 
+                            [href]="'http://localhost:5000/public' + event.qr_image" 
+                            download="Event_QR_Code.png"
+                            class="download-button"
+                          >
+                            <button mat-raised-button color="primary">
+                              <mat-icon>download</mat-icon> Download QR
+                            </button>
+                          </a>
+                        </div>
+                    
+                      </div>
+                      
+                  
+                  
+                <hr>
+                <div class="locations">
+                    <h2>Location:</h2>
+                </div>
+                <div class="maps-standort">
+                    <ng-container *ngIf="event.google_maps_link; else noLink">
+                    <a [href]="event.google_maps_link">Route auf der Karte ansehen</a>
+                    <iframe [src]="googleMapsUrl" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </ng-container>
+                <ng-template #noLink>
+                    <p>Die Kartenansicht ist aktuell noch nicht verfügbar.</p>
+                </ng-template>
+
+                </div>
         </div>
-        
+    </div>
       }
 
       @else {
@@ -24,16 +94,17 @@
         @if(isFailed) {
             
             <div class="loading-container">
-                loading
+                <app-loading-failed-box></app-loading-failed-box>
             </div>
         }
 
         @else { 
             <div class="loading-container">
-                fehler
+                <app-loading-box></app-loading-box>
             </div>
         }
 
       }
 
 </div>
+</body>

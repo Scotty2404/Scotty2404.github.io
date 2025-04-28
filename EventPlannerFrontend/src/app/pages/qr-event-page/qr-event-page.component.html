@@ -1,0 +1,89 @@
+<div class="event-container">
+    <div class="event-card">
+      <img [src]="'http://localhost:5000/public' + event.image" alt="Event Bild" class="event-image" />
+  
+      <div class="event-details">
+        <h1>{{ event.title }}</h1>
+        <p><strong>Datum:</strong> {{ event.startdate | date:'fullDate' }} – {{ event.startdate | date:'shortTime' }}</p>
+        <p><strong>Adresse:</strong> {{ event.street }}, {{ event.postalCode }} {{ event.city }}</p>
+        <p><strong>Info:</strong> {{ event.description }}</p>
+      </div>
+    </div>
+  
+    <div class="response-section">
+      <p>Möchtest du am Event teilnehmen?</p>
+      <button mat-raised-button color="primary" (click)="attending = 'yes'">Ja</button>
+      <button mat-raised-button color="warn" (click)="attending = 'no'">Nein</button>
+    </div>
+  
+    <!-- Formular bei Ja -->
+    <div class="form-section" *ngIf="attending === 'yes'">
+      <p><strong>Bitte fülle die Felder aus:</strong></p>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Vorname</mat-label>
+        <input matInput [(ngModel)]="guest.firstname">
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Nachname</mat-label>
+        <input matInput [(ngModel)]="guest.lastname">
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" [(ngModel)]="guest.mail">
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Weitere Info (optional)</mat-label>
+        <textarea matInput rows="3" [(ngModel)]="guest.info"></textarea>
+      </mat-form-field>
+  
+      <p class="password-hint">Möchtest du später alle Infos sehen? Lege ein Passwort fest, um dich auf der Website einzuloggen.</p>
+      <mat-form-field appearance="fill">
+        <mat-label>Passwort (optional)</mat-label>
+        <input matInput type="password" [(ngModel)]="guest.password">
+      </mat-form-field>
+    </div>
+  
+    <!-- Formular bei Nein -->
+    <div class="form-section" *ngIf="attending === 'no'">
+      <p><strong>Du kannst trotzdem deinen Daten angeben damit der Gastgeber bescheid weiß.</strong></p>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Vorname</mat-label>
+        <input matInput [(ngModel)]="guest.firstname">
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Nachname</mat-label>
+        <input matInput [(ngModel)]="guest.lastname">
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" [(ngModel)]="guest.mail">
+      </mat-form-field>
+      
+      <p class="password-hint">Möchtest du später alle Infos sehen? Lege ein Passwort fest, um dich auf der Website einzuloggen.</p>
+      <mat-form-field appearance="fill">
+        <mat-label>Passwort (optional)</mat-label>
+        <input matInput type="password" [(ngModel)]="guest.password">
+      </mat-form-field>
+    </div>
+  
+    <div *ngIf="attending !== null" class="submit-button">
+      <button mat-flat-button color="accent" (click)="submitResponse()">Antwort absenden</button>
+    </div>
+
+    <div *ngIf="responseSubmitted" class="confirmation">
+        <p><strong>{{ responseMessage }}</strong></p>
+      
+        
+      
+        
+    </div>
+      
+  </div>
+  

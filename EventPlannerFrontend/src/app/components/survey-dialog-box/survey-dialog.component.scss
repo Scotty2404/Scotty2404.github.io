@@ -1,0 +1,9 @@
+mat-dialog-content {
+    display: flex;  /* Setzt das Layout auf Flexbox */
+    flex-direction: column;  /* Richtet die Flex-Elemente vertikal aus */
+    gap: 10px;  /* Fügt einen Abstand von 10px zwischen den Flex-Elementen hinzu */
+}
+
+mat-form-field {
+    width: 100%;  /* Sorgt dafür, dass jedes Formularfeld die gesamte verfügbare Breite einnimmt */
+}

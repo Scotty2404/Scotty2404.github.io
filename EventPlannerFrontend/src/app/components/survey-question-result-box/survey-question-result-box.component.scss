@@ -1,0 +1,140 @@
+/* Umfrage-Box (Hauptcontainer für jede Umfrage) */
+.survey-box {
+  width: 97%; /* Setzt die Breite auf 97% des übergeordneten Containers */
+  box-sizing: border-box; /* Padding und Border werden in der Gesamtbreite berücksichtigt */
+  padding: 24px; /* Fügt 24px Innenabstand hinzu, um den Inhalt zu polstern */
+  background-color: #f9f9f9; /* Setzt die Hintergrundfarbe auf ein helles Grau */
+  border-radius: 16px; /* Abrundung der Ecken auf 16px für ein weicheres Design */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Leichter Schatten, um die Box vom Hintergrund abzuheben */
+  font-family: 'Arial', sans-serif; /* Setzt die Schriftart auf Arial für bessere Lesbarkeit */
+  text-align: left; /* Richtet den Text nach links aus */
+  margin-top: 20px; /* Abstand von 20px oben */
+  margin-bottom: 20px; /* Abstand von 20px unten */
+  margin-left: 20px; /* Abstand von 20px links */
+  margin-right: 20px; /* Abstand von 20px rechts */
+}
+
+/* Styling für die Material Card-Komponente */
+mat-card {
+  width: 100%; /* Die Karte nimmt die gesamte Breite des Containers ein */
+  box-sizing: border-box; /* Padding und Border werden in die Gesamtbreite eingerechnet */
+  margin: 10px 0px; /* Fügt einen Abstand von 10px oben und unten hinzu */
+  padding: 16px; /* Fügt 16px Innenabstand hinzu */
+  background-color: #fff; /* Setzt den Hintergrund auf Weiß */
+  border-radius: 16px; /* Abrundung der Ecken der Karte auf 16px */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Leichter Schatten für die Karte */
+}
+
+/* Styling für den Titel der Card */
+mat-card-title {
+  font-size: 1.8rem; /* Setzt die Schriftgröße auf 1.8rem für den Titel */
+  font-weight: 600; /* Fettgedruckter Text für den Titel */
+  margin-bottom: 16px; /* Fügt einen Abstand von 16px nach unten hinzu */
+}
+
+/* Flexbox-Layout für eine Fragezeile */
+.question-row {
+  display: flex; /* Verwendet Flexbox für das Layout */
+  flex-direction: column; /* Anordnung der Elemente in einer Spalte */
+  margin-bottom: 24px; /* Abstand von 24px nach unten */
+}
+
+/* Stil für die Frage (Text) */
+.question {
+  font-weight: 600; /* Fettgedruckter Text für Fragen */
+  font-size: 1.1rem; /* Schriftgröße von 1.1rem */
+  margin-top: 15px; /* Abstand von 15px oben */
+  margin-bottom: 20px; /* Abstand von 20px unten */
+  color: #333; /* Dunkle Schriftfarbe für bessere Lesbarkeit */
+}
+
+/* Flexbox-Layout für die Antworten */
+.answer {
+  display: flex; /* Flexbox zur Ausrichtung der Antworten */
+  flex-wrap: wrap; /* Ermöglicht das Umbruch von Elementen bei Bedarf */
+  gap: 12px; /* Abstand von 12px zwischen den Antwort-Elementen */
+  align-items: center; /* Zentriert die Antworten vertikal */
+}
+
+/* Spezifisches Styling für Skalenfragen */
+.scale {
+  align-items: center; /* Zentriert die Skalen-Antworten vertikal */
+  gap: 12px; /* Abstand von 12px zwischen den Elementen */
+}
+
+/* Layout für die Skalen-Ergebnisse */
+.scale-result {
+  display: flex; /* Flexbox für die horizontale Ausrichtung */
+  align-items: center; /* Vertikale Zentrierung */
+  gap: 12px; /* Abstand zwischen den Elementen */
+  width: 100%; /* Volle Breite des Containers */
+}
+
+/* Stil für die Prozentangabe bei Skalenfragen */
+.percentage-label {
+  min-width: 40px; /* Minimale Breite von 40px für die Prozentanzeige */
+  font-weight: 500; /* Mittlere Schriftstärke */
+}
+
+/* Stil für die Material-Formularfelder */
+mat-form-field {
+  width: 100%; /* Setzt die Breite des Formularfelds auf 100% */
+  max-width: 400px; /* Maximale Breite von 400px */
+}
+
+/* Stil für den Schieberegler (Slider) */
+mat-slider {
+  width: 300px; /* Setzt die Breite des Sliders auf 300px */
+}
+
+/* Layout für Checkbox-Antworten */
+.checkbox-result {
+  display: flex; /* Flexbox für die Antwortausrichtung */
+  flex-direction: column; /* Antworten werden in einer Spalte angeordnet */
+  gap: 12px; /* Abstand von 12px zwischen den Optionen */
+}
+
+/* Layout für jede Option bei Checkbox-Fragen */
+.option-row {
+  display: flex; /* Flexbox für die horizontale Ausrichtung */
+  align-items: center; /* Zentriert die Optionen vertikal */
+  gap: 16px; /* Abstand zwischen den Optionen */
+  width: 100%; /* Volle Breite */
+}
+
+/* Stil für die Optionensbezeichnung */
+.option-label {
+  flex: 0 0 150px; /* Festgelegte Breite von 150px für das Label */
+  font-weight: 500; /* Mittlere Schriftstärke */
+}
+
+/* Stil für die Prozentangabe der Option */
+.option-percentage {
+  flex: 0 0 50px; /* Festgelegte Breite von 50px für die Prozentanzeige */
+  text-align: right; /* Rechtsbündige Ausrichtung der Prozentangabe */
+  font-size: 0.9rem; /* Schriftgröße von 0.9rem */
+}
+
+/* Stil für die Fortschrittsbalken der Option */
+.option-bar {
+  flex: 1; /* Der Balken nimmt den verbleibenden Raum ein */
+  height: 12px; /* Höhe des Fortschrittsbalkens */
+}
+
+/* Positionierung der Umfragebox */
+.survey-box {
+  position: relative; /* Ermöglicht die Positionierung von Kind-Elementen relativ zur Box */
+}
+
+/* Positionierung des Card-Headers */
+.card-header {
+  position: absolute; /* Der Header wird absolut positioniert */
+  top: 8px; /* Abstand von 8px vom oberen Rand der Box */
+  right: 8px; /* Abstand von 8px vom rechten Rand der Box */
+  z-index: 1; /* Sicherstellt, dass der Header immer oben bleibt */
+}
+
+/* Stil für grüne Icons (z.B. das Häkchen) */
+.green-icon {
+  color: green; /* Setzt die Farbe der Icons auf grün */
+}

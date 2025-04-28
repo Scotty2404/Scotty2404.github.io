@@ -4,6 +4,7 @@
 
     <div class="title">
         <h1>Event übersicht</h1>
+        
 
     </div>
 
@@ -24,7 +25,7 @@
     
             <div class="col">
                 <div class="more-services">
-                    <p>Neues Event erstellen?</p>
+                    <p style="margin-bottom: 10px;">Wollen Sie ein neues Event erstellen?</p>
                     <section>
                         <button mat-button class="btn" routerLink="/addevent">Neues Event erstellen</button>
                     </section>
@@ -41,13 +42,13 @@
         @if(isFailed) {
             
             <div class="loading-container">
-                loading
+                <app-loading-failed-box></app-loading-failed-box>
             </div>
         }
 
         @else { 
             <div class="loading-container">
-                fehler
+                <app-loading-box></app-loading-box>
             </div>
         }
 

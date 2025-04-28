@@ -1,0 +1,17 @@
+<!-- Titel des Dialogs -->
+<h2 mat-dialog-title>Bestätigen</h2>
+
+<!-- Inhalt des Dialogs -->
+<mat-dialog-content>
+  <!-- Text, der den Benutzer fragt, ob er die Umfrage abschließen möchte -->
+  <p>Möchten Sie die Umfrage wirklich abschließen?</p>
+</mat-dialog-content>
+
+<!-- Aktionen am unteren Rand des Dialogs -->
+<mat-dialog-actions>
+  <!-- Abbrechen-Button: Wenn der Benutzer diesen Button klickt, wird die Aktion abgebrochen -->
+  <button mat-button (click)="onCancel()">Abbrechen</button>
+  
+  <!-- Bestätigungs-Button: Wenn der Benutzer diesen Button klickt, wird die Umfrage abgeschlossen -->
+  <button mat-button color="primary" (click)="onConfirm()">Ja, abschließen</button>
+</mat-dialog-actions>

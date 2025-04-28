@@ -18,6 +18,8 @@ import { CalendarPageComponent } from '../calendar-page/calendar-page.component'
 import { ContactPageComponent } from '../contact-page/contact-page.component';
 import { ImprintPageComponent } from '../imprint-page/imprint-page.component';
 import { subscribe } from 'diagnostics_channel';
+import { MatDialog } from '@angular/material/dialog';
+import { SettingsDialogComponent } from '../../components/settings-dialog/settings-dialog.component';
 
 @Component({
   selector: 'app-main-layout',
@@ -37,6 +39,7 @@ import { subscribe } from 'diagnostics_channel';
     CalendarPageComponent,
     ContactPageComponent,
     ImprintPageComponent,
+    SettingsDialogComponent
   ],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss'
@@ -48,7 +51,7 @@ export class MainLayoutComponent implements OnInit{
     this.getUserName();
   }
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService, private dialog: MatDialog) {}
 
   getUserName() {
     this.apiService.getUser().subscribe((response) => {
@@ -58,4 +61,13 @@ export class MainLayoutComponent implements OnInit{
       console.log('Failed to get User Data', error);
     });
   }
+
+  openSettingsDialog() {
+    this.dialog.open(SettingsDialogComponent, {
+      width: '400px'
+    });
+  }
+  
+
+  
 }

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormArray, AbstractControl, FormControl } from '@angular/forms';
 
 import { ApiService } from '../../services/api.service';
 import { Router } from '@angular/router';
@@ -15,6 +15,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatRadioButton } from '@angular/material/radio';
 import { MatIcon } from '@angular/material/icon';
+import { SurveyQuestionBoxComponent } from '../../components/survey-question-box/survey-question-box.component';
+import { RouterLink } from '@angular/router';
+import { LoadingBoxComponent } from '../../components/loading-box/loading-box.component';
+import { LoadingFailedBoxComponent } from '../../components/loading-failed-box/loading-failed-box.component';
 
 
 
@@ -32,7 +36,11 @@ import { MatIcon } from '@angular/material/icon';
     MatButtonModule,
     ReactiveFormsModule,
     MatRadioButton,
-    MatIcon
+    MatIcon,
+    SurveyQuestionBoxComponent,
+    RouterLink,
+    LoadingBoxComponent,
+    LoadingFailedBoxComponent
   ],
   templateUrl: './add-event-page.component.html',
   styleUrl: './add-event-page.component.scss'
@@ -41,31 +49,30 @@ export class AddEventPageComponent {
   eventForm: FormGroup;
   selectedFile: File | null = null;
   previewImage: string | null = null;
-  
-  
-  
+  isLoaded = true;
+  isFailed = false;
 
   standardImages = [
     '/auswahl/hochzeit.jpg',
     '/auswahl/geburtstag.avif',
     '/auswahl/jugendweihe.jpg',
   ];
-  
+
+
 
   constructor(private fb: FormBuilder, private apiService: ApiService, private router: Router) {
     this.eventForm = this.fb.group({
       title: ['', Validators.required],
-      description: ['', Validators.required],
       date: ['', Validators.required],
       street: ['', Validators.required], 
       city: ['', Validators.required], 
       postalCode: ['', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
       image: ['', Validators.required],
-      guestCount: [''],
+      guestCount: ['', Validators.required],
       timeOption: ['ganztags', Validators.required],
       startTime: [''],
       endTime: [''],
-      
+      survey: this.fb.array([]),
     });
 
     // Uhrzeit validieren
@@ -101,15 +108,90 @@ export class AddEventPageComponent {
       reader.readAsDataURL(file);
     }
   }
+  // Getter für das FormArray
+  get survey(): FormArray {
+    return this.eventForm.get('survey') as FormArray;
+  }
 
-  private transformEventData() {
+  // Neue Frage zur Umfrage hinzufügen
+  addQuestion() {
+    const questionGroup = this.fb.group({
+      question: ['', Validators.required],
+      answerType: ['multiple', Validators.required],
+      answers: this.fb.array([
+        this.fb.control('', Validators.required),
+        this.fb.control('', Validators.required)
+      ]),
+      
+      minValue: new FormControl(null),
+      maxValue: new FormControl(null),
+    });
+  
+    questionGroup.get('answerType')?.valueChanges.subscribe((type) => {
+      const min = questionGroup.get('minValue');
+      const max = questionGroup.get('maxValue');
+      const answers = questionGroup.get('answers') as FormArray;
+  
+      if (type === 'scale') {
+        min?.setValidators([Validators.required]);
+        max?.setValidators([Validators.required]);
+        answers.clear(); // Keine Antworten bei Skala
+      } else if (type === 'multiple') {
+        min?.clearValidators();
+        max?.clearValidators();
+        if (answers.length === 0) {
+          answers.push(this.fb.control('', Validators.required));
+          answers.push(this.fb.control('', Validators.required));
+        }
+        
+      } else if (type === 'text') {
+        min?.clearValidators();
+        max?.clearValidators();
+        answers.clear(); // Keine Antworten bei Freitext
+      }
+  
+      min?.updateValueAndValidity();
+      max?.updateValueAndValidity();
+    });
+  
+    this.survey.push(questionGroup);
+  }
+  
+
+  // Antwortmöglichkeit zu einer Frage hinzufügen
+  addAnswer(questionIndex: number) {
+    const answers = this.getAnswers(this.survey.at(questionIndex));
+    answers.push(this.fb.control('', Validators.required));
+  }
+  
+
+  // Frage entfernen
+  removeQuestion(index: number) {
+    this.survey.removeAt(index);
+  }
+
+  // Antwortmöglichkeit entfernen
+  removeAnswer(questionIndex: number, answerIndex: number) {
+    const answers = this.survey.at(questionIndex).get('answers') as FormArray;
+    answers.removeAt(answerIndex);
+  }
+
+  getAnswers(question: AbstractControl | null): FormArray {
+    return question?.get('answers') as FormArray;
+  }
+  
+  private transformEventData(surveyId: number) {
     const formData = this.eventForm.value;
 
     let startdate, enddate, eventVenue;
 
     //Start- und Endzeit setzen
     const eventDate = new Date(formData.date);
-    const formattedDate = eventDate.toISOString().split('T')[0];
+    const year = eventDate.getFullYear();
+    const month = (eventDate.getMonth() + 1).toString().padStart(2, '0');
+    const day = eventDate.getDate().toString().padStart(2, '0');
+    
+    const formattedDate = `${year}-${month}-${day}`;
 
     if(formData.timeOption === 'ganztags') {
       startdate = `${formattedDate}T00:00:00`;
@@ -122,39 +204,100 @@ export class AddEventPageComponent {
       enddate = `${formattedDate}T${formData.endTime}:00`;
     }
 
+    //Encoded Adress für google Maps link erzeugen
+    const address = `${formData.street}, ${formData.city}, ${formData.postal_code}`;
+    const encodedAddress = encodeURIComponent(address);
+    const googleMapsLink = `https://www.google.com/maps/place?q=${encodedAddress}`; //no api key for embeded google maps links
+
     //Venue Setzten
     eventVenue = {
-      street: 'Hans-Grundig-Straße 25',
-      city: 'Dresden',
-      postal_code: '01307',
+      street: formData.street,
+      city: formData.city,
+      postal_code: formData.postalCode,
+      google_maps_link: googleMapsLink,
     };
 
+    //Image setzten !Achtung custom images werden noch nicht berücksichtigt!
+    let image;
+    this.selectedFile ? image = this.selectedFile : image = formData.image;
 
+    const resultData = new FormData();
 
-    return {
-      title: formData.title,
-      description: formData.description,
-      venue: eventVenue, //Vorläufitge Lösung
-      startdate: startdate,
-      enddate: enddate,
-      max_guests: formData.guestCount,
-    }
+    resultData.append('title', formData.title);
+    resultData.append('description', formData.description);
+    resultData.append('venue', JSON.stringify(eventVenue));
+    resultData.append('startdate', startdate!);
+    resultData.append('enddate', enddate!);
+    resultData.append('max_guests', formData.guestCount.toString());
+    resultData.append('image', image);
+    resultData.append('survey_id', surveyId.toString());
+
+    return resultData;
+  }
+
+  private transfromSurveyData() {
+    const fromData = this.eventForm.value;
+
+    const survey = {
+      description: 'Hier wird später die Art der Umfrage hinterlegt',
+      questions: fromData.survey.map((q: any) => ({
+        question_text: q.question,
+        offered_answer: q.answers
+      }))
+    };
+
+    return survey;
   }
 
   saveEvent(){
-    console.log(this.transformEventData());
-    this.apiService.createEvent(this.transformEventData()).subscribe((response) => {
-      console.log('Event saved successfully', response);
-    }, (error) => {
-      console.log('Saving Event Failed', error);
-    })
+    let surveyId = -1;
+    this.apiService.createSurvey(this.transfromSurveyData()).subscribe({
+      next: (surveyResponse) => {
+        surveyId = surveyResponse.survey_id;
+
+        this.apiService.createEvent(this.transformEventData(surveyId)).subscribe({ 
+          next: (response) => {
+            console.log('Event saved successfully', response);
+            this.router.navigate(['/landing-page']);
+          }, error: (error) => {
+            console.log('Saving Event Failed', error);
+          }
+        });
+      }, error: (error) => {
+        console.log('Saving survey failed', error);
+      }
+    });
   }
 
   onSubmit() {
-    if (this.eventForm.valid) {
-      this.saveEvent();
-      this.router.navigate(['/landing-page']);
-    }
+    const questionsValid = this.surveyFormGroups.every((q) => {
+      const type = q.get('answerType')?.value;
+      const answers = q.get('answers') as FormArray;
+    
+      if (type === 'text') {
+        return true; // Freitextfrage ist immer gültig, keine Antworten nötig
+      }
+    
+      if (type === 'scale') {
+        const min = q.get('minValue')?.value;
+        const max = q.get('maxValue')?.value;
+        return min !== null && max !== null;
+      }
+    
+      return answers.length > 0 && answers.controls.every(a => a.value && a.value.trim() !== '');
+    });
+    
+
+  if (this.eventForm.valid && questionsValid) {
+    this.saveEvent();
+  } else {
+    console.warn('Formular ungültig oder Fragen nicht korrekt ausgefüllt');
   }
 }
 
+
+  get surveyFormGroups(): FormGroup[] {
+  return this.survey.controls as FormGroup[];
+}
+
+}

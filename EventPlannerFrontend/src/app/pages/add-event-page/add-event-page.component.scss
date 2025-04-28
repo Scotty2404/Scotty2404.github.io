@@ -6,15 +6,56 @@
   align-items: center;
 }
 
+.breadcrumb {
+    display: flex;
+    width: 100%;
+  min-width: 500px;
+
+}
+
+
+.breadcrumb-link {
+    color: $secondarycolor;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.breadcrumb-link:hover {
+    color: $secondarycolor;
+    text-decoration: underline 1.5px;
+    cursor: pointer;
+}
+
+.breadcrumb p {
+    font-size: 1.1em;
+    margin: 10px 0;
+}
+
 .title {
-  display: flex;
-  align-items: left;
-  width: 100%;
-  color: $secondarycolor;
+    color: $secondarycolor;
+    display: flex;
+    gap: 10px;
+    width: 100%;
+  min-width: 500px;
+
 }
 
 .title h1 {
-  font-weight: 200;
+    font-weight: normal;
+    margin: 0px;
+}
+
+
+.title h1 {
+    font-weight: normal;
+    margin: 0px;
+}
+
+.content-container {
+    display: flex;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    width: 100%;
 }
 
 .content {
@@ -29,6 +70,7 @@
   background-color: white;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  min-width: fit-content;
 }
 
 mat-card-title {
@@ -78,6 +120,7 @@ mat-radio-button .mat-radio-checked img {
   display: flex;
   align-items: center;
   gap: 10px;
+  margin-bottom: 10px;
 }
 
 .file-preview {
@@ -87,6 +130,25 @@ mat-radio-button .mat-radio-checked img {
   border: 2px solid #ddd;
   object-fit: cover;
 }
+
+
+.question-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  margin-top: 10px;
+  background-color: rgb(255, 255, 255);
+}
+
+.answer-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 
 
 

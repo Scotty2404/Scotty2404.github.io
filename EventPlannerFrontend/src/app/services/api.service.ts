@@ -34,8 +34,32 @@ export class ApiService {
     });
   }
 
+  editEvent(eventData: any, eventId: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/events/my-events/${eventId}/edit`, eventData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }
+
+  deleteEvent(eventId: string) {
+    return this.http.delete(`${this.baseUrl}/events/my-events/${eventId}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }
+
   getEvents(): Observable<any> {
     return this.http.get(`${this.baseUrl}/events/my-events`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }
+
+  getInvitedEventsForUser(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/events/my-events/invited`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
@@ -46,6 +70,39 @@ export class ApiService {
     return this.http.get(`${this.baseUrl}/events/my-events/${eventId}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }
+
+  createSurvey(surveyData: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/events/survey/create`, surveyData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }
+
+  getGuestsForEvent(eventId: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/events/${eventId}/guests`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }
+
+  addGuestToEvent(guestData: any, eventId: string): Observable<any> {
+    console.log('adding guest: ', guestData);
+    return this.http.post(`${this.baseUrl}/events/${eventId}/guests/add`, guestData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }
+
+  getEventFromQrCode(eventId: string, token: string) {
+    return this.http.get(`${this.baseUrl}/events/public-event/${eventId}`, {
+      params: {
+        token: token
       }
     });
   }
