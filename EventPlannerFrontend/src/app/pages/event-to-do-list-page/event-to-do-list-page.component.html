@@ -13,6 +13,7 @@
         <button mat-flat-button (click)="addTodo()">Hinzufügen</button>
       </div>
   
+      <div class="todo-table-container">
       <table>
         <thead>
           <tr>
@@ -22,17 +23,18 @@
         </thead>
         <tbody>
           <tr *ngFor="let todo of todos; let i = index">
-            <td>{{ todo.text }}</td>
-            <td>
-              <button mat-button color="warn" (click)="deleteTodo(i)">Löschen</button>
+            <td [ngClass]="{ 'done-todo': todo.done }">{{ todo.text }}</td>
+            <td style="display: flex; align-items: center; gap: 8px;">
+              <mat-checkbox [(ngModel)]="todo.done" (change)="saveTodos()">Erledigt</mat-checkbox>
+              <button mat-button color="highlight-delete" (click)="deleteTodo(i)">Löschen</button>
             </td>
           </tr>
-        </tbody>
+        </tbody>        
       </table>
+      </div>
   
       <!-- Debug-Hilfe -->
       <p>Aktuelle Todos: {{ todos.length }}</p>
-      <div *ngFor="let todo of todos">[Debug] {{ todo.text }}</div>
     </div>
   </div>
   
