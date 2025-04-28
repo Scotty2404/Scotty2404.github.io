@@ -4,7 +4,8 @@
 
     <div class="title">
         <h1>Event übersicht</h1>
-
+        <button routerLink="/guesttable">Gästeliste Test</button>
+        <button routerLink="/qr">QR Test</button>
     </div>
 
     @if(isLoaded){
@@ -14,15 +15,15 @@
 
             <div class="col" *ngFor="let event of eventList">
                 <app-event-box 
-                    [eventName]="event.eventName" 
+                    [eventName]="event.title" 
                     [eventTitle]="event.eventTitle" 
-                    [eventInfo]="event.eventInfo"
-                    [routerLink]="['/event']">
+                    [eventInfo]="event.description"
+                    [routerLink]="'/event/' + event.event_id">
                 </app-event-box>
             </div>
 
     
-            <div class="col-services">
+            <div class="col">
                 <div class="more-services">
                     <p>Neues Event erstellen?</p>
                     <section>
@@ -41,13 +42,13 @@
         @if(isFailed) {
             
             <div class="loading-container">
-                loading
+                <app-loading-failed-box></app-loading-failed-box>
             </div>
         }
 
         @else { 
             <div class="loading-container">
-                fehler
+                <app-loading-box></app-loading-box>
             </div>
         }
 

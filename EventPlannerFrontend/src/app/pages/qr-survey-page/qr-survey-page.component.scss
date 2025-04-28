@@ -1,0 +1,65 @@
+.survey-form {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .survey-card {
+    margin-bottom: 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .survey-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2c3e50;
+  }
+  
+  .checkbox-item {
+    margin-bottom: 10px;
+  }
+  
+  .survey-checkbox {
+    color: #2980b9;
+  }
+  
+  .full-width {
+    width: 100%;
+  }
+  
+  .textarea-input {
+    resize: vertical;
+  }
+  
+  .submit-button {
+    background-color: #2980b9;
+    color: white;
+    font-size: 1rem;
+    padding: 12px 24px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  
+    &:hover {
+      background-color: #1f5e8c;
+    }
+  }
+  
+  .mat-card-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #34495e;
+  }
+  
+  .mat-slider {
+    width: 100%;
+    margin-top: 12px;
+  }
+  
+  .mat-form-field {
+    margin-top: 10px;
+  }
+  
