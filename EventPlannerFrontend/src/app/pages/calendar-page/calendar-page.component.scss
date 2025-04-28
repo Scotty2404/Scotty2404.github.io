@@ -1,0 +1,22 @@
+.calendar-container {
+    max-width: 400px;
+    margin: 20px auto;
+  }
+  
+  .event-list {
+    margin-top: 20px;
+  }
+  
+  .event-item {
+    border-left: 6px solid;
+    padding: 8px;
+    margin-bottom: 10px;
+    background: #f9f9f9;
+    border-radius: 4px;
+  }
+  
+  .event-type {
+    font-size: 0.9em;
+    color: #666;
+  }
+  
