@@ -243,7 +243,6 @@ export class AddEventPageComponent {
       }))
     };
 
-    console.log(survey)
     return survey;
   }
 
@@ -251,9 +250,7 @@ export class AddEventPageComponent {
     let surveyId = -1;
     this.apiService.createSurvey(this.transfromSurveyData()).subscribe({
       next: (surveyResponse) => {
-        console.log(surveyResponse);
         surveyId = surveyResponse.survey_id;
-        console.log(this.transformEventData(surveyId));
 
         this.apiService.createEvent(this.transformEventData(surveyId)).subscribe({ 
           next: (response) => {

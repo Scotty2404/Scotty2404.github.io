@@ -58,7 +58,6 @@ function generateEventAccessToken(eventId, userId) {
 // Create an event with venue
 router.post('/create', authMiddleware, upload.single('image'), async (req, res) => {
     try {
-        console.log(req.file);
         let { 
             title, 
             description, 
@@ -510,8 +509,6 @@ router.post('/survey/create', authMiddleware, async (req, res) => {
             [surveyId]
         );
 
-        console.log(survey);
-
         res.json(survey[0] || { message: "No survey Data found." });
 
     } catch (err) {
@@ -521,7 +518,6 @@ router.post('/survey/create', authMiddleware, async (req, res) => {
 
 // Get Guests for Event from EventId
 router.get('/:eventId/guests', authMiddleware, async(req, res) => {
-    console.log('fetching guests for Event');
     try {
         const eventId = req.params.eventId;
 
@@ -549,7 +545,6 @@ router.get('/:eventId/guests', authMiddleware, async(req, res) => {
 
 // Adding guest to an event
 router.post('/:eventId/guests/add', authMiddleware, async (req, res) => {
-    console.log('adding guest');
     const eventId = req.params.eventId;
     const userId = req.user;
     const { type, confirmation, guest } = req.body;
@@ -570,7 +565,6 @@ router.post('/:eventId/guests/add', authMiddleware, async (req, res) => {
         }
 
         if(type === 'user') {
-            console.log('inserting user...');
             const exists = await queryAsync(`
                 SELECT * FROM event_management.user_event WHERE user_id = ? AND event_id = ?`,
             [userId, eventId]);
@@ -585,7 +579,6 @@ router.post('/:eventId/guests/add', authMiddleware, async (req, res) => {
 
             return res.status(201).json({ message: 'Added User to Event' });
         } else if (type === 'extra') {
-            console.log('inserting extra...');
             const { firstname, lastname } = guest;
 
             const exists = await queryAsync(`
