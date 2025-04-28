@@ -4,7 +4,6 @@ import { FormBuilder, FormGroup, Validators, FormArray, AbstractControl, FormCon
 
 import { ApiService } from '../../services/api.service';
 import { Router } from '@angular/router';
-import { NgModule } from '@angular/core';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -17,7 +16,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatRadioButton } from '@angular/material/radio';
 import { MatIcon } from '@angular/material/icon';
 import { SurveyQuestionBoxComponent } from '../../components/survey-question-box/survey-question-box.component';
-import { response } from 'express';
 import { RouterLink } from '@angular/router';
 
 
@@ -52,8 +50,8 @@ export class AddEventPageComponent {
 
   standardImages = [
     '/auswahl/hochzeit.jpg',
-    '/public/auswahl/geburtstag.avif',
-    '/public/auswahl/jugendweihe.jpg',
+    '/auswahl/geburtstag.avif',
+    '/auswahl/jugendweihe.jpg',
   ];
 
 
@@ -186,7 +184,11 @@ export class AddEventPageComponent {
 
     //Start- und Endzeit setzen
     const eventDate = new Date(formData.date);
-    const formattedDate = eventDate.toISOString().split('T')[0];
+    const year = eventDate.getFullYear();
+    const month = (eventDate.getMonth() + 1).toString().padStart(2, '0');
+    const day = eventDate.getDate().toString().padStart(2, '0');
+    
+    const formattedDate = `${year}-${month}-${day}`;
 
     if(formData.timeOption === 'ganztags') {
       startdate = `${formattedDate}T00:00:00`;
@@ -202,7 +204,7 @@ export class AddEventPageComponent {
     //Encoded Adress für google Maps link erzeugen
     const address = `${formData.street}, ${formData.city}, ${formData.postal_code}`;
     const encodedAddress = encodeURIComponent(address);
-    const googleMapsLink = `https://www.google.com/maps/embed/place?q=${encodedAddress}`; //no api key for embeded google maps links
+    const googleMapsLink = `https://www.google.com/maps/place?q=${encodedAddress}`; //no api key for embeded google maps links
 
     //Venue Setzten
     eventVenue = {
@@ -241,7 +243,6 @@ export class AddEventPageComponent {
       }))
     };
 
-    console.log(survey)
     return survey;
   }
 
@@ -249,9 +250,7 @@ export class AddEventPageComponent {
     let surveyId = -1;
     this.apiService.createSurvey(this.transfromSurveyData()).subscribe({
       next: (surveyResponse) => {
-        console.log(surveyResponse);
         surveyId = surveyResponse.survey_id;
-        console.log(this.transformEventData(surveyId));
 
         this.apiService.createEvent(this.transformEventData(surveyId)).subscribe({ 
           next: (response) => {

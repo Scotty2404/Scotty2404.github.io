@@ -58,7 +58,6 @@ function generateEventAccessToken(eventId, userId) {
 // Create an event with venue
 router.post('/create', authMiddleware, upload.single('image'), async (req, res) => {
     try {
-        console.log(req.file);
         let { 
             title, 
             description, 
@@ -84,7 +83,6 @@ router.post('/create', authMiddleware, upload.single('image'), async (req, res) 
         }
 
         // First, create the venue if provided
-        console.log(venue);
         let venueId = null;
         if (venue) {
             const { street, city, postal_code, google_maps_link } = venue;
@@ -273,13 +271,13 @@ router.get('/my-events/:id', authMiddleware, async(req, res) => {
 });
 
 // Edit Event by Id
-router.post('/my-events/:id/edit', authMiddleware, async(req, res) => {
+router.post('/my-events/:id/edit', authMiddleware, upload.single('image'), async(req, res) => {
     try{
         const eventId = req.params.id;
         const userId = req.user;
         const eventData = req.body;
 
-        const { 
+        let { 
             title, 
             description, 
             startdate, 
@@ -287,8 +285,20 @@ router.post('/my-events/:id/edit', authMiddleware, async(req, res) => {
             max_guests, 
             image,
             venue_id,
-            venue: {street, city, postal_code, google_maps_link},
+            venue,
         } = eventData;
+
+        // parse venue to json
+        venue = JSON.parse(req.body.venue);
+
+        const { street, city, postal_code, google_maps_link } = venue;
+
+        // is image file or path
+        if (req.file) {
+            image = '/uploads/' + req.file.filename;
+        } else if (image) {
+            image = image;
+        }
 
         // update event Data
         db.query(`
@@ -499,8 +509,6 @@ router.post('/survey/create', authMiddleware, async (req, res) => {
             [surveyId]
         );
 
-        console.log(survey);
-
         res.json(survey[0] || { message: "No survey Data found." });
 
     } catch (err) {
@@ -510,7 +518,6 @@ router.post('/survey/create', authMiddleware, async (req, res) => {
 
 // Get Guests for Event from EventId
 router.get('/:eventId/guests', authMiddleware, async(req, res) => {
-    console.log('fetching guests for Event');
     try {
         const eventId = req.params.eventId;
 
@@ -538,7 +545,6 @@ router.get('/:eventId/guests', authMiddleware, async(req, res) => {
 
 // Adding guest to an event
 router.post('/:eventId/guests/add', authMiddleware, async (req, res) => {
-    console.log('adding guest');
     const eventId = req.params.eventId;
     const userId = req.user;
     const { type, confirmation, guest } = req.body;
@@ -547,7 +553,7 @@ router.post('/:eventId/guests/add', authMiddleware, async (req, res) => {
             SELECT
                 (SELECT COUNT(*)
                 FROM (
-                    SELECT user_id FROM event_management.user_event WHERE event_id = ?
+                    SELECT user_id FROM event_management.user_event WHERE event_id = ? AND confirmation = 1 AND owner = 0
                     UNION ALL
                     SELECT extra_guests_id FROM event_management.extra_guests WHERE event_id = ?
                 ) AS combined) AS current_guests,
@@ -559,7 +565,6 @@ router.post('/:eventId/guests/add', authMiddleware, async (req, res) => {
         }
 
         if(type === 'user') {
-            console.log('inserting user...');
             const exists = await queryAsync(`
                 SELECT * FROM event_management.user_event WHERE user_id = ? AND event_id = ?`,
             [userId, eventId]);
@@ -574,7 +579,6 @@ router.post('/:eventId/guests/add', authMiddleware, async (req, res) => {
 
             return res.status(201).json({ message: 'Added User to Event' });
         } else if (type === 'extra') {
-            console.log('inserting extra...');
             const { firstname, lastname } = guest;
 
             const exists = await queryAsync(`
