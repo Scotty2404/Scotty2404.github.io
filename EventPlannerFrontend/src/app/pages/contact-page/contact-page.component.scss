@@ -30,6 +30,7 @@
 .breadcrumb p {
   font-size: 1.1em; // Etwas größere Schrift
   margin: 10px 0; // Abstand oben und unten
+  font-family: "Roboto", normal;
 }
 
 // ---------------- Button für "Zurück" ----------------
@@ -49,6 +50,7 @@
 .title h1 {
   font-weight: normal; // Normale Schriftstärke (nicht fett)
   margin: 0px; // Kein Außenabstand
+  font-family: "Roboto", normal;
 }
 
 // ---------------- Inhaltlicher Container ----------------
@@ -85,6 +87,7 @@
   max-width: 600px; // Begrenzung auf max. 600px
   margin: 20px auto; // Vertikaler Abstand, zentriert
   padding: 20px; // Innenabstand
+  background-color: white;
 }
 
 // Titel der Card
