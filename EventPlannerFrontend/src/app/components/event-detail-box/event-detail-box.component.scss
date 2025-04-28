@@ -89,3 +89,59 @@
     padding-top: 20px;
     width: 100%;
 }
+
+
+@media (max-width: 70em) {
+    .box-service {
+        flex-direction: column;
+        min-width: 200px;  // Statt fester Pixelzahl
+        max-width: 100%;
+        min-height: auto; // Automatische Höhe
+        max-height: none;
+        margin: 10px;     // Weniger Außenabstand
+    }
+
+    .button-box {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;              // Besserer Abstand zwischen Buttons
+        background-color: transparent; // Kein unnötiges Background-Color (optional)
+        padding: 10px 0;
+        margin: 0px;
+    }
+
+    .event-info {
+        background-color: white; // Hintergrundfarbe neutralisieren, optional
+        width: 100%;
+        height: auto;
+        padding: 10px;
+    }
+
+    .event-name {
+        width: 100%;
+        height: auto;
+        padding: 10px;
+    }
+
+    .countdown-container {
+        padding: 10px 0;
+    }
+
+    .icon-buttons {
+        display: flex;
+        flex-direction: row;    // Icons nebeneinander
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    img {
+        height: auto;
+        object-fit: cover;
+    }
+
+    .raised-buttons {
+        width: 100%; 
+        margin-top: 10px;
+    }
+}
