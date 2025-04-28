@@ -4,10 +4,12 @@
   <!-- Breadcrumb-Navigation oben auf der Seite -->
   <div class="breadcrumb">
     <p>
-      <!-- Link zur Startseite (verwendet Angular-Routing mit [routerLink]) -->
-      <a [routerLink]="['/event/:id']" class="breadcrumb-link">Home</a> /
-      <!-- Aktueller Navigationspunkt ohne Link, da User sich bereits hier befindet -->
-      Umfrage
+      <!-- Link zur Startseite, mit Angular-Routing -->
+      <a [routerLink]="['/start']" class="breadcrumb-link">Home</a> 
+      <a [routerLink]="['/start']" class="breadcrumb-link"> /Evenet Ansicht</a> /Umfrage
+
+      <!-- Aktuelle Position in der Navigation -->
+
     </p>
   </div>
 

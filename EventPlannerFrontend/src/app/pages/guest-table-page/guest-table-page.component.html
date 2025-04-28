@@ -2,14 +2,17 @@
 
     <div class="breadcrumb">
         <p>
-            <a [routerLink]="['/start']" class="breadcrumb-link">Home</a> /Gästeliste
+            <a [routerLink]="['/start']" class="breadcrumb-link">Home</a> 
+      <a [routerLink]="['/event/' +eventId]" class="breadcrumb-link"> /Evenet Ansicht</a> /Gästeliste
         </p>
     </div>
 
 
         
     <div class="title">
-        <button mat-icon-button [routerLink]="['/event/' + eventId]" class="btn-back">
+
+        <button mat-icon-button [routerLink]="['/event/' +eventId]" class="btn-back">
+
                 <mat-icon>arrow_back</mat-icon>
         </button>
         <h1>Userübersicht</h1>
@@ -21,12 +24,12 @@
             @if(isLoaded){
 
                 
-                <div>
+                <div class="table-container">
                     <div class="table-btn">
                         <button mat-fab extended (click)="openDialog()"><mat-icon>add</mat-icon> Gast hinzufügen</button>
                     </div>
 
-                    <div class="table-container">
+                    <div >
                         <app-guest-table-box [data]="guests"></app-guest-table-box>
                     </div>
                 </div>
@@ -35,15 +38,15 @@
               @else {
         
                 @if(isFailed) {
-                    
+            
                     <div class="loading-container">
-                        fehler
+                        <app-loading-failed-box></app-loading-failed-box>
                     </div>
                 }
         
                 @else { 
                     <div class="loading-container">
-                        loading
+                        <app-loading-box></app-loading-box>
                     </div>
                 }
         

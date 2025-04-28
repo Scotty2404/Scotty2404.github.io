@@ -2,15 +2,19 @@ import { Component, OnInit } from '@angular/core';
 import { NgFor } from '@angular/common';
 import { MatButton, MatButtonModule } from '@angular/material/button';
 import { EventDetailBoxComponent } from '../../components/event-detail-box/event-detail-box.component';
+import { LoadingBoxComponent } from '../../components/loading-box/loading-box.component';
+import { LoadingFailedBoxComponent } from '../../components/loading-failed-box/loading-failed-box.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCard } from '@angular/material/card';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-event-page',
-  imports: [ NgFor, MatButton, MatButtonModule, RouterLink, EventDetailBoxComponent, MatCheckboxModule],
-
+  imports: [ NgFor, MatButton, MatButtonModule, EventDetailBoxComponent, RouterLink, MatCheckboxModule, LoadingBoxComponent, LoadingFailedBoxComponent, MatIconModule, MatCard, CommonModule],
   templateUrl: './event-page.component.html',
   styleUrl: './event-page.component.scss'
 })

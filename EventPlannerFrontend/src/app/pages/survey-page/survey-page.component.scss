@@ -26,7 +26,13 @@
   }
 }
 
-// Stil für den Text innerhalb des Breadcrumbs
+.breadcrumb {
+  min-width: 500px;
+  width: 100%;
+
+}
+
+
 .breadcrumb p {
   font-size: 1.1em; // Schriftgröße leicht vergrößert
   margin: 10px 0; // Vertikaler Abstand
@@ -34,9 +40,10 @@
 
 // Container für den Seitentitel (Zurück-Button + Titeltext)
 .title {
-  color: $secondarycolor; // Farbe für Text und Icons
-  display: flex; // Flexbox zur horizontalen Ausrichtung
-  gap: 10px; // Abstand zwischen Button und Überschrift
+  color: $secondarycolor;
+  display: flex;
+  gap: 10px;
+  min-width: 500px;
 }
 
 // Spezifisches Styling der h1-Überschrift innerhalb des Titel-Containers

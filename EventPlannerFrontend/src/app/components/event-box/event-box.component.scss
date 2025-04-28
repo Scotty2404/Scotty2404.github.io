@@ -9,7 +9,17 @@
     border-radius: 5px;
     box-shadow: 0px 3px 10px silver;
     margin: 20px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        border-color: #888;
+      }
 }
+
+
 
 .event-name {
     margin: 0px;
@@ -48,10 +58,4 @@
     width: 70%;
     margin-left: 0px;
 }
-
-
-
-
-
-
 

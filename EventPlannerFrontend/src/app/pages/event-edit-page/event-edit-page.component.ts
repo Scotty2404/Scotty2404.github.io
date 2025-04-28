@@ -18,6 +18,8 @@ import { MatRadioButton } from '@angular/material/radio';
 import { MatIcon } from '@angular/material/icon';
 import { SurveyQuestionBoxComponent } from '../../components/survey-question-box/survey-question-box.component';
 import { RouterLink } from '@angular/router';
+import { LoadingBoxComponent } from '../../components/loading-box/loading-box.component';
+import { LoadingFailedBoxComponent } from '../../components/loading-failed-box/loading-failed-box.component';
 
 
 @Component({
@@ -35,7 +37,9 @@ import { RouterLink } from '@angular/router';
     MatRadioButton,
     MatIcon,
     SurveyQuestionBoxComponent,
-    RouterLink
+    RouterLink,
+    LoadingBoxComponent,
+    LoadingFailedBoxComponent
   ],
   templateUrl: './event-edit-page.component.html',
   styleUrl: './event-edit-page.component.scss'
@@ -56,6 +60,7 @@ export class EventEditPageComponent implements OnInit {
   isFailed = false;
 
   constructor(private fb: FormBuilder, private apiService: ApiService, private route: ActivatedRoute, private router: Router) {}
+
 
   ngOnInit(): void {
     this.loadEvent();
@@ -130,7 +135,7 @@ export class EventEditPageComponent implements OnInit {
       postalCode: [this.sampleEvent.postalCode, Validators.required],
       description: [this.sampleEvent.description, Validators.required],
       image: [this.sampleEvent.image],
-      guestCount: [this.sampleEvent.guestCount],
+      guestCount: [this.sampleEvent.guestCount, Validators.required],
     });
 
     // Nur setzen, wenn das Bild nicht in den Standardbildern ist

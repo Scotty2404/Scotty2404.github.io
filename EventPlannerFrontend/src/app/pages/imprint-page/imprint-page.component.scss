@@ -9,7 +9,9 @@
   .breadcrumb {
     display: flex;
     width: 100%;
+  min-width: 500px;
     font-family: "Roboto", normal;
+
 }
 
 
@@ -35,6 +37,8 @@
     display: flex;
     gap: 10px;
     width: 100%;
+  min-width: 500px;
+
 }
 
 .title h1 {
@@ -75,7 +79,7 @@
   
 
   
-  mat-icon {
+  .icon {
     vertical-align: middle;
     margin-right: 5px;
     color: #1976d2; // Blaue Farbe für Icons

@@ -1,4 +1,4 @@
-<body class="body">
+<body>
     <div class="breadcrumb">
         <p>
             <a [routerLink]="['/start']" class="breadcrumb-link">Home </a>
@@ -109,8 +109,8 @@
                           
                                 <!-- Gästeanzahl (optional) -->
                                 <mat-form-field appearance="outline">
-                                  <mat-label>Gästeanzahl (optional)</mat-label>
-                                  <input matInput type="number" formControlName="guestCount" />
+                                  <mat-label>Gästeanzahl</mat-label>
+                                  <input matInput type="text" formControlName="guestCount" />
                                 </mat-form-field>
                         
                                 
@@ -129,16 +129,16 @@
             @else {
             
                 @if(isFailed) {
-                        
+            
                     <div class="loading-container">
-                        fehler
+                        <app-loading-failed-box></app-loading-failed-box>
                     </div>
                 }
-            
+        
                 @else { 
-                        <div class="loading-container">
-                            loading
-                        </div>
+                    <div class="loading-container">
+                        <app-loading-box></app-loading-box>
+                    </div>
                 }
             
             }

@@ -1,15 +1,41 @@
-<h2 mat-dialog-title>Kontostellungen</h2>
+<h2 mat-dialog-title>Kontoeinstellungen</h2>
+
 <mat-dialog-content class="settings-content">
   <form>
     <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Neue E-Mail</mat-label>
-      <input matInput type="email">
+      <mat-label>Was möchtest du ändern?</mat-label>
+      <mat-select [(ngModel)]="changeOption" name="changeOption">
+        <mat-option value="email">E-Mail ändern</mat-option>
+        <mat-option value="password">Passwort ändern</mat-option>
+        <mat-option value="both">Beides ändern</mat-option>
+      </mat-select>
     </mat-form-field>
 
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Neues Passwort</mat-label>
-      <input matInput type="password">
-    </mat-form-field>
+    <!-- Nur bei E-Mail-Änderung oder Beides -->
+    <div *ngIf="changeOption === 'email' || changeOption === 'both'">
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Alte E-Mail</mat-label>
+        <input matInput type="email">
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Neue E-Mail</mat-label>
+        <input matInput type="email">
+      </mat-form-field>
+    </div>
+
+    <!-- Nur bei Passwort-Änderung oder Beides -->
+    <div *ngIf="changeOption === 'password' || changeOption === 'both'">
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Altes Passwort</mat-label>
+        <input matInput type="password">
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Neues Passwort</mat-label>
+        <input matInput type="password">
+      </mat-form-field>
+    </div>
   </form>
 </mat-dialog-content>
 

@@ -5,11 +5,12 @@ import { GuestTableDialogComponent } from '../../components/guest-table-dialog/g
 import { MatButtonModule } from '@angular/material/button';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { LoadingBoxComponent } from '../../components/loading-box/loading-box.component';
+import { LoadingFailedBoxComponent } from '../../components/loading-failed-box/loading-failed-box.component';
 import { ApiService } from '../../services/api.service';
-
 @Component({
   selector: 'app-guest-table-page',
-  imports: [GuestTableBoxComponent, GuestTableDialogComponent, MatButtonModule, RouterLink,MatIconModule],
+  imports: [GuestTableBoxComponent, GuestTableDialogComponent, MatButtonModule, RouterLink,MatIconModule, LoadingBoxComponent, LoadingFailedBoxComponent],
   templateUrl: './guest-table-page.component.html',
   styleUrl: './guest-table-page.component.scss'
 })

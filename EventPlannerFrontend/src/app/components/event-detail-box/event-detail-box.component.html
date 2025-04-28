@@ -3,11 +3,6 @@
 
     <div class="event-name">
 
-        <div>
-
-            <h3>{{ event.title }}</h3>
-
-        </div>
 
         <div>
 
@@ -25,6 +20,7 @@
         <div>
 
             <h3 class="title-main"> {{ event.title }} </h3>
+            <hr>
 
             <div class="option-status">
                 <mat-radio-group aria-label="Wähle den Status">
@@ -32,8 +28,6 @@
                   <mat-radio-button value="inaktiv">Inaktiv</mat-radio-button>
                 </mat-radio-group>
             </div>
-
-            <p>{{ event.description }}</p>
 
         </div>
 
@@ -49,21 +43,18 @@
             <button mat-flat-button [routerLink]="['/survey']">zur Umfrage Übersicht</button>
             <button mat-flat-button [routerLink]="['/to-do-list']">zur To-Do-Liste</button>
 
-            <div>
 
-                <button mat-mini-fab aria-label="Example icon button with a menu icon" style="margin-right: 20px;">
 
-                    <mat-icon [routerLink]="'/eventedit/' + event.event_id">edit</mat-icon>
+
+            <div class="icon-buttons">
+                <button [routerLink]="'/eventedit/' + event.event_id" mat-icon-button aria-label="Example icon button with a menu icon" style="margin-right: 20px;">
+                    <mat-icon>edit</mat-icon>
 
                 </button>
 
-                <button mat-mini-fab aria-label="Example icon button with a menu icon" (click)="deleteEvent(event.event_id)">
-
-
+                <button mat-icon-button aria-label="Example icon button with a menu icon" (click)="deleteEvent(event.event_id)">
                     <mat-icon>delete</mat-icon>
-
                 </button>
-
             </div>
         </div>
     </div>

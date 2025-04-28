@@ -124,7 +124,6 @@ export class QrEventPageComponent implements OnInit{
     });
   }
 
-
   submitResponse() {
     const isYes = this.attending === 'yes';
     const message = isYes ? 'Du hast erfolgreich zugesagt!' : 'Deine Absage wurde erfolgreich zugeschickt.';

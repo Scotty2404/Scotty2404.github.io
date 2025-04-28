@@ -10,9 +10,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCalendar } from '@angular/material/datepicker'; 
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { ApiService } from '../../services/api.service';
-import { LoadingBoxComponent } from '../../components/loading-box/loading-box.component';
 import { LoadingFailedBoxComponent } from '../../components/loading-failed-box/loading-failed-box.component';
+import { LoadingBoxComponent } from '../../components/loading-box/loading-box.component';
+
+import { ApiService } from '../../services/api.service';
+
 
 interface EventItem {
   title: string;
@@ -45,6 +47,8 @@ export class CalendarPageComponent implements OnInit {
   isLoaded = false;
   isFailed = false;
   selectedDate = new Date();
+  isLoaded = true;
+  isFailed = false;
 
   events: any[] = [];
 
