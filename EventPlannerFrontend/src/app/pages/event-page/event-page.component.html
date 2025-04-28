@@ -73,7 +73,7 @@
                 </div>
                 <div class="maps-standort">
                     <a [href]="event.google_maps_link">Route auf der Karte ansehen</a>
-                    <iframe [src]="googleMapsUrl" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    <iframe ngIf="event.google_maps_link" [src]="googleMapsUrl" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </div>
         </div>
     </div>
