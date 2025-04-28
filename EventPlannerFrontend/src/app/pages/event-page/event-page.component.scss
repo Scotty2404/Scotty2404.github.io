@@ -54,6 +54,10 @@
     min-width: 200px;
     margin-bottom: 200px;
   }
+
+  .event-box {
+    min-width: 200px;
+  }
   
 
 
@@ -130,6 +134,7 @@
     flex-direction: column;
     padding: 20px;
     width: 100%;
+    min-width: 200px;
 }
 
 .maps-standort iframe{
