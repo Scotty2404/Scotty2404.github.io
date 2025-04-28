@@ -18,6 +18,7 @@ interface EventItem {
   title: string;
   date: Date;
   owner: 1 | 0;
+  confirmation: 1| 0;
 }
 
 @Component({

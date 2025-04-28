@@ -73,7 +73,7 @@ router.post('/create', authMiddleware, upload.single('image'), async (req, res) 
 
 
         // parse venue to json
-        venue = JSON.parse(req.body.venue);
+        if(venue) venue = JSON.parse(req.body.venue);
 
         // is image file or path
         if (req.file) {
