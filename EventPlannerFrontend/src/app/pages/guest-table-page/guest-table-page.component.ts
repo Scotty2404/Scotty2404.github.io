@@ -35,6 +35,8 @@ export class GuestTablePageComponent implements OnInit{
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         const transformResult = this.transformResult(result);
+        console.log(result);
+        console.log(transformResult);
         this.apiService.addGuestToEvent(transformResult, this.eventId).subscribe({
           next: (res) => {
             console.log('Guest added: ', res);

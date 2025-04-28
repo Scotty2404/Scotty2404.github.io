@@ -8,6 +8,8 @@ import { CommonModule } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCalendar } from '@angular/material/datepicker'; 
+import { RouterLink } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
 
 interface EventItem {
   title: string;
@@ -27,6 +29,8 @@ interface EventItem {
     MatListModule,
     MatIconModule,
     MatCalendar,
+    RouterLink,
+    MatButtonModule
     
   ],
   templateUrl: './calendar-page.component.html',

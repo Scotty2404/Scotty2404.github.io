@@ -18,6 +18,7 @@ import { MatRadioButton } from '@angular/material/radio';
 import { MatIcon } from '@angular/material/icon';
 import { SurveyQuestionBoxComponent } from '../../components/survey-question-box/survey-question-box.component';
 import { response } from 'express';
+import { RouterLink } from '@angular/router';
 
 
 
@@ -36,7 +37,8 @@ import { response } from 'express';
     ReactiveFormsModule,
     MatRadioButton,
     MatIcon,
-    SurveyQuestionBoxComponent
+    SurveyQuestionBoxComponent,
+    RouterLink
   ],
   templateUrl: './add-event-page.component.html',
   styleUrl: './add-event-page.component.scss'
@@ -45,12 +47,16 @@ export class AddEventPageComponent {
   eventForm: FormGroup;
   selectedFile: File | null = null;
   previewImage: string | null = null;
+  isLoaded = true;
+  isFailed = false;
 
   standardImages = [
     '/auswahl/hochzeit.jpg',
-    '/auswahl/geburtstag.avif',
-    '/auswahl/jugendweihe.jpg',
+    '/public/auswahl/geburtstag.avif',
+    '/public/auswahl/jugendweihe.jpg',
   ];
+
+
 
   constructor(private fb: FormBuilder, private apiService: ApiService, private router: Router) {
     this.eventForm = this.fb.group({
@@ -108,13 +114,46 @@ export class AddEventPageComponent {
 
   // Neue Frage zur Umfrage hinzufügen
   addQuestion() {
-    this.survey.push(
-      this.fb.group({
-        question: ['', Validators.required],
-        answerType: ['einzelauswahl', Validators.required], // <== NEU: default ist "einzelauswahl"
-        answers: this.fb.array([this.fb.control('', Validators.required)]),
-      })
-    );
+    const questionGroup = this.fb.group({
+      question: ['', Validators.required],
+      answerType: ['multiple', Validators.required],
+      answers: this.fb.array([
+        this.fb.control('', Validators.required),
+        this.fb.control('', Validators.required)
+      ]),
+      
+      minValue: new FormControl(null),
+      maxValue: new FormControl(null),
+    });
+  
+    questionGroup.get('answerType')?.valueChanges.subscribe((type) => {
+      const min = questionGroup.get('minValue');
+      const max = questionGroup.get('maxValue');
+      const answers = questionGroup.get('answers') as FormArray;
+  
+      if (type === 'scale') {
+        min?.setValidators([Validators.required]);
+        max?.setValidators([Validators.required]);
+        answers.clear(); // Keine Antworten bei Skala
+      } else if (type === 'multiple') {
+        min?.clearValidators();
+        max?.clearValidators();
+        if (answers.length === 0) {
+          answers.push(this.fb.control('', Validators.required));
+          answers.push(this.fb.control('', Validators.required));
+        }
+        
+      } else if (type === 'text') {
+        min?.clearValidators();
+        max?.clearValidators();
+        answers.clear(); // Keine Antworten bei Freitext
+      }
+  
+      min?.updateValueAndValidity();
+      max?.updateValueAndValidity();
+    });
+  
+    this.survey.push(questionGroup);
   }
   
 
@@ -174,18 +213,21 @@ export class AddEventPageComponent {
     };
 
     //Image setzten !Achtung custom images werden noch nicht berücksichtigt!
-    const imageURL = formData.image;
+    let image;
+    this.selectedFile ? image = this.selectedFile : image = formData.image;
 
-    return {
-      title: formData.title,
-      description: formData.description,
-      venue: eventVenue,
-      startdate: startdate,
-      enddate: enddate,
-      max_guests: formData.guestCount,
-      image: imageURL,
-      survey_id: surveyId,
-    }
+    const resultData = new FormData();
+
+    resultData.append('title', formData.title);
+    resultData.append('description', formData.description);
+    resultData.append('venue', JSON.stringify(eventVenue));
+    resultData.append('startdate', startdate!);
+    resultData.append('enddate', enddate!);
+    resultData.append('max_guests', formData.guestCount.toString());
+    resultData.append('image', image);
+    resultData.append('survey_id', surveyId.toString());
+
+    return resultData;
   }
 
   private transfromSurveyData() {
@@ -226,10 +268,31 @@ export class AddEventPageComponent {
   }
 
   onSubmit() {
-    if (this.eventForm.valid) {
-      this.saveEvent();
-    }
+    const questionsValid = this.surveyFormGroups.every((q) => {
+      const type = q.get('answerType')?.value;
+      const answers = q.get('answers') as FormArray;
+    
+      if (type === 'text') {
+        return true; // Freitextfrage ist immer gültig, keine Antworten nötig
+      }
+    
+      if (type === 'scale') {
+        const min = q.get('minValue')?.value;
+        const max = q.get('maxValue')?.value;
+        return min !== null && max !== null;
+      }
+    
+      return answers.length > 0 && answers.controls.every(a => a.value && a.value.trim() !== '');
+    });
+    
+
+  if (this.eventForm.valid && questionsValid) {
+    this.saveEvent();
+  } else {
+    console.warn('Formular ungültig oder Fragen nicht korrekt ausgefüllt');
   }
+}
+
 
   get surveyFormGroups(): FormGroup[] {
   return this.survey.controls as FormGroup[];

@@ -5,6 +5,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
+import { QrDialogComponent } from '../../components/qr-dialog/qr-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 
@@ -17,21 +19,23 @@ import { ApiService } from '../../services/api.service';
     MatButtonModule,
     CommonModule,
     MatCardModule,
-    RouterLink
+    RouterLink,
+    
+
   ],
   templateUrl: './qr-event-page.component.html',
   styleUrl: './qr-event-page.component.scss'
 })
 export class QrEventPageComponent implements OnInit{
   attending: 'yes' | 'no' | null = null;
-  surveyAvailable = true; // ← vom Backend setzen, falls es eine Umfrage gibt
+  surveyAvailable = true;
   responseSubmitted = false;
   responseMessage = '';
   eventId: any;
   token: any;
-  event: any
+  event: any;
 
-  constructor(private apiService: ApiService, private route: ActivatedRoute) {}
+  constructor(private apiService: ApiService, private route: ActivatedRoute, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.eventId = this.route.snapshot.paramMap.get('id');
@@ -120,7 +124,11 @@ export class QrEventPageComponent implements OnInit{
     });
   }
 
+
   submitResponse() {
+    const isYes = this.attending === 'yes';
+    const message = isYes ? 'Du hast erfolgreich zugesagt!' : 'Deine Absage wurde erfolgreich zugeschickt.';
+  
     if (this.attending === 'yes') {
       if(this.guest.password === null){
         this.submitWithoutPassword(this.guest, 'extra', 1);
@@ -131,10 +139,19 @@ export class QrEventPageComponent implements OnInit{
       }
       this.responseMessage = 'Du hast erfolgreich zugesagt!';
     } else if (this.attending === 'no') {
+      this.submitWithPassword(this.guest, 'user', 0);
       console.log('Absage');
       this.responseMessage = 'Deine Absage wurde gespeichert.';
     }
-    alert('Antwort wurde übermittelt. Danke!');
-    this.responseSubmitted = true;
+
+    this.dialog.open(QrDialogComponent, {
+      data: {
+        title: isYes ? '🎉 Zusage gespeichert' : '❌ Absage gespeichert',
+        message: message,
+        attending: this.attending,
+        surveyAvailable: this.surveyAvailable
+      }
+    });
   }
+  
 }
