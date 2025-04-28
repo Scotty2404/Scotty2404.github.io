@@ -1,17 +1,8 @@
 @import '../../styles/colors.scss';
-
-.body {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  
   .breadcrumb {
       display: flex;
       width: 100%;
-  min-width: 500px;
-
+      min-width: 200px;
   }
   
   
@@ -37,8 +28,8 @@
       display: flex;
       gap: 10px;
       width: 100%;
-  min-width: 500px;
-
+    min-width: 500px;
+  
   }
   
   .title h1 {
@@ -47,15 +38,12 @@
   }
   
   
-  .title h1 {
-      font-weight: normal;
-      margin: 0px;
-  }
+  
   
   .content-container {
       display: flex;
       margin-top: 50px;
-      margin-bottom: 50px;
+      margin-left: 0px;
       width: 100%;
   }
   
@@ -65,6 +53,7 @@
     width: 100%;
     margin-bottom: 200px;
   }
+  
 
 
 .loading-container {
@@ -146,28 +135,10 @@
     margin-right: 20px;
 }
 
-.wunschliste, .to-do-liste{
-    position: relative;
-    margin: 0px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    text-align: left;
-    padding: 20px;
-    width: 100%;
-}
 
 
 
 
-.btn {
-    background-color: $primarycolor;
-    color: white !important;
-    font-weight: lighter;
-    font-size: medium;
-    padding-left: 10px;
-    padding-right: 10px;
-}
 
 
 

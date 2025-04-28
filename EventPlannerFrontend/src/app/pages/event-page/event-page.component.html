@@ -1,4 +1,4 @@
-<body class="body">
+<body>
     <div class="breadcrumb">
         <p>
             <a [routerLink]="['/start']" class="breadcrumb-link">Home </a> /Event ansicht
@@ -20,9 +20,13 @@
     @if(isLoaded){
 
         <div class="content">
+
+            <div class="event-box">
             
                 <app-event-detail-box>
                 </app-event-detail-box>
+
+            </div>
 
             <div>                                
                 <div class="event-details-container">
