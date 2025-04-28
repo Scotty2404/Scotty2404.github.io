@@ -1,5 +1,4 @@
 <body>
-  @if(isLoaded){
   <div class="breadcrumb">
     <p>
         <a [routerLink]="['/start']" class="breadcrumb-link">Home</a> /Impressum
@@ -25,7 +24,7 @@
         <div *ngIf="getEventsForSelectedDate().length === 0">Keine Events.</div>
         <div *ngFor="let event of getEventsForSelectedDate()" 
              class="event-item"
-             [style.borderLeftColor]="getColor(event.type)">
+             [style.borderLeftColor]="getColor(event.owner)">
           {{ event.title }}
           <span class="event-type">({{ event.owner === 1 ? 'Mein Event' : event.confirmation === 1 ? 'zugesagt' : 'abgesagt' }})</span>
         </div>

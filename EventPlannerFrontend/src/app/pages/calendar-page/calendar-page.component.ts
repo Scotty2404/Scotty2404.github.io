@@ -47,9 +47,6 @@ export class CalendarPageComponent implements OnInit {
   isLoaded = false;
   isFailed = false;
   selectedDate = new Date();
-  isLoaded = true;
-  isFailed = false;
-
   events: any[] = [];
 
   constructor(private apiService: ApiService) {}
