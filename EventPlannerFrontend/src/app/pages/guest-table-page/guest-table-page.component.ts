@@ -15,8 +15,14 @@ import { ApiService } from '../../services/api.service';
   styleUrl: './guest-table-page.component.scss'
 })
 export class GuestTablePageComponent implements OnInit{
-
-  guests: any[] = [];
+  guests: any = [{
+    guest_firstname: 'Noch keine Gäste im Event',
+    guest_lastname: '',
+    email: '',
+    confirmation: 0,
+    owner: 0,
+    guest_info: '',
+  }];
   eventId: any;
   isLoaded = false;
   isFailed = false;
@@ -36,6 +42,8 @@ export class GuestTablePageComponent implements OnInit{
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         const transformResult = this.transformResult(result);
+        console.log(result);
+        console.log(transformResult);
         this.apiService.addGuestToEvent(transformResult, this.eventId).subscribe({
           next: (res) => {
             console.log('Guest added: ', res);
@@ -52,7 +60,9 @@ export class GuestTablePageComponent implements OnInit{
   loadGuests(){
     this.apiService.getGuestsForEvent(this.eventId!).subscribe((data) => {
       console.log(data);
-      this.guests = data;
+      if(data.length !== 0) {
+        this.guests = data;
+      }
       this.isLoaded = true;
     }, (error) => {
       console.error('Error fetching guests for Event', error);

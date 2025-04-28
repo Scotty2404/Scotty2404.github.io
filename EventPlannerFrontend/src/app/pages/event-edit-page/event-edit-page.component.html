@@ -7,7 +7,7 @@
     </div>
     
     <div class="title">
-            <button mat-icon-button [routerLink]="['/start']" class="btn-back">
+            <button mat-icon-button [routerLink]="['/event/' + event.event_id]" class="btn-back">
                     <mat-icon>arrow_back</mat-icon>
             </button>
             <h1>Bearbeite dein Event</h1>
@@ -101,7 +101,7 @@
                           
                                 <!-- Bild hochladen -->
                                 <div class="file-upload-container">
-                                    <button mat-raised-button color="accent" (click)="fileInput.click()">
+                                    <button mat-raised-button type="button" color="accent" (click)="fileInput.click()">
                                         <mat-icon>upload</mat-icon> Bild hochladen
                                     </button>
                                     <input #fileInput type="file" hidden (change)="onFileSelected($event)" accept="image/*" />

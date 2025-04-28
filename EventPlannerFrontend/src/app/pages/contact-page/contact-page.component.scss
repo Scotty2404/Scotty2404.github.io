@@ -1,27 +1,172 @@
-.scroll-container {
-  max-height: 75vh;
-  overflow-y: auto;
-  padding: 20px;
+// Farbvariablen importieren
+@import '../../styles/colors.scss';
+
+// ---------------- Basislayout der Seite ----------------
+.page-container {
+  display: flex; // Flexbox-Layout
+  flex-direction: column; // Spaltenrichtung
+  justify-content: flex-start; // Inhalt oben anfangen
+  min-height: calc(100vh - 150px); // Mindesthöhe abzüglich fixer Elemente wie Header/Footer
+  background-image: url('/MX_hintergrund.svg'); // Hintergrundbild
+  background-repeat: no-repeat; // Kein Kacheln
+  background-size: 1200px; // Feste Größe
+  background-position: center; // Zentriert
+  overflow: auto; // Scrollbar bei Bedarf
 }
 
-.contact-card, .contact-form-card {
+// ---------------- Breadcrumb Link-Styling ----------------
+.breadcrumb-link {
+  color: $secondarycolor; // Verwendung der sekundären Farbe aus SCSS Variablen
+  text-decoration: none; // Keine Unterstreichung standardmäßig
+  transition: all 0.3s ease; // Sanfte Transition bei Hover
+
+  &:hover {
+    text-decoration: underline 1.5px; // Unterstrichen beim Hover
+    cursor: pointer; // Zeiger-Cursor
+  }
+}
+
+// ---------------- Breadcrumb Text-Styling ----------------
+.breadcrumb p {
+  font-size: 1.1em; // Etwas größere Schrift
+  margin: 10px 0; // Abstand oben und unten
+  font-family: "Roboto", normal;
+}
+
+// ---------------- Button für "Zurück" ----------------
+.btn-back {
+  width: auto; // Automatische Breite je nach Inhalt
+}
+
+// ---------------- Titelbereich der Seite ----------------
+.title {
+  color: $secondarycolor; // Wieder Sekundärfarbe
+  display: flex; // Flexbox
+  gap: 10px; // Abstand zwischen Elementen
+  align-items: baseline; // Elemente am Textgrund ausrichten
+}
+
+// Styling für die Überschrift selbst
+.title h1 {
+  font-weight: normal; // Normale Schriftstärke (nicht fett)
+  margin: 0px; // Kein Außenabstand
+  font-family: "Roboto", normal;
+}
+
+// ---------------- Inhaltlicher Container ----------------
+.content-container {
+  display: flex; // Flexbox
+  margin-top: 50px;
+  margin-bottom: 50px;
   width: 100%;
-  max-width: 600px;
-  margin: 20px auto;
-  padding: 20px;
 }
 
+// ---------------- Editier-Container ----------------
+.edit-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 200px; // Großer Abstand unten
+}
+
+// ---------------- Styling der Material Card ----------------
+.mat-card {
+  padding: 20px; // Innenabstand
+  background-color: white; // Weißer Hintergrund
+  border-radius: 12px; // Abgerundete Ecken
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); // Leichter Schatten
+  min-width: fit-content; // Minimale Breite an Inhalt angepasst
+}
+
+// ---------------- Bereich für das Kontaktformular ----------------
+
+// Card für Kontaktformular
+.contact-card,
+.contact-form-card {
+  width: 100%;
+  max-width: 600px; // Begrenzung auf max. 600px
+  margin: 20px auto; // Vertikaler Abstand, zentriert
+  padding: 20px; // Innenabstand
+  background-color: white;
+}
+
+// Titel der Card
 .card-title {
-  margin-bottom: 20px;
+  margin-bottom: 10px; // Abstand nach unten
+  font-weight: bold; // Fett
+  color: #324a9a; // Dunkelblau
 }
 
+// Material Formularelemente
 mat-form-field {
-  width: 100%;
-  margin-bottom: 16px;
+  width: 100%; // Volle Breite
+  margin-bottom: 16px; // Abstand zwischen den Feldern
 }
 
+// Standard-Button
 button {
   margin-top: 20px;
-  width: 100%;
-  display: block;
+  width: 100%; // Volle Breite
+  display: block; // Blockelement
+}
+
+// Fehlermeldung bei Formularproblemen
+.error-message {
+  color: red; // Rote Schrift
+  margin-top: 20px; // Abstand nach oben
+  font-weight: bold; // Fett für bessere Sichtbarkeit
+}
+
+// Material Liste
+mat-list {
+  margin-top: 0px;
+  padding-top: 0px;
+  padding-bottom: 0px; // Saubere Kanten bei Listen
+}
+
+// ---------------- Responsives Verhalten ----------------
+
+// Große Tablets
+@media (max-width: 1200px) {
+  .contact-card,
+  .contact-form-card {
+    max-width: 90%; // Breiter auf großen Tablets
+  }
+
+  .card-title {
+    font-size: 1.5em; // Schrift etwas kleiner
+  }
+}
+
+// Normale Tablets
+@media (max-width: 900px) {
+  .contact-card,
+  .contact-form-card {
+    max-width: 95%; // Fast volle Breite
+  }
+
+  .card-title {
+    font-size: 1.3em; // Noch kleinere Schrift
+  }
+
+  button {
+    margin-top: 15px; // Etwas weniger Abstand
+  }
+}
+
+// Handys
+@media (max-width: 600px) {
+  .contact-card,
+  .contact-form-card {
+    max-width: 100%; // Volle Breite
+    padding: 10px; // Kleineres Padding
+  }
+
+  .card-title {
+    font-size: 1.2em; // Kleinste Schriftgröße
+  }
+
+  button {
+    margin-top: 10px; // Minimaler Abstand
+  }
 }

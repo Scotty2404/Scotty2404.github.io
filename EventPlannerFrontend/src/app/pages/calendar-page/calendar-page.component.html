@@ -1,17 +1,17 @@
 <body>
-<div class="breadcrumb">
-  <p>
-      <a [routerLink]="['/start']" class="breadcrumb-link">Home</a> /Impressum
-  </p>
-</div>
+  @if(isLoaded){
+  <div class="breadcrumb">
+    <p>
+        <a [routerLink]="['/start']" class="breadcrumb-link">Home</a> /Impressum
+    </p>
+  </div>
 
-<div class="title">
-      <button mat-icon-button [routerLink]="['/start']" class="btn-back">
-              <mat-icon>arrow_back</mat-icon>
-      </button>
-      <h1>Impressum</h1>
-</div>
-
+  <div class="title">
+        <button mat-icon-button [routerLink]="['/start']" class="btn-back">
+                <mat-icon>arrow_back</mat-icon>
+        </button>
+        <h1>Impressum</h1>
+  </div>
 
 <div class="content-container">
 
@@ -27,11 +27,13 @@
              class="event-item"
              [style.borderLeftColor]="getColor(event.type)">
           {{ event.title }}
-          <span class="event-type">({{ event.type === 'zugesagt' ? 'Zugesagt' : 'Selbst erstellt' }})</span>
+          <span class="event-type">({{ event.owner === 1 ? 'Mein Event' : event.confirmation === 1 ? 'zugesagt' : 'abgesagt' }})</span>
         </div>
+
       </div>
     </mat-card>
     </div>
+
     }
 
   @else {
@@ -40,6 +42,7 @@
             
       <div class="loading-container">
           <app-loading-failed-box></app-loading-failed-box>
+
       </div>
   }
 
@@ -53,6 +56,5 @@
 
 
 
-</div>
-</body>
+
   

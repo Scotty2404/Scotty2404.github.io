@@ -1,26 +1,28 @@
+// Farbvariablen aus dem globalen Stylesheet importieren
 @import '../../styles/colors.scss';
 
-
+// Haupt-Container der Seite
 .page-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  min-height: calc(100vh - 150px);
-  background-image: url('/MX_hintergrund.svg');
-  background-repeat: no-repeat;
-  background-size: 1200px;
-  background-position: center;
-  overflow: auto;
+  display: flex; // Flexbox-Layout für vertikale Anordnung
+  flex-direction: column; // Stapelt Kind-Elemente untereinander
+  justify-content: flex-start; // Inhalt beginnt oben
+  min-height: calc(100vh - 150px); // Mindesthöhe (volle Bildschirmhöhe minus 150px, vermutlich wegen Footer/Header)
+  background-image: url('/MX_hintergrund.svg'); // Hintergrundbild
+  background-repeat: no-repeat; // Bild nicht wiederholen
+  background-size: 1200px; // Hintergrund auf feste Breite skalieren
+  background-position: center; // Bild zentrieren
+  overflow: auto; // Scrollbar anzeigen, wenn nötig
 }
 
+// Stil für die Links im Breadcrumb
 .breadcrumb-link {
-  color: $secondarycolor;
-  text-decoration: none;
-  transition: all 0.3s ease;
+  color: $secondarycolor; // Farbe aus SCSS-Variablen
+  text-decoration: none; // Keine Unterstreichung standardmäßig
+  transition: all 0.3s ease; // Sanfte Übergänge bei Hover
 
   &:hover {
-    text-decoration: underline 1.5px;
-    cursor: pointer;
+    text-decoration: underline 1.5px; // Unterstrich beim Überfahren mit Maus
+    cursor: pointer; // Cursor wird zur Hand
   }
 }
 
@@ -30,42 +32,97 @@
 
 }
 
+
 .breadcrumb p {
-  font-size: 1.1em;
-  margin: 10px 0;
+  font-size: 1.1em; // Schriftgröße leicht vergrößert
+  margin: 10px 0; // Vertikaler Abstand
 }
 
+// Container für den Seitentitel (Zurück-Button + Titeltext)
 .title {
   color: $secondarycolor;
   display: flex;
   gap: 10px;
   min-width: 500px;
-
 }
 
+// Spezifisches Styling der h1-Überschrift innerhalb des Titel-Containers
 .title h1 {
-  font-weight: normal;
-  margin: 0;
+  font-weight: normal; // Kein fetter Text
+  margin: 0; // Kein äußerer Abstand
 }
 
+// Container für den Hauptinhalt
 .content-container {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 150px;
-  gap: 10px;
+  display: flex; // Flexbox für Inhalte
+  flex-direction: column; // Inhalte untereinander anordnen
+  margin-bottom: 150px; // Großer Abstand unten (vermutlich für Footer-Freiraum)
+  gap: 10px; // Abstand zwischen einzelnen Blöcken
 }
 
+// Container für den "Umfrage hinzufügen"-Button
 .table-btn {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-  margin-top: 20px;
+  display: flex; // Flexbox für zentrierte Ausrichtung
+  justify-content: center; // Button zentrieren
+  margin-bottom: 20px; // Abstand unten
+  margin-top: 20px; // Abstand oben
 }
 
+// Container für die Tabellen/Accordion-Elemente
 .table-container {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 0px;
+  width: 100%; // Volle Breite ausnutzen
+  display: flex; // Flexbox
+  flex-direction: column; // Elemente untereinander
+  gap: 10px; // Abstand zwischen Panels
+  padding: 0px; // Kein Innenabstand
+}
+
+/* ===== Responsive Design: Anpassungen für verschiedene Bildschirmgrößen ===== */
+
+// Für Tablets und mittelgroße Bildschirme (Breite <= 900px)
+@media (max-width: 900px) {
+  
+  // Titel kleiner darstellen
+  .title h1 {
+    font-size: 1.5em; // Kleinere Schriftgröße
+  }
+
+  // Breadcrumb kleiner darstellen
+  .breadcrumb p {
+    font-size: 0.9em; // Kleinere Schriftgröße
+  }
+
+  // Button-Bereich schmaler gestalten
+  .table-btn {
+    margin: 10px 0; // Weniger Abstand
+  }
+
+  // Contentbereich etwas kompakter gestalten
+  .content-container {
+    margin-bottom: 100px; // Weniger Abstand unten
+  }
+}
+
+// Für Smartphones und sehr kleine Bildschirme (Breite <= 600px)
+@media (max-width: 600px) {
+  
+  // Titel noch kleiner darstellen
+  .title h1 {
+    font-size: 1.2em; // Noch kleinere Schriftgröße
+  }
+
+  // Breadcrumb-Text noch kleiner darstellen
+  .breadcrumb p {
+    font-size: 0.8em; // Noch kleinere Schriftgröße
+  }
+
+  // Button soll volle Breite einnehmen
+  .table-btn {
+    width: 100%; // Button dehnt sich über gesamte Breite
+  }
+
+  // Tabellencontainer mit Innenabstand
+  .table-container {
+    padding: 0 10px; // Links und rechts etwas Padding
+  }
 }

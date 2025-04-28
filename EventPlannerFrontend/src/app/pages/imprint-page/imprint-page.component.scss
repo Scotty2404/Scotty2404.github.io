@@ -10,6 +10,7 @@
     display: flex;
     width: 100%;
   min-width: 500px;
+    font-family: "Roboto", normal;
 
 }
 
@@ -43,13 +44,9 @@
 .title h1 {
     font-weight: normal;
     margin: 0px;
+    font-family: "Roboto", normal;
 }
 
-
-.title h1 {
-    font-weight: normal;
-    margin: 0px;
-}
 
 .content-container {
   display: flex;
@@ -57,6 +54,27 @@
   margin-top: 50px;
   margin-bottom: 50px;
   width: 100%;
+}
+
+.page-container {
+  display: flex; // Flexbox-Layout
+  flex-direction: column; // Spaltenrichtung
+  justify-content: flex-start; // Inhalt oben anfangen
+  min-height: calc(100vh - 150px); // Mindesthöhe abzüglich fixer Elemente wie Header/Footer
+  background-image: url('/MX_hintergrund.svg'); // Hintergrundbild
+  background-repeat: no-repeat; // Kein Kacheln
+  background-size: 1200px; // Feste Größe
+  background-position: center; // Zentriert
+  overflow: auto; // Scrollbar bei Bedarf
+}
+
+.imprint-card {
+  padding: 20px; // Innenabstand
+  background-color: white; // Weißer Hintergrund
+  border-radius: 12px; // Abgerundete Ecken
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); // Leichter Schatten
+  min-width: fit-content; // Minimale Breite an Inhalt angepasst
+  font-family: "Roboto", normal;
 }
   
 

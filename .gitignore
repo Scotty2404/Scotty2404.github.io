@@ -2,3 +2,7 @@ node_modules
 eventRoutesNotIn.js
 EventPlannerBackend/testconnectiondb.js
 EventPlannerBackend/.env
+EventPlannerBackend/public/
+dist/
+/dist
+.vscode

@@ -1,0 +1,14 @@
+<!-- Der Titel des Dialogs, z.B. "Fehler" -->
+<h2 mat-dialog-title>Fehler</h2>
+
+<!-- Der Inhalt des Dialogs, der hier dynamisch eine Nachricht anzeigt -->
+<mat-dialog-content>
+  <!-- {{ data.message }} zeigt die Nachricht an, die beim Öffnen des Dialogs übergeben wurde -->
+  <p>{{ data.message }}</p>
+</mat-dialog-content>
+
+<!-- Der Bereich für die Aktionen des Dialogs -->
+<mat-dialog-actions>
+  <!-- Der Button, der den Dialog schließt. Klick ruft die onClose-Methode auf -->
+  <button mat-button (click)="onClose()">OK</button>
+</mat-dialog-actions>
