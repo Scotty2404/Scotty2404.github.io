@@ -9,6 +9,7 @@
   .breadcrumb {
     display: flex;
     width: 100%;
+    font-family: "Roboto", normal;
 }
 
 
@@ -39,13 +40,9 @@
 .title h1 {
     font-weight: normal;
     margin: 0px;
+    font-family: "Roboto", normal;
 }
 
-
-.title h1 {
-    font-weight: normal;
-    margin: 0px;
-}
 
 .content-container {
   display: flex;
@@ -73,6 +70,7 @@
   border-radius: 12px; // Abgerundete Ecken
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); // Leichter Schatten
   min-width: fit-content; // Minimale Breite an Inhalt angepasst
+  font-family: "Roboto", normal;
 }
   
 
