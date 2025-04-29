@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -8,11 +8,19 @@ import { CommonModule } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCalendar } from '@angular/material/datepicker'; 
+import { RouterLink } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { LoadingFailedBoxComponent } from '../../components/loading-failed-box/loading-failed-box.component';
+import { LoadingBoxComponent } from '../../components/loading-box/loading-box.component';
+
+import { ApiService } from '../../services/api.service';
+
 
 interface EventItem {
   title: string;
   date: Date;
-  type: 'zugesagt' | 'selbst';
+  owner: 1 | 0;
+  confirmation: 1| 0;
 }
 
 @Component({
@@ -27,34 +35,47 @@ interface EventItem {
     MatListModule,
     MatIconModule,
     MatCalendar,
-    
+    RouterLink,
+    MatButtonModule,
+    LoadingBoxComponent,
+    LoadingFailedBoxComponent
   ],
   templateUrl: './calendar-page.component.html',
   styleUrl: './calendar-page.component.scss'
 })
-export class CalendarPageComponent {
+export class CalendarPageComponent implements OnInit {
+  isLoaded = false;
+  isFailed = false;
   selectedDate = new Date();
+  events: any[] = [];
 
-  events: EventItem[] = [
-    {
-      title: 'Geburtstag Oma',
-      date: new Date('2025-04-25'),
-      type: 'zugesagt'
-    },
-    {
-      title: 'Meine Hochzeit',
-      date: new Date('2025-04-27'),
-      type: 'selbst'
-    }
-  ];
+  constructor(private apiService: ApiService) {}
 
-  getEventsForSelectedDate(): EventItem[] {
-    return this.events.filter(event =>
-      event.date.toDateString() === this.selectedDate.toDateString()
-    );
+  ngOnInit(): void {
+    this.getEvents();
   }
 
-  getColor(type: 'zugesagt' | 'selbst'): string {
-    return type === 'zugesagt' ? '#4CAF50' : '#2196F3';
+  getEvents(){
+    this.apiService.getInvitedEventsForUser().subscribe({
+      next: (data) => {
+        this.events.push(...data);
+        console.log('Fetching Events successful: ', this.events);
+        this.isLoaded = true;
+      }, error: (error) => {
+        console.log('Error fetching invited Events: ', error);
+        this.isFailed = true;
+      }
+    });
+  }
+
+  getEventsForSelectedDate(): EventItem[] {
+    return this.events.filter(event => {
+      const eventDate = new Date(event.startdate);
+      return eventDate.toDateString() === this.selectedDate.toDateString();
+    });
+  }
+
+  getColor(owner: 0 | 1 ): string {
+    return owner === 1 ? '#4CAF50' : '#2196F3';
   }
 }

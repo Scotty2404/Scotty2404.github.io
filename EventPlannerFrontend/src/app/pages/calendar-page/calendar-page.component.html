@@ -1,15 +1,59 @@
-<div class="calendar-container">
-    <mat-calendar [(selected)]="selectedDate"></mat-calendar>
-  
-    <div class="event-list">
-      <h3>Events am {{ selectedDate | date: 'fullDate' }}:</h3>
-      <div *ngIf="getEventsForSelectedDate().length === 0">Keine Events.</div>
-      <div *ngFor="let event of getEventsForSelectedDate()" 
-           class="event-item"
-           [style.borderLeftColor]="getColor(event.type)">
-        {{ event.title }}
-        <span class="event-type">({{ event.type === 'zugesagt' ? 'Zugesagt' : 'Selbst erstellt' }})</span>
-      </div>
-    </div>
+<body>
+  <div class="breadcrumb">
+    <p>
+        <a [routerLink]="['/start']" class="breadcrumb-link">Home</a> /Impressum
+    </p>
   </div>
+
+  <div class="title">
+        <button mat-icon-button [routerLink]="['/start']" class="btn-back">
+                <mat-icon>arrow_back</mat-icon>
+        </button>
+        <h1>Impressum</h1>
+  </div>
+
+<div class="content-container">
+
+  @if(isLoaded){
+    <div class="calendar-container">
+      <mat-card class="mat-card">
+      <mat-calendar [(selected)]="selectedDate"></mat-calendar>
+    
+      <div class="event-list">
+        <h3>Events am {{ selectedDate | date: 'fullDate' }}:</h3>
+        <div *ngIf="getEventsForSelectedDate().length === 0">Keine Events.</div>
+        <div *ngFor="let event of getEventsForSelectedDate()" 
+             class="event-item"
+             [style.borderLeftColor]="getColor(event.owner)">
+          {{ event.title }}
+          <span class="event-type">({{ event.owner === 1 ? 'Mein Event' : event.confirmation === 1 ? 'zugesagt' : 'abgesagt' }})</span>
+        </div>
+
+      </div>
+    </mat-card>
+    </div>
+
+    }
+
+  @else {
+
+    @if(isFailed) {
+            
+      <div class="loading-container">
+          <app-loading-failed-box></app-loading-failed-box>
+
+      </div>
+  }
+
+  @else { 
+      <div class="loading-container">
+          <app-loading-box></app-loading-box>
+      </div>
+  }
+
+  }
+
+
+
+
   

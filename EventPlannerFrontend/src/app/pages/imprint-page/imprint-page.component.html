@@ -1,29 +1,53 @@
-<div class="impressum-container">
-    
-      
-        <h1>Impressum</h1>
+<div class="page-container">
+
+  <div class="impressum-container">
+
+    <div class="breadcrumb">
+      <p>
+        <a [routerLink]="['/start']" class="breadcrumb-link">Home</a> /Impressum
+      </p>
+    </div>
+
+    <div class="title">
+      <button mat-icon-button [routerLink]="['/start']" class="btn-back">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h1>Impressum</h1>
+    </div>
+
+    <div class="content-container">
+      <mat-card class="imprint-card">
         <p><strong>Event Access</strong></p>
         <p>DHSN Dresden<br>
-        Musterstraße 123<br>
-        12345 Musterstadt</p>
-  
+          Musterstraße 123<br>
+          12345 Musterstadt<br>
+        </p>
+        <hr>
         <p><strong>Vertreten durch:</strong><br>
-        Patricia</p>
-  
+          Patricia<br>
+        </p>
+        <hr>
         <p><strong>Kontakt:</strong></p>
         <p>
-          <mat-icon>phone</mat-icon> +49 (0)123 4567890<br>
-          <mat-icon>email</mat-icon> <a href="mailto:info@event-access.de">infoevent-access.de</a>
+
+          <mat-icon class="icon">phone</mat-icon> +49 (0)123 4567890<br>
+          <mat-icon class="icon">email</mat-icon> <a href="mailto:info@event-access.de">infoevent-access.de</a>
+
         </p>
-  
+        <hr>
         <p><strong>Umsatzsteuer-ID:</strong><br>
-        DE123456789</p>
-  
+          DE123456789<br>
+        </p>
+        <hr>
         <p class="disclaimer">
-          <mat-icon>info</mat-icon> Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links. 
+
+          <mat-icon class="icon">info</mat-icon> Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links. 
+
           Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.
         </p>
-      
-    
+      </mat-card>
+    </div>
+
+
   </div>
-  
+</div>

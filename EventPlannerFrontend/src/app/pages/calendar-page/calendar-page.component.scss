@@ -1,22 +1,117 @@
-.calendar-container {
-    max-width: 400px;
-    margin: 20px auto;
-  }
+@import '../../styles/colors.scss';
+.body {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.breadcrumb {
+    display: flex;
+    width: 100%;
+    min-width: 200px;
+}
+
+
+.breadcrumb-link {
+    color: $secondarycolor;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.breadcrumb-link:hover {
+    color: $secondarycolor;
+    text-decoration: underline 1.5px;
+    cursor: pointer;
+}
+
+.breadcrumb p {
+    font-size: 1.1em;
+    margin: 10px 0;
+}
+
+.title {
+    color: $secondarycolor;
+    display: flex;
+    gap: 10px;
+    width: 100%;
+  min-width: 500px;
+
+}
+
+.title h1 {
+    font-weight: normal;
+    margin: 0px;
+}
+
+
+.title h1 {
+    font-weight: normal;
+    margin: 0px;
+}
+
+.content-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 200px;
+  min-width: 400px;
+  justify-content: flex-start;
   
+
+}
+
+.calendar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 300px;
+  width: 100%;
+  
+
+  .mat-card {
+    display: flex;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 300px;
+    min-width: 300px;
+  }
+
   .event-list {
     margin-top: 20px;
   }
-  
+
   .event-item {
     border-left: 6px solid;
-    padding: 8px;
-    margin-bottom: 10px;
+    padding: 10px;
+    margin-bottom: 12px;
     background: #f9f9f9;
     border-radius: 4px;
   }
-  
+
   .event-type {
     font-size: 0.9em;
     color: #666;
   }
-  
+}
+
+// 📱 Media Query für kleinere Bildschirme
+@media (max-width: 768px) {
+  .calendar-container {
+    padding: 10px;
+    
+
+    .mat-card {
+      padding: 12px;
+    }
+
+    .event-item {
+      padding: 8px;
+    }
+
+  }
+}
+

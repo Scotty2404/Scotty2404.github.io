@@ -1,16 +1,22 @@
 <div class="box-service">
+    @if(isLoaded){
+
     <div class="event-name">
+
+
         <div>
-            <h3>{{ event.title }}</h3>
-        </div>
-        <div>
-            <img [src]="event.image" style="width: 100%;">
+
+            <img [src]="'http://localhost:5000/public' + event.image" style="width: 100%;">
+
         </div>
     </div>
 
     <div class="event-info">
         <div>
-            <h3 class="title-main"> {{ event.title }} {{ event.startdate }} </h3>
+
+            <h3 class="title-main"> {{ event.title }} </h3>
+            <hr>
+
             <div class="option-status">
                 <mat-radio-group aria-label="Wähle den Status">
                     <mat-radio-button value="aktiv" checked>Aktiv</mat-radio-button>
@@ -22,22 +28,42 @@
         <p>{{ event.description }}</p>
 
         <div class="countdown-container">
-            <h3>Countdown bis zu {{ event.title }}: 🎉 00 Tage 00 Stunden 00 Minuten 00 Sekunden 🎉</h3> <!-- countdown implementieren -->
+            <h3>Countdown bis zu {{ event.title }}: 🎉 {{ countdown }}🎉</h3> 
         </div>
 
         <div class="button-box">
-            <button mat-flat-button [routerLink]="['/guesttable']">zur Gästeliste</button>
-            <button mat-flat-button [routerLink]="['/wishlist']">zur Wunschliste</button>
-            <button mat-flat-button [routerLink]="['/to-do-list']">zur To-Do-Liste</button>
 
-            <div>
-                <button mat-mini-fab aria-label="Example icon button with a menu icon" style="margin-right: 20px;">
+            <button mat-flat-button [routerLink]="['/guesttable/' + event.event_id]">zur Gästeliste</button>
+            <button mat-flat-button [routerLink]="['/survey']">zur Umfrage Übersicht</button>
+            <button mat-flat-button [routerLink]="['/to-do-list']">zur To-Do-Liste</button>
+            <!-- <button mat-flat-button [routerLink]="['/wishlist']">zur Wunschliste</button> -->
+
+
+
+
+            <div class="icon-buttons">
+                <button [routerLink]="'/eventedit/' + event.event_id" mat-icon-button aria-label="Example icon button with a menu icon" style="margin-right: 20px;">
                     <mat-icon>edit</mat-icon>
                 </button>
-                <button mat-mini-fab aria-label="Example icon button with a menu icon" (click)="deleteEvent(event.event_id)">
+
+                <button mat-icon-button aria-label="Example icon button with a menu icon" (click)="deleteEvent(event.event_id)">
                     <mat-icon>delete</mat-icon>
                 </button>
             </div>
         </div>
     </div>
+    }
+    @else {
+        @if(isFailed) {
+            <div class="loading-container">
+                <app-loading-failed-box></app-loading-failed-box>
+            </div>
+        }
+
+        @else {
+            <div class="loading-container">
+                <app-loading-box></app-loading-box>
+            </div>
+        }
+    }
 </div>

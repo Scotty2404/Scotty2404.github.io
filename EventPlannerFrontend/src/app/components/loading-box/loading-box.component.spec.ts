@@ -21,3 +21,4 @@ describe('LoadingBoxComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+

@@ -1,11 +1,85 @@
+@import '../../styles/colors.scss';
+
 .impressum-container {
     display: flex;
     flex-direction: column;
+    margin-bottom: 200px;
   }
+
+  .breadcrumb {
+    display: flex;
+    width: 100%;
+  min-width: 500px;
+    font-family: "Roboto", normal;
+
+}
+
+
+.breadcrumb-link {
+    color: $secondarycolor;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.breadcrumb-link:hover {
+    color: $secondarycolor;
+    text-decoration: underline 1.5px;
+    cursor: pointer;
+}
+
+.breadcrumb p {
+    font-size: 1.1em;
+    margin: 10px 0;
+}
+
+.title {
+    color: $secondarycolor;
+    display: flex;
+    gap: 10px;
+    width: 100%;
+  min-width: 500px;
+
+}
+
+.title h1 {
+    font-weight: normal;
+    margin: 0px;
+    font-family: "Roboto", normal;
+}
+
+
+.content-container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  width: 100%;
+}
+
+.page-container {
+  display: flex; // Flexbox-Layout
+  flex-direction: column; // Spaltenrichtung
+  justify-content: flex-start; // Inhalt oben anfangen
+  min-height: calc(100vh - 150px); // Mindesthöhe abzüglich fixer Elemente wie Header/Footer
+  background-image: url('/MX_hintergrund.svg'); // Hintergrundbild
+  background-repeat: no-repeat; // Kein Kacheln
+  background-size: 1200px; // Feste Größe
+  background-position: center; // Zentriert
+  overflow: auto; // Scrollbar bei Bedarf
+}
+
+.imprint-card {
+  padding: 20px; // Innenabstand
+  background-color: white; // Weißer Hintergrund
+  border-radius: 12px; // Abgerundete Ecken
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); // Leichter Schatten
+  min-width: fit-content; // Minimale Breite an Inhalt angepasst
+  font-family: "Roboto", normal;
+}
   
 
   
-  mat-icon {
+  .icon {
     vertical-align: middle;
     margin-right: 5px;
     color: #1976d2; // Blaue Farbe für Icons

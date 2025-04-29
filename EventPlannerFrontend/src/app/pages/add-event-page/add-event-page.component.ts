@@ -4,7 +4,6 @@ import { FormBuilder, FormGroup, Validators, FormArray, AbstractControl, FormCon
 
 import { ApiService } from '../../services/api.service';
 import { Router } from '@angular/router';
-import { NgModule } from '@angular/core';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -17,7 +16,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatRadioButton } from '@angular/material/radio';
 import { MatIcon } from '@angular/material/icon';
 import { SurveyQuestionBoxComponent } from '../../components/survey-question-box/survey-question-box.component';
-import { response } from 'express';
+import { RouterLink } from '@angular/router';
+import { LoadingBoxComponent } from '../../components/loading-box/loading-box.component';
+import { LoadingFailedBoxComponent } from '../../components/loading-failed-box/loading-failed-box.component';
 
 
 @Component({
@@ -34,7 +35,10 @@ import { response } from 'express';
     ReactiveFormsModule,
     MatRadioButton,
     MatIcon,
-    SurveyQuestionBoxComponent
+    SurveyQuestionBoxComponent,
+    RouterLink,
+    LoadingBoxComponent,
+    LoadingFailedBoxComponent
   ],
   templateUrl: './add-event-page.component.html',
   styleUrl: './add-event-page.component.scss'
@@ -44,12 +48,16 @@ export class AddEventPageComponent implements OnInit {
   eventForm: FormGroup;
   selectedFile: File | null = null;
   previewImage: string | null = null;
+  isLoaded = true;
+  isFailed = false;
 
   standardImages = [
     '/auswahl/hochzeit.jpg',
     '/auswahl/geburtstag.avif',
     '/auswahl/jugendweihe.jpg',
   ];
+
+
 
   constructor(private fb: FormBuilder, private apiService: ApiService, private router: Router) {
     this.eventForm = this.fb.group({
@@ -58,9 +66,8 @@ export class AddEventPageComponent implements OnInit {
       street: ['', Validators.required], 
       city: ['', Validators.required], 
       postalCode: ['', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
-      description: ['', Validators.required],
       image: ['', Validators.required],
-      guestCount: [''],
+      guestCount: ['', Validators.required],
       timeOption: ['ganztags', Validators.required],
       startTime: [''],
       endTime: [''],
@@ -150,7 +157,11 @@ export class AddEventPageComponent implements OnInit {
 
     //Start- und Endzeit setzen
     const eventDate = new Date(formData.date);
-    const formattedDate = eventDate.toISOString().split('T')[0];
+    const year = eventDate.getFullYear();
+    const month = (eventDate.getMonth() + 1).toString().padStart(2, '0');
+    const day = eventDate.getDate().toString().padStart(2, '0');
+    
+    const formattedDate = `${year}-${month}-${day}`;
 
     if(formData.timeOption === 'ganztags') {
       startdate = `${formattedDate}T00:00:00`;
@@ -163,26 +174,35 @@ export class AddEventPageComponent implements OnInit {
       enddate = `${formattedDate}T${formData.endTime}:00`;
     }
 
+    //Encoded Adress für google Maps link erzeugen
+    const address = `${formData.street}, ${formData.city}, ${formData.postal_code}`;
+    const encodedAddress = encodeURIComponent(address);
+    const googleMapsLink = `https://www.google.com/maps/place?q=${encodedAddress}`; //no api key for embeded google maps links
+
     //Venue Setzten
     eventVenue = {
       street: formData.street,
       city: formData.city,
       postal_code: formData.postalCode,
+      google_maps_link: googleMapsLink,
     };
 
     //Image setzten !Achtung custom images werden noch nicht berücksichtigt!
-    const imageURL = formData.image;
+    let image;
+    this.selectedFile ? image = this.selectedFile : image = formData.image;
 
-    return {
-      title: formData.title,
-      description: formData.description,
-      venue: eventVenue,
-      startdate: startdate,
-      enddate: enddate,
-      max_guests: formData.guestCount,
-      image: imageURL,
-      survey_id: surveyId,
-    }
+    const resultData = new FormData();
+
+    resultData.append('title', formData.title);
+    resultData.append('description', formData.description);
+    resultData.append('venue', JSON.stringify(eventVenue));
+    resultData.append('startdate', startdate!);
+    resultData.append('enddate', enddate!);
+    resultData.append('max_guests', formData.guestCount.toString());
+    resultData.append('image', image);
+    resultData.append('survey_id', surveyId.toString());
+
+    return resultData;
   }
 
   private transfromSurveyData() {
@@ -231,9 +251,7 @@ export class AddEventPageComponent implements OnInit {
     let surveyId = -1;
     this.apiService.createSurvey(this.transfromSurveyData()).subscribe({
       next: (surveyResponse) => {
-        console.log(surveyResponse);
         surveyId = surveyResponse.survey_id;
-        console.log(this.transformEventData(surveyId));
 
         this.apiService.createEvent(this.transformEventData(surveyId)).subscribe({ 
           next: (response) => {
@@ -250,10 +268,31 @@ export class AddEventPageComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.eventForm.valid) {
-      this.saveEvent();
-    }
+    const questionsValid = this.surveyFormGroups.every((q) => {
+      const type = q.get('answerType')?.value;
+      const answers = q.get('answers') as FormArray;
+    
+      if (type === 'text') {
+        return true; // Freitextfrage ist immer gültig, keine Antworten nötig
+      }
+    
+      if (type === 'scale') {
+        const min = q.get('minValue')?.value;
+        const max = q.get('maxValue')?.value;
+        return min !== null && max !== null;
+      }
+    
+      return answers.length > 0 && answers.controls.every(a => a.value && a.value.trim() !== '');
+    });
+    
+
+  if (this.eventForm.valid && questionsValid) {
+    this.saveEvent();
+  } else {
+    console.warn('Formular ungültig oder Fragen nicht korrekt ausgefüllt');
   }
+}
+
 
   get surveyFormGroups(): FormGroup[] {
   return this.survey.controls as FormGroup[];

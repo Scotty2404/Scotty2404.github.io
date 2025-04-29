@@ -34,6 +34,14 @@ export class ApiService {
     });
   }
 
+  editEvent(eventData: any, eventId: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/events/my-events/${eventId}/edit`, eventData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }
+
   deleteEvent(eventId: string) {
     return this.http.delete(`${this.baseUrl}/events/my-events/${eventId}`, {
       headers: {
@@ -44,6 +52,14 @@ export class ApiService {
 
   getEvents(): Observable<any> {
     return this.http.get(`${this.baseUrl}/events/my-events`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }
+
+  getInvitedEventsForUser(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/events/my-events/invited`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
@@ -78,6 +94,23 @@ export class ApiService {
     });
   }
 
+  getGuestsForEvent(eventId: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/events/${eventId}/guests`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }
+
+  addGuestToEvent(guestData: any, eventId: string): Observable<any> {
+    console.log('adding guest: ', guestData);
+    return this.http.post(`${this.baseUrl}/events/${eventId}/guests/add`, guestData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }
+
   getSurveyResults(surveyId: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/surveys/${surveyId}/results`, {
       headers: {
@@ -90,4 +123,11 @@ export class ApiService {
     return this.http.get(`${this.baseUrl}/events/public-event/${eventId}?token=${token}`);
   }
 
+  getEventFromQrCode(eventId: string, token: string) {
+    return this.http.get(`${this.baseUrl}/events/public-event/${eventId}`, {
+      params: {
+        token: token
+      }
+    });
+  }
 }

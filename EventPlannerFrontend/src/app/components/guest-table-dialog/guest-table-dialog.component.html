@@ -12,7 +12,7 @@
 
   <mat-form-field>
     <mat-label>Email</mat-label>
-    <input matInput [(ngModel)]="guest.mail">
+    <input matInput [(ngModel)]="guest.email">
   </mat-form-field>
 
   <mat-form-field>
@@ -22,9 +22,9 @@
 
   <mat-form-field>
     <mat-label>Zusage</mat-label>
-    <mat-select [(ngModel)]="guest.commitment">
-      <mat-option value="yes">Ja</mat-option>
-      <mat-option value="no">Nein</mat-option>
+    <mat-select [(ngModel)]="guest.confirmation">
+      <mat-option value="1">Ja</mat-option>
+      <mat-option value="0">Nein</mat-option>
     </mat-select>
   </mat-form-field>
 </mat-dialog-content>

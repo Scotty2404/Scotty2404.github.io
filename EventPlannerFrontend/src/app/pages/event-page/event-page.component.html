@@ -1,60 +1,152 @@
-<div class="status-container">
+<body>
+  <div class="breadcrumb">
+      <p>
+          <a [routerLink]="['/start']" class="breadcrumb-link">Home </a> /Event ansicht
+      </p>
+  </div>
+  
+  <div class="title">
+          <button mat-icon-button [routerLink]="['/start']" class="btn-back">
+                  <mat-icon>arrow_back</mat-icon>
+          </button>
+          <h1>Dein Event</h1>
+  </div>
+        
+    
+    
+  <div class="content-container">
 
-    <div class="title">
-        <h1>Statusübersicht</h1>
-
-    </div>
 
     @if(isLoaded){
-            
-                <app-event-detail-box>
-                </app-event-detail-box>
 
-            <div>                                
-                <div class="kurzinfo-mail">
-                    <h3>Folgender Inhalt wird deinen Gästen per E-Mail zugeschickt:</h3>
+      <div class="content">
 
-                    <div class="kurzinfo-content">
-                    <div class="einladung-content">
-                    <h4>Geburtstagseinladung Maurice</h4>
-                    <p>Einladung zur meinem 20. Geburtstag!!!</p>
-                    <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. </p>
-                    </div>
-
-                    <div class="qr-code">
-                        <img src="https://2.bp.blogspot.com/-m-bSFBlBkUo/UWPazwwKbFI/AAAAAAAAAaQ/mFnVkzM1NDc/s1600/QR-Code-Blue.jpg" style="width: 100%;">
-                        <p class="qr-text">Scan = Zu EventAccess</p>
-                    </div>
-
-                    </div>
-                </div>
-
-                <div class="locations">
-                    <h2>Location:</h2>
-                </div>
-                <div class="maps-standort">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d80260.8588681168!2d13.60864877700805!3d51.05028407498948!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4709cf5d64464f8d%3A0x7ddd3c5b6674dcf2!2sL&#39;Osteria%20Dresden%20Wilsdruffer%20Stra%C3%9Fe!5e0!3m2!1sde!2sde!4v1743054026811!5m2!1sde!2sde" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3412.5011525474547!2d13.73033937401037!3d51.04178778777948!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4709c58b1e665d35%3A0xeee86636267a5c51!2sDresden%20Hauptbahnhof!5e0!3m2!1sde!2sde!4v1743493296413!5m2!1sde!2sde" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                </div>
-        </div>
+        <div class="event-box">
         
-      }
+            <app-event-detail-box>
+            </app-event-detail-box>
 
-      @else {
+        </div>
 
-        @if(isFailed) {
+        <div>
+          <div class="event-details-container">
+
+            <mat-card>
+              <h2>Alle Infos zu deinem Event:</h2>
             
-            <div class="loading-container">
-                loading
-            </div>
-        }
+              <div class="event-info">
+                <h3>{{ event.title }}</h3>
+                <p>{{ eventTime }} in {{ event.city }}</p>
+            
+                <h4>Details:</h4>
+                <p>{{ event.description }}</p>
+            
+                <h4>Gästeanzahl:</h4>
+                <p>{{ event.max_guests }}</p>
+              </div>
+            </mat-card>
+          </div>   
 
-        @else { 
-            <div class="loading-container">
-                fehler
+          <div class="qr-code-section">
+                    
+            <h3>Dein QR-Code:</h3>
+            <div class="qr-code-container">
+              <img 
+                [src]="'http://localhost:5000/public' + event.qr_image" 
+                alt="QR Code" 
+                class="qr-code-image"
+              >
+              <a 
+                [href]="'http://localhost:5000/public' + event.qr_image" 
+                download="Event_QR_Code.png"
+                class="download-button"
+              >
+                <button mat-raised-button color="primary">
+                  <mat-icon>download</mat-icon> Download QR
+                </button>
+              </a>
             </div>
-        }
+        </div>     
+      </div>       
 
+      <div class="kurzinfo-mail">
+        <h3>Oder gleich eine fertige Einladung:</h3>
+
+          <div class="kurzinfo-container">
+            <img src="/finalLogo.png" alt="EventAccess Logo" style="max-width: 200px; margin: 20px auto; display: block;" />
+            <h1>Einladung {{ event.title }}</h1>
+            <p>
+              {{ event.description }}
+              {{ eventTime }}. Über den QR-Code etwas weiter unten in der Einladung gelangt ihr zu meiner Partnerwebsite EventAcces. Dort könnt ihr euch ganz einfach an- oder abmelden und viele weitere Feautures entdecken, schaut gern einmal vorbei.
+            </p>
+            <table align="center"><tbody><tr><td><img src="https://gen.sendtric.com/countdown/fbzaw8b6az" style="display: block; max-width: 300px; width: 100%; margin: 0 auto;" /></td></tr></tbody></table>
+            
+            <!-- Beispielbild -->
+            <img class="example" [src]="'http://localhost:5000/public' + event.image" alt="Bild zum Event">
+                
+                
+            <!-- Location -->
+            <p>Die Location könnt ihr auch hier schon einmal bei Google-Maps:</p>
+            <ng-container *ngIf="event.google_maps_link">
+              <a [href]="event.google_maps_link">Route auf der Karte ansehen</a>
+              <iframe 
+                [src]="googleMapsUrl" 
+                width="100%" 
+                height="400" 
+                style="border:0; border-radius: 10px;" 
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade">
+              </iframe>
+            </ng-container>
+                
+            <!-- QR-Code -->
+            <div class="kurzinfo-qr-code">
+              <h2>Zur An-/Abmeldung bei EventAcces:</h2>
+              <a [href]="'http://localhost:4200/' + event.url">
+                <img 
+                  [src]="'http://localhost:5000/public' + event.qr_image" 
+                  alt="QR Code" 
+                  class="qr-code-image"
+                  style="width: 50%;"
+                >
+              </a>
+            </div>
+                
+            <!-- Anleitung -->
+            <div class="instructions">
+              <strong>So funktioniert’s:</strong><br>
+              📱 Öffne die Kamera-App auf deinem Smartphone<br>
+              🔍 Richte die Kamera auf den QR-Code oben<br>
+              🌐 Klicke auf den angezeigten Link<br>
+              ✅ Sag zu oder ab – ganz einfach!
+            </div>
+            <div class="kurzinfo-qr-code">
+              <h4>Dein zuverlässiger Partner für Event Planungen</h4>
+              <img src="/finalLogo.png" alt="EventAccess Logo" style="max-width: 200px; margin: 20px auto; display: block;" />
+            </div>
+          </div>
+        </div>
+      </div>
+        
+    }
+
+    @else {
+
+      @if(isFailed) {
+          
+          <div class="loading-container">
+              <app-loading-failed-box></app-loading-failed-box>
+          </div>
       }
 
-</div>
+      @else { 
+          <div class="loading-container">
+              <app-loading-box></app-loading-box>
+          </div>
+      }
+
+    }
+
+  </div>
+</body>

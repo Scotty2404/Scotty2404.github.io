@@ -36,7 +36,7 @@ export class SurveyQuestionBoxComponent {
   options = [
     { value: 'multiple', viewValue: 'Multiple Choice Frage' },
     { value: 'scale', viewValue: 'Skala Frage' },
-    { value: 'open', viewValue: 'Freitext Frage' },
+    { value: 'text', viewValue: 'Freitext Frage' },
 
   ];
 
@@ -88,5 +88,7 @@ export class SurveyQuestionBoxComponent {
       answersArray.clear();
     }
   }
+  
+
   
 }

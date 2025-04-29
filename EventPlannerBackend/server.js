@@ -1,5 +1,4 @@
 require('dotenv').config();
-const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
 
@@ -21,6 +20,8 @@ app.use(cors({
   credentials: true
 }));
 
+const app = require('./app');
+/*
 // MySQL Verbindung erstellen
 const db = mysql.createConnection({
   host: process.env.DB_HOST || 'localhost',
@@ -73,4 +74,5 @@ app.get('/api/test-db', (req, res) => {
   });
 });
 
+*/
 app.listen(5000, () => console.log("Server running on Port 5000"));

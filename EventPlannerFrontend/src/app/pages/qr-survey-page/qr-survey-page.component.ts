@@ -15,6 +15,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSlider } from '@angular/material/slider';
 import { ApiService } from '../../services/api.service';
+import { Validators, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { QrSurveyDialogComponent } from '../../components/qr-survey-dialog/qr-survey-dialog.component';
+
+
 
 @Component({
   selector: 'app-qr-survey-page',
@@ -31,7 +36,7 @@ import { ApiService } from '../../services/api.service';
     ReactiveFormsModule,
     MatCheckboxModule,
     MatDividerModule,
-    MatSlider
+    QrSurveyDialogComponent
   ],
   templateUrl: './qr-survey-page.component.html',
   styleUrl: './qr-survey-page.component.scss'

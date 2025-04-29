@@ -35,12 +35,18 @@
     </div>
 
     <div *ngIf="questionForm.get('answerType')?.value === 'scale'">
-        <mat-slider>
-            <input matSliderThumb>
-          </mat-slider>
+      <mat-form-field appearance="outline" style="margin-right: 20px;">
+        <mat-label>Min</mat-label>
+        <input matInput type="number" formControlName="minValue" required />
+      </mat-form-field>
+      
+      <mat-form-field appearance="outline">
+        <mat-label>Max</mat-label>
+        <input matInput type="number" formControlName="maxValue" required />
+      </mat-form-field>
     </div>
 
-    <div *ngIf="questionForm.get('answerType')?.value === 'open'" formArrayName="answers">
+    <div *ngIf="questionForm.get('answerType')?.value === 'text'" formArrayName="answers">
         
         <mat-form-field appearance="outline" style="width: 40%;">
             <mat-label>Antwort</mat-label>
