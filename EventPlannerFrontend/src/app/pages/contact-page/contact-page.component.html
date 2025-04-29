@@ -1,24 +1,21 @@
-<div class="page-container">
 
-  <!-- Breadcrumb-Navigation (Pfadnavigation oben) -->
+<body>
   <div class="breadcrumb">
     <p>
-      <a [routerLink]="['/start']" class="breadcrumb-link">Home</a> / Kontakt
+        <a [routerLink]="['/start']" class="breadcrumb-link">Home</a> /Kontaktformular
     </p>
   </div>
 
-  <!-- Seitentitel mit Zurück-Button -->
   <div class="title">
-    <button mat-icon-button [routerLink]="['/start']" class="btn-back">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <h1>Kontakt</h1>
+        <button mat-icon-button [routerLink]="['/start']" class="btn-back">
+                <mat-icon>arrow_back</mat-icon>
+        </button>
+        <h1>Kontaktformular</h1>
   </div>
 
-  <!-- Haupt-Content Bereich -->
-  <div class="content-container">
+<div class="content-container">
 
-    @if (isLoaded) {
+  @if(isLoaded){
     <div class="edit-container">
 
       <!-- Kontaktinformationen Card -->
@@ -84,19 +81,29 @@
         </form>
       </mat-card>
 
-    </div> <!-- Ende edit-container -->
-    }
-    @else if (isFailed) {
-    <div class="loading-container">
-      Fehler
     </div>
-    }
-    @else {
-    <div class="loading-container">
-      Loading...
-    </div>
+
     }
 
-  </div> <!-- Ende Content-Container -->
+  @else {
 
-</div> <!-- Ende Page-Container -->
+    @if(isFailed) {
+            
+      <div class="loading-container">
+          <app-loading-failed-box></app-loading-failed-box>
+
+      </div>
+  }
+
+  @else { 
+      <div class="loading-container">
+          <app-loading-box></app-loading-box>
+      </div>
+  }
+
+  }
+
+
+
+
+  

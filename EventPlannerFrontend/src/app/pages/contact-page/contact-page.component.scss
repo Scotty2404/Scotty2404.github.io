@@ -1,82 +1,86 @@
 // Farbvariablen importieren
 @import '../../styles/colors.scss';
-
-// ---------------- Basislayout der Seite ----------------
-.page-container {
-  display: flex; // Flexbox-Layout
-  flex-direction: column; // Spaltenrichtung
-  justify-content: flex-start; // Inhalt oben anfangen
-  min-height: calc(100vh - 150px); // Mindesthöhe abzüglich fixer Elemente wie Header/Footer
-  background-image: url('/MX_hintergrund.svg'); // Hintergrundbild
-  background-repeat: no-repeat; // Kein Kacheln
-  background-size: 1200px; // Feste Größe
-  background-position: center; // Zentriert
-  overflow: auto; // Scrollbar bei Bedarf
-}
-
-// ---------------- Breadcrumb Link-Styling ----------------
-.breadcrumb-link {
-  color: $secondarycolor; // Verwendung der sekundären Farbe aus SCSS Variablen
-  text-decoration: none; // Keine Unterstreichung standardmäßig
-  transition: all 0.3s ease; // Sanfte Transition bei Hover
-
-  &:hover {
-    text-decoration: underline 1.5px; // Unterstrichen beim Hover
-    cursor: pointer; // Zeiger-Cursor
-  }
-}
-
-// ---------------- Breadcrumb Text-Styling ----------------
-.breadcrumb p {
-  font-size: 1.1em; // Etwas größere Schrift
-  margin: 10px 0; // Abstand oben und unten
-  font-family: "Roboto", normal;
-}
-
-// ---------------- Button für "Zurück" ----------------
-.btn-back {
-  width: auto; // Automatische Breite je nach Inhalt
-}
-
-// ---------------- Titelbereich der Seite ----------------
-.title {
-  color: $secondarycolor; // Wieder Sekundärfarbe
-  display: flex; // Flexbox
-  gap: 10px; // Abstand zwischen Elementen
-  align-items: baseline; // Elemente am Textgrund ausrichten
-}
-
-// Styling für die Überschrift selbst
-.title h1 {
-  font-weight: normal; // Normale Schriftstärke (nicht fett)
-  margin: 0px; // Kein Außenabstand
-  font-family: "Roboto", normal;
-}
-
-// ---------------- Inhaltlicher Container ----------------
-.content-container {
-  display: flex; // Flexbox
-  margin-top: 50px;
-  margin-bottom: 50px;
-  width: 100%;
-}
-
-// ---------------- Editier-Container ----------------
-.edit-container {
+.body {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  margin-bottom: 200px; // Großer Abstand unten
+  justify-content: flex-start;
+  align-items: center;
 }
 
-// ---------------- Styling der Material Card ----------------
-.mat-card {
-  padding: 20px; // Innenabstand
-  background-color: white; // Weißer Hintergrund
-  border-radius: 12px; // Abgerundete Ecken
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); // Leichter Schatten
-  min-width: fit-content; // Minimale Breite an Inhalt angepasst
+.breadcrumb {
+    display: flex;
+    width: 100%;
+    min-width: 200px;
 }
+
+
+.breadcrumb-link {
+    color: $secondarycolor;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.breadcrumb-link:hover {
+    color: $secondarycolor;
+    text-decoration: underline 1.5px;
+    cursor: pointer;
+}
+
+.breadcrumb p {
+    font-size: 1.1em;
+    margin: 10px 0;
+}
+
+.title {
+    color: $secondarycolor;
+    display: flex;
+    gap: 10px;
+    width: 100%;
+  min-width: 500px;
+
+}
+
+.title h1 {
+    font-weight: normal;
+    margin: 0px;
+}
+
+
+.title h1 {
+    font-weight: normal;
+    margin: 0px;
+}
+
+.content-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 200px;
+  min-width: 400px;
+  justify-content: flex-start;
+  
+
+}
+
+.calendar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 300px;
+  width: 100%;
+}
+  
+
+  .mat-card {
+    display: flex;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 300px;
+    min-width: 300px;
+  }
 
 // ---------------- Bereich für das Kontaktformular ----------------
 
@@ -93,8 +97,7 @@
 // Titel der Card
 .card-title {
   margin-bottom: 10px; // Abstand nach unten
-  font-weight: bold; // Fett
-  color: #324a9a; // Dunkelblau
+  color: $primarycolor; // Dunkelblau
 }
 
 // Material Formularelemente
@@ -104,7 +107,7 @@ mat-form-field {
 }
 
 // Standard-Button
-button {
+.button {
   margin-top: 20px;
   width: 100%; // Volle Breite
   display: block; // Blockelement
@@ -149,7 +152,7 @@ mat-list {
     font-size: 1.3em; // Noch kleinere Schrift
   }
 
-  button {
+  .button {
     margin-top: 15px; // Etwas weniger Abstand
   }
 }
@@ -166,7 +169,7 @@ mat-list {
     font-size: 1.2em; // Kleinste Schriftgröße
   }
 
-  button {
+  .button {
     margin-top: 10px; // Minimaler Abstand
   }
 }
