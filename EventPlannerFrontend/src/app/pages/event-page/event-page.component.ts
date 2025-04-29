@@ -66,7 +66,7 @@ export class EventPageComponent implements OnInit{
             <title>Einladung drucken</title>
             <style>
               body { font-family: Arial, sans-serif; padding: 20px; }
-              img { max-width: 100%; }
+              img { max-width: 80%; }
             </style>
           </head>
           <body>${printContent.innerHTML}</body>
