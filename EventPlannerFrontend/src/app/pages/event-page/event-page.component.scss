@@ -3,12 +3,13 @@
 body{
     height: 100%;
 }
+
+//style breadcrumb
 .breadcrumb {
     display: flex;
     width: 100%;
     min-width: 200px;
 }
-
 
 .breadcrumb-link {
     color: $secondarycolor;
@@ -27,6 +28,143 @@ body{
     margin: 10px 0;
 }
 
+//style title
+.title {
+    color: $secondarycolor;
+    display: flex;
+    gap: 10px;
+    width: 100%;
+  min-width: 200px;
+
+}
+
+.title h1 {
+    font-weight: normal;
+    margin: 0px;
+}
+
+//content-container
+.content-container {
+    display: flex;
+    margin-top: 50px;
+    margin-left: 0px;
+    width: 100%;
+}
+
+//content
+.content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 200px;
+  margin-bottom: 200px;
+}
+
+//event-box (event detail box styling)
+.event-box {
+    min-width: 200px;
+}
+
+//event-details styling
+.event-details-container {
+    margin-top: 20px;
+}
+
+.event-info {
+    margin-bottom: 20px;
+}
+
+mat-card {
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+//qr-code selection
+.qr-code-section {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.qr-code-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.qr-code-image {
+    width: 300px;
+    max-width: 90%;
+    border-radius: 8px;
+}
+
+.download-button {
+    text-decoration: none;
+    
+    button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: bold;
+    }
+}
+
+//kurzinfo mail
+.kurzinfo-mail {
+    display: flex;
+    flex-direction: column; /* Überschrift bleibt oben */
+    gap: 10px;
+}
+
+.kurzinfo-mail h3 {
+    color: $backgroundcolordark;
+    padding-left: 20px;
+}
+
+.kurzinfo-container {
+    max-width: 600px;
+    margin: auto;
+    background: #fff;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+img.example {
+    width: 100%;
+    max-width: 500px;
+    margin: 20px 0;
+    border-radius: 10px;
+}
+
+.kurzinfo-qr-code {
+    margin: 30px 0;
+}
+
+.instructions {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.6;
+}
+
+//loading container
+.loading-container {
+    min-height: 600px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    width: 100%;
+}
+
+
 .status-container {
     display: flex;
     flex-direction: column;
@@ -42,137 +180,6 @@ body{
     background-position-x: 50%;
     background-position-y: 50%;
     overflow-x: hidden; 
-}
-
-.title {
-    color: $secondarycolor;
-    display: flex;
-    gap: 10px;
-    width: 100%;
-  min-width: 200px;
-
-}
-
-.title h1 {
-    font-weight: normal;
-    margin: 0px;
-}
-
-
-
-.loading-container {
-    min-height: 600px; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center;
-    width: 100%;
-}
-
-.event-info {
-    margin-bottom: 20px;
-  }
-
-  .event-details-container {
-    margin-top: 20px;
-  }
-  
-  mat-card {
-    padding: 20px;
-    background-color: #f9f9f9;
-  }
-
-
-
-.kurzinfo-mail{
-    display: flex;
-    flex-direction: column; /* Überschrift bleibt oben */
-    gap: 10px;
-}
-
-.kurzinfo-mail h3 {
-    color: $backgroundcolordark;
-    padding-left: 20px;
-}
-
-.qr-code-section {
-    margin-top: 30px;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-  }
-  
-
-.einladung-content {
-    width: 100%;
-  }
-  
-  .qr-code-container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 20px;
-}
-
-.qr-code {
-    flex-shrink: 0;
-    width: 150px;
-}
-
-.qr-text {
-    text-align: center;
-    font-size: 14px;
-    color: $backgroundcolordark;
-    margin-top: 5px;
-}
-
-.locations{
-    padding-left: 20px;
-}
-.maps-standort{
-    margin: 0px;
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    width: 100%;
-    min-width: 200px;
-}
-
-.maps-standort iframe{
-    margin-right: 20px;
-}
-
-.wunschliste, .to-do-liste{
-    position: relative;
-    margin: 0px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    text-align: left;
-    padding: 20px;
-    width: 100%;
-}
-
-
-.more-services {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-width: 400px;
-    min-height: 200px;
-    border-radius: 5px;
-    box-shadow: 0px 3px 10px $backgroundcolorlight;
-    margin: 20px;
-}
-
-.btn {
-    background-color: $primarycolor;
-    color: white !important;
-    font-weight: lighter;
-    font-size: medium;
-    padding-left: 10px;
-    padding-right: 10px;
 }
 
 .row {

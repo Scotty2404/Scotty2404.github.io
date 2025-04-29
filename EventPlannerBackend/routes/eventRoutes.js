@@ -139,7 +139,7 @@ router.post('/create', authMiddleware, upload.single('image'), async (req, res) 
                     // Generate QR Code with event ID and access token
                     try {
                         // The URL now includes the access token
-                        const qrData = `https://EventPlannerFrontend/event/${eventId}?token=${accessToken}`; //for local dev-server: http://localhost:4200/EventPlannerFrontend/...
+                        const qrData = `EventPlannerFrontend/event/${eventId}?token=${accessToken}`; //for local dev-server: http://localhost:4200/EventPlannerFrontend/...
                         const qrFileName = `event-${eventId}-${Date.now()}.png`;
                         const qrFilePath = path.join(qrCodeDir, qrFileName);
                         const qrRelativePath = `/qr-codes/${qrFileName}`;

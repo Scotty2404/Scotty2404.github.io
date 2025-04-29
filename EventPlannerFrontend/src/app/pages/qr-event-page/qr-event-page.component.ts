@@ -108,7 +108,8 @@ export class QrEventPageComponent implements OnInit{
   submitWithoutPassword(result: any, type: string, confirmation: number) {
     const guestData = {
       type: type,
-      consfirmation: confirmation,
+      
+      //consfirmation: confirmation,
       guest: {
         firstname: result.firstname,
         lastname: result.lastname
@@ -129,7 +130,7 @@ export class QrEventPageComponent implements OnInit{
     const message = isYes ? 'Du hast erfolgreich zugesagt!' : 'Deine Absage wurde erfolgreich zugeschickt.';
   
     if (this.attending === 'yes') {
-      if(this.guest.password === null){
+      if(this.guest.password === ''){
         this.submitWithoutPassword(this.guest, 'extra', 1);
         console.log('Zusage:', this.guest);
       } else {
