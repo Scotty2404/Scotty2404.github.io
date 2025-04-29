@@ -22,7 +22,7 @@ import { MatCardModule } from '@angular/material/card';
   templateUrl: './event-to-do-list-page.component.html',
   styleUrls: ['./event-to-do-list-page.component.scss']
 })
-export class EventToDoListPageComponent implements OnInit {
+export class EventToDoListPageComponent {
   isLoaded = true;
   isFailed = false;
 

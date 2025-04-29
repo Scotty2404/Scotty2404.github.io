@@ -20,6 +20,7 @@ describe('AuthRoutes tests', () => {
         const res = await request(app)
             .post('/api/auth/register')
             .send(testUser);
+        //console.log(res.body);
         expect(res.statusCode).toBe(200);
         expect(res.body).toHaveProperty('user_id');
         
@@ -31,6 +32,7 @@ describe('AuthRoutes tests', () => {
         const res = await request(app)
             .post('/api/auth/login')
             .send({ email: testUser.email, password: testUser.password });
+        console.log(res.body);
         expect(res.statusCode).toBe(200);
         expect(res.body).toHaveProperty('token');
         expect(res.body).toHaveProperty('user');

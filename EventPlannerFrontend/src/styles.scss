@@ -1,10 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
+@import '../public/Fonts/Roboto/static/Roboto-Black.ttf';
+
 
 html, body { height: 100%; }
 body, h1, p { margin: 0;
     @font-face {
         font-family: 'Roboto';
-        src: url('/EventPlannerFrontend/public/Fonts/Roboto/Roboto-VariableFont_wdth\,wght.ttf') format('ttf');
+        src: url('../public/Fonts/Roboto/static/Roboto-Black.ttf') format('ttf');
         font-weight: normal;
         font-style: normal;
       }
