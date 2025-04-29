@@ -23,6 +23,7 @@ import { LoadingFailedBoxComponent } from '../../components/loading-failed-box/l
 
 @Component({
   selector: 'app-add-event-page',
+  standalone: true,
   imports: [
     CommonModule,
     MatCardModule,
@@ -57,8 +58,6 @@ export class AddEventPageComponent implements OnInit {
     '/auswahl/jugendweihe.jpg',
   ];
 
-
-
   constructor(private fb: FormBuilder, private apiService: ApiService, private router: Router) {
     this.eventForm = this.fb.group({
       title: ['', Validators.required],
@@ -66,8 +65,9 @@ export class AddEventPageComponent implements OnInit {
       street: ['', Validators.required], 
       city: ['', Validators.required], 
       postalCode: ['', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
+      description: ['', Validators.required],
       image: ['', Validators.required],
-      guestCount: ['', Validators.required],
+      guestCount: [''], // Optional - kein Validator
       timeOption: ['ganztags', Validators.required],
       startTime: [''],
       endTime: [''],
@@ -78,10 +78,10 @@ export class AddEventPageComponent implements OnInit {
     this.eventForm.get('timeOption')?.valueChanges.subscribe((value) => {
       if (value === 'ganztags') {
         this.eventForm.get('startTime')?.clearValidators();
-        this.eventForm.get('endTime')?.setValidators([]);
+        this.eventForm.get('endTime')?.clearValidators();
       } else if (value === 'startzeit') {
         this.eventForm.get('startTime')?.setValidators([Validators.required]);
-        this.eventForm.get('endTime')?.setValidators([]);
+        this.eventForm.get('endTime')?.clearValidators();
       } else if (value === 'start_endzeit') {
         this.eventForm.get('startTime')?.setValidators([Validators.required]);
         this.eventForm.get('endTime')?.setValidators([Validators.required]);
@@ -90,8 +90,6 @@ export class AddEventPageComponent implements OnInit {
       this.eventForm.get('endTime')?.updateValueAndValidity();
     });
   }
-
-  
 
   onFileSelected(event: any) {
     const file = event.target.files[0];
@@ -174,20 +172,15 @@ export class AddEventPageComponent implements OnInit {
       enddate = `${formattedDate}T${formData.endTime}:00`;
     }
 
-    //Encoded Adress für google Maps link erzeugen
-    const address = `${formData.street}, ${formData.city}, ${formData.postal_code}`;
-    const encodedAddress = encodeURIComponent(address);
-    const googleMapsLink = `https://www.google.com/maps/place?q=${encodedAddress}`; //no api key for embeded google maps links
-
     //Venue Setzten
     eventVenue = {
       street: formData.street,
       city: formData.city,
       postal_code: formData.postalCode,
-      google_maps_link: googleMapsLink,
+      google_maps_link: `https://www.google.com/maps/place/${encodeURIComponent(formData.street + ', ' + formData.postalCode + ' ' + formData.city)}`
     };
 
-    //Image setzten !Achtung custom images werden noch nicht berücksichtigt!
+    //Image setzten
     let image;
     this.selectedFile ? image = this.selectedFile : image = formData.image;
 
@@ -198,9 +191,55 @@ export class AddEventPageComponent implements OnInit {
     resultData.append('venue', JSON.stringify(eventVenue));
     resultData.append('startdate', startdate!);
     resultData.append('enddate', enddate!);
-    resultData.append('max_guests', formData.guestCount.toString());
-    resultData.append('image', image);
-    resultData.append('survey_id', surveyId.toString());
+    
+    // Gästeanzahl korrekt behandeln
+    if (formData.guestCount && formData.guestCount !== '') {
+      resultData.append('max_guests', formData.guestCount.toString());
+    } else {
+      resultData.append('max_guests', '0'); // Standardwert, wenn leer
+    }
+    
+    // Bild korrekt verarbeiten
+    if (this.selectedFile) {
+      resultData.append('image', this.selectedFile);
+    } else if (typeof formData.image === 'string') {
+      // Bei vorhandener Bildauswahl: Verwende die URL als String
+      const imageUrl = formData.image;
+      // Falls ein Standard-Bild aus dem Array verwendet wird
+      if (this.standardImages.includes(imageUrl)) {
+        resultData.append('image', imageUrl);
+      } else {
+        // Wenn es ein Base64-String ist (durch FileReader)
+        // Konvertiere und sende als File-Objekt
+        try {
+          const byteString = atob(imageUrl.split(',')[1]);
+          const mimeString = imageUrl.split(',')[0].split(':')[1].split(';')[0];
+          const ab = new ArrayBuffer(byteString.length);
+          const ia = new Uint8Array(ab);
+          for (let i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+          }
+          const blob = new Blob([ab], { type: mimeString });
+          const file = new File([blob], 'image.png', { type: mimeString });
+          resultData.append('image', file);
+        } catch (e) {
+          console.error('Error converting base64 to file:', e);
+          // Fallback: Sende eine Standardbild-URL
+          resultData.append('image', this.standardImages[0]);
+        }
+      }
+    } else {
+      // Fallback für den Fall, dass kein Bild ausgewählt wurde
+      resultData.append('image', this.standardImages[0]);
+    }
+    
+    // Wenn eine Umfrage erstellt wurde, füge survey_id hinzu
+    if (surveyId > 0) {
+      resultData.append('survey_id', surveyId.toString());
+    } else {
+      // Bei keiner Umfrage
+      resultData.append('survey_id', '0');
+    }
 
     return resultData;
   }
@@ -243,31 +282,79 @@ export class AddEventPageComponent implements OnInit {
       })
     };
   
-    console.log(survey);
     return survey;
   }
 
   saveEvent(){
-    let surveyId = -1;
+    console.log('Saving event...');
+    
+    // Wenn keine Fragen vorhanden sind
+    if (this.survey.length === 0) {
+      const eventData = this.transformEventData(0);
+      
+      console.log('Sending event data without survey:', eventData);
+      
+      this.apiService.createEvent(eventData).subscribe({
+        next: (response) => {
+          console.log('Event saved successfully without survey', response);
+          this.router.navigate(['/landing-page']);
+        },
+        error: (error) => {
+          console.log('Saving Event Failed', error);
+          console.log('Request payload:', eventData);
+          alert('Fehler beim Speichern des Events: ' + (error.message || 'Unbekannter Fehler'));
+        }
+      });
+      return;
+    }
+
+    // Mit Umfrage
     this.apiService.createSurvey(this.transfromSurveyData()).subscribe({
       next: (surveyResponse) => {
-        surveyId = surveyResponse.survey_id;
-
-        this.apiService.createEvent(this.transformEventData(surveyId)).subscribe({ 
+        console.log('Survey created:', surveyResponse);
+        const surveyId = surveyResponse.survey_id;
+        const eventData = this.transformEventData(surveyId);
+        
+        console.log('Sending event data with survey:', eventData);
+        
+        this.apiService.createEvent(eventData).subscribe({ 
           next: (response) => {
-            console.log('Event saved successfully', response);
+            console.log('Event saved successfully with survey', response);
             this.router.navigate(['/landing-page']);
-          }, error: (error) => {
+          }, 
+          error: (error) => {
             console.log('Saving Event Failed', error);
+            console.log('Request payload:', eventData);
+            alert('Fehler beim Speichern des Events: ' + (error.message || 'Unbekannter Fehler'));
           }
         });
-      }, error: (error) => {
+      }, 
+      error: (error) => {
         console.log('Saving survey failed', error);
+        alert('Fehler beim Erstellen der Umfrage: ' + (error.message || 'Unbekannter Fehler'));
       }
     });
   }
 
   onSubmit() {
+    console.log('Form Status before validation:', this.eventForm.status);
+    console.log('Form Value:', this.eventForm.value);
+    
+    // Überprüfen, ob Umfragefragen vorhanden sind
+    const hasQuestions = this.surveyFormGroups.length > 0;
+    
+    // Wenn keine Fragen vorhanden sind, überspringen wir die Validierung
+    if (!hasQuestions) {
+      if (this.eventForm.valid) {
+        this.saveEvent();
+      } else {
+        console.warn('Formular ungültig:', this.getFormValidationErrors());
+        alert('Bitte füllen Sie alle erforderlichen Felder aus.');
+      }
+      return;
+    }
+    
+    // Wenn Fragen vorhanden sind, validieren wir diese
     const questionsValid = this.surveyFormGroups.every((q) => {
       const type = q.get('answerType')?.value;
       const answers = q.get('answers') as FormArray;
@@ -285,37 +372,62 @@ export class AddEventPageComponent implements OnInit {
       return answers.length > 0 && answers.controls.every(a => a.value && a.value.trim() !== '');
     });
     
-
-  if (this.eventForm.valid && questionsValid) {
-    this.saveEvent();
-  } else {
-    console.warn('Formular ungültig oder Fragen nicht korrekt ausgefüllt');
+    if (this.eventForm.valid && questionsValid) {
+      this.saveEvent();
+    } else {
+      console.warn('Formular ungültig oder Fragen nicht korrekt ausgefüllt');
+      console.log('Formular-Status:', this.eventForm.status);
+      console.log('Formular-Fehler:', this.getFormValidationErrors());
+      
+      if (!questionsValid) {
+        alert('Bitte überprüfen Sie die Umfragefragen. Alle Fragen müssen ausgefüllt sein.');
+      } else {
+        alert('Bitte füllen Sie alle erforderlichen Felder aus.');
+      }
+    }
   }
-}
 
+  // Hilfsmethode, um Formularfehler anzuzeigen
+  getFormValidationErrors() {
+    const errors: {[key: string]: any} = {};
+    Object.keys(this.eventForm.controls).forEach(key => {
+      const control = this.eventForm.get(key);
+      if (control && control.errors) {
+        errors[key] = control.errors;
+      }
+    });
+    return errors;
+  }
 
   get surveyFormGroups(): FormGroup[] {
-  return this.survey.controls as FormGroup[];
-}
-
-onQuestionTypeChange(index: number) {
-  const questionGroup = (this.eventForm.get('survey') as FormArray).at(index) as FormGroup;
-  const answerType = questionGroup.get('answerType')?.value;
-  const answersArray = questionGroup.get('answers') as FormArray;
-  
-  if (answerType === 'multiple') {
-    // Multiple Choice benötigt mindestens eine Antwort
-    if (answersArray.length === 0) {
-      answersArray.push(this.fb.control('', Validators.required));
-    }
-  } else {
-    // Für andere Fragetypen keine Antworten erforderlich
-    answersArray.clear();
+    return this.survey.controls as FormGroup[];
   }
-}
 
-ngOnInit() {
-  // Leer lassen, aber die Methode muss vorhanden sein wegen OnInit Interface
-}
+  onQuestionTypeChange(index: number) {
+    const questionGroup = (this.eventForm.get('survey') as FormArray).at(index) as FormGroup;
+    const answerType = questionGroup.get('answerType')?.value;
+    const answersArray = questionGroup.get('answers') as FormArray;
+    
+    if (answerType === 'multiple') {
+      // Multiple Choice benötigt mindestens eine Antwort
+      if (answersArray.length === 0) {
+        answersArray.push(this.fb.control('', Validators.required));
+      }
+    } else {
+      // Für andere Fragetypen keine Antworten erforderlich
+      answersArray.clear();
+    }
+  }
 
+  ngOnInit() {
+    // Stellen Sie sicher, dass alle FormControls korrekt initialisiert sind
+    console.log('FormGroup initialisiert:', this.eventForm);
+    
+    // Setze ein Standardbild, wenn keines ausgewählt ist
+    if (!this.eventForm.get('image')?.value) {
+      this.eventForm.patchValue({
+        image: this.standardImages[0]
+      });
+    }
+  }
 }

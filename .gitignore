@@ -6,4 +6,5 @@ EventPlannerBackend/public/
 dist/
 /dist
 .vscode
-
+*/.env
+.env.example

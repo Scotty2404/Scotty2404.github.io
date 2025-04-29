@@ -1,18 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
-import { RouterLink } from '@angular/router';
-import { QrDialogComponent } from '../../components/qr-dialog/qr-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { QrDialogComponent } from '../../components/qr-dialog/qr-dialog.component';
 import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-qr-event-page',
+  standalone: true,
   imports: [
     FormsModule,
     MatFormFieldModule,
@@ -21,8 +21,7 @@ import { ApiService } from '../../services/api.service';
     CommonModule,
     MatCardModule,
     RouterLink,
-    
-
+    QrDialogComponent
   ],
   templateUrl: './qr-event-page.component.html',
   styleUrl: './qr-event-page.component.scss'
@@ -37,21 +36,6 @@ export class QrEventPageComponent implements OnInit {
   token: any;
   event: any;
 
-  constructor(private apiService: ApiService, private route: ActivatedRoute, private dialog: MatDialog) {}
-
-  ngOnInit(): void {
-    this.eventId = this.route.snapshot.paramMap.get('id');
-    this.token = this.route.snapshot.queryParamMap.get('token');
-    console.log('Event ID:', this.eventId);
-    console.log('Token:', this.token);
-      this.apiService.getEventFromQrCode(this.eventId!, this.token).subscribe((eventData) => {
-        this.event = eventData;
-        console.log('Event fetched successfully: ', this.event);
-      }, (error) => {
-        console.error('Error fetching Event', error);
-      })
-  }
-
   guest = {
     firstname: '',
     lastname: '',
@@ -60,96 +44,20 @@ export class QrEventPageComponent implements OnInit {
     password: ''
   };
 
-  event = {
-    title: '',
-    date: '',
-    image: '',
-    street: '',
-    zip: '',
-    city: '',
-    info: ''
-  };
-  
-  submitWithPassword(result: any, type: string, confirmation: number) {
-    const userData = {
-      firstname: result.firstname,
-      lastname: result.lastname,
-      email: result.mail,
-      password: result.password
-    }
-
-    this.apiService.register(userData).subscribe((response) => {
-      console.log('registration successfull', response);
-      this.apiService.login(userData).subscribe((response) => {
-        console.log('Login successfull', response);
-        localStorage.setItem('token', response.token);
-        const guestData = {
-          type: type,
-          confirmation: confirmation,
-          guest: ''
-        }
-        this.apiService.addGuestToEvent(guestData, this.eventId).subscribe((response) => {
-          console.log('Answer submitted...', response);
-        }, (error) => {
-          console.error('Error while submitting answer...', error);
-        });
-      }, (error) => {
-        console.log('Login failed', error);
-      });
-    }, (error) => {
-      console.log('Registration failed', error);
-      this.apiService.login(userData).subscribe((response) => {
-        console.log('Login successfull', response);
-        localStorage.setItem('token', response.token);
-        const guestData = {
-          type: type,
-          confirmation: confirmation,
-          guest: ''
-        }
-        this.apiService.addGuestToEvent(guestData, this.eventId).subscribe((response) => {
-          console.log('Answer submitted...', response);
-        }, (error) => {
-          console.error('Error while submitting answer...', error);
-        });
-      }, (error) => {
-        console.log('Login failed', error);
-      });
-    });
-  }
-
-  submitWithoutPassword(result: any, type: string, confirmation: number) {
-    const guestData = {
-      type: type,
-      
-      //consfirmation: confirmation,
-      guest: {
-        firstname: result.firstname,
-        lastname: result.lastname
-      }
-    }
-
-    this.apiService.addGuestToEvent(guestData, this.eventId).subscribe({
-      next: (res) => {
-        console.log('Answer submitted... ', res);
-      }, error: (error) => {
-        console.log('Error while submitting Data...', error);
-      }
-    });
-  }
-
   constructor(
     private route: ActivatedRoute,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
     // Hole Event-ID und Token aus der URL
     this.route.params.subscribe(params => {
-      const eventId = params['id'];
+      this.eventId = params['id'];
       this.route.queryParams.subscribe(queryParams => {
-        const token = queryParams['token'];
-        if (eventId && token) {
-          this.loadEvent(eventId, token);
+        this.token = queryParams['token'];
+        if (this.eventId && this.token) {
+          this.loadEvent(this.eventId, this.token);
         }
       });
     });
@@ -175,6 +83,73 @@ export class QrEventPageComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading event:', error);
+      }
+    });
+  }
+
+  submitWithPassword(result: any, type: string, confirmation: number) {
+    const userData = {
+      firstname: result.firstname,
+      lastname: result.lastname,
+      email: result.mail,
+      password: result.password
+    };
+
+    this.apiService.register(userData).subscribe((response) => {
+      console.log('registration successfull', response);
+      this.apiService.login(userData).subscribe((response) => {
+        console.log('Login successfull', response);
+        localStorage.setItem('token', response.token);
+        const guestData = {
+          type: type,
+          confirmation: confirmation,
+          guest: ''
+        };
+        this.apiService.addGuestToEvent(guestData, this.eventId).subscribe((response) => {
+          console.log('Answer submitted...', response);
+        }, (error) => {
+          console.error('Error while submitting answer...', error);
+        });
+      }, (error) => {
+        console.log('Login failed', error);
+      });
+    }, (error) => {
+      console.log('Registration failed', error);
+      this.apiService.login(userData).subscribe((response) => {
+        console.log('Login successfull', response);
+        localStorage.setItem('token', response.token);
+        const guestData = {
+          type: type,
+          confirmation: confirmation,
+          guest: ''
+        };
+        this.apiService.addGuestToEvent(guestData, this.eventId).subscribe((response) => {
+          console.log('Answer submitted...', response);
+        }, (error) => {
+          console.error('Error while submitting answer...', error);
+        });
+      }, (error) => {
+        console.log('Login failed', error);
+      });
+    });
+  }
+
+  submitWithoutPassword(result: any, type: string, confirmation: number) {
+    const guestData = {
+      type: type,
+      confirmation: confirmation,
+      guest: {
+        firstname: result.firstname,
+        lastname: result.lastname
+      }
+    };
+
+    this.apiService.addGuestToEvent(guestData, this.eventId).subscribe({
+      next: (res) => {
+        console.log('Answer submitted... ', res);
+      }, 
+      error: (error) => {
+        console.log('Error while submitting Data...', error);
       }
     });
   }
@@ -208,5 +183,4 @@ export class QrEventPageComponent implements OnInit {
       }
     });
   }
-  
 }

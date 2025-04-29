@@ -1,19 +1,37 @@
 import { Component, OnInit } from '@angular/core';
 import { NgFor } from '@angular/common';
-import { MatButton, MatButtonModule } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { EventDetailBoxComponent } from '../../components/event-detail-box/event-detail-box.component';
 import { LoadingBoxComponent } from '../../components/loading-box/loading-box.component';
 import { LoadingFailedBoxComponent } from '../../components/loading-failed-box/loading-failed-box.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { ActivatedRoute } from '@angular/router';
+import { ApiService } from '../../services/api.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-event-page',
-  imports: [ NgFor, MatButton, MatButtonModule, EventDetailBoxComponent, RouterLink, MatCheckboxModule, LoadingBoxComponent, LoadingFailedBoxComponent, MatIconModule, MatCard, CommonModule],
+  standalone: true,
+  imports: [ 
+    NgFor, 
+    MatButtonModule, 
+    EventDetailBoxComponent, 
+    RouterLink, 
+    MatCheckboxModule, 
+    LoadingBoxComponent, 
+    LoadingFailedBoxComponent,
+    MatIconModule,
+    MatCardModule,
+    CommonModule
+  ],
   templateUrl: './event-page.component.html',
   styleUrl: './event-page.component.scss'
 })
-export class EventPageComponent implements OnInit{
+export class EventPageComponent implements OnInit {
   isLoaded = false;
   isFailed = false;
   event: any;
@@ -26,12 +44,12 @@ export class EventPageComponent implements OnInit{
     const eventId = this.route.snapshot.paramMap.get('id');
 
     if(eventId) {
-      this.apiService.getEventById(eventId).subscribe((eventData) => {
+      this.apiService.getEventById(eventId).subscribe((eventData: any) => {
         this.event = eventData;
         this.setTimeForEvent();
         this.googleMapsUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.event.google_maps_link);
         this.isLoaded = true;
-      }, (error) => {
+      }, (error: any) => {
         console.error('Error fetching Event details', error);
         this.isFailed = true;
       });
