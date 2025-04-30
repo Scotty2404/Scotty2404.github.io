@@ -30,6 +30,7 @@
 .breadcrumb p {
   font-size: 1.1em; // Schriftgröße leicht vergrößert
   margin: 10px 0; // Vertikaler Abstand
+  font-family: "Roboto", normal;
 }
 
 // Container für den Seitentitel (Zurück-Button + Titeltext)
@@ -43,6 +44,7 @@
 .title h1 {
   font-weight: normal; // Kein fetter Text
   margin: 0; // Kein äußerer Abstand
+  font-family: "Roboto", normal;
 }
 
 // Container für den Hauptinhalt
