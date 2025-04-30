@@ -18,6 +18,7 @@
                     [eventName]="event.title" 
                     [eventTitle]="event.eventTitle" 
                     [eventInfo]="event.description"
+                    [eventTime]="formatEventTime(event.startdate, event.enddate)"
                     [routerLink]="'/event/' + event.event_id">
                 </app-event-box>
             </div>

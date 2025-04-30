@@ -48,4 +48,18 @@ export class LandingPageComponent implements OnInit{
       }
     });
   }
+
+  formatEventTime(startdate: Date, enddate: Date) {
+    const start = new Date(startdate);
+    const end = new Date(enddate);
+    let eventTime;
+
+    if(start === end) {
+      eventTime = `${start.toLocaleDateString('de-DE')} : ${start.toLocaleTimeString('de-DE')} Uhr`;
+    } else {
+      eventTime = `${start.toLocaleDateString('de-DE')} : ${start.toLocaleTimeString('de-DE')} - ${end.toLocaleTimeString('de-DE')} Uhr`;
+    }
+
+    return eventTime;
+  }
 }

@@ -21,5 +21,6 @@ export class EventBoxComponent {
   @Input() eventName: string = '';
   @Input() eventTitle: string = '';
   @Input() eventInfo: string = '';
+  @Input() eventTime: string = '';
 
 }
