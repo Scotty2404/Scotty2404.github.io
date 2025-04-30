@@ -134,7 +134,7 @@ export class EventEditPageComponent implements OnInit {
       city: [this.sampleEvent.city, Validators.required],
       postalCode: [this.sampleEvent.postalCode, Validators.required],
       description: [this.sampleEvent.description, Validators.required],
-      image: [this.sampleEvent.image],
+      image: [this.sampleEvent.image, Validators.required],
       guestCount: [this.sampleEvent.guestCount, Validators.required],
     });
 
