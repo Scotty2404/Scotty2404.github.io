@@ -1,8 +1,13 @@
 @import '../../styles/colors.scss';
 
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
 body {
-    overflow: hidden;
-    font-family: 'Nunito';
+  display: flex;
+  flex-direction: column;
   }
   
 .mat-toolbar{
@@ -31,8 +36,10 @@ body {
 }
   
 .container {
+  flex: 1;
   display: flex;
-  height: 100vh;
+  flex-direction: column;
+  overflow: auto; // erlaubt dem Container zu scrollen, wenn nötig
 }
     
 .sidenav {
@@ -67,13 +74,13 @@ mat-menu-item mat-icon {
   margin-right: 10px;
 }
   
-  
 .content {
+  flex: 1;
   display: flex;
-  width: 100vw;
   flex-direction: column;
   padding: 20px;
 }
+
   
 .block {
   background-color: pink;
@@ -89,8 +96,7 @@ mat-menu-item mat-icon {
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
-  bottom: 0;
+  margin-top: auto;
   width: 100%;
 }
     

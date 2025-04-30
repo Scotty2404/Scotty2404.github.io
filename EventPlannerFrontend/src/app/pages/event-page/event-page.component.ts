@@ -55,4 +55,28 @@ export class EventPageComponent implements OnInit{
 
     return;
   }
+
+  printInvitation() {
+    const printContent = document.querySelector('.mail-card') as HTMLElement;
+    const WindowPrt = window.open('', '', 'width=800,height=600');
+    if (WindowPrt && printContent) {
+      WindowPrt.document.write(`
+        <html>
+          <head>
+            <title>Einladung drucken</title>
+            <style>
+              body { font-family: Arial, sans-serif; padding: 20px; }
+              img { max-width: 80%; }
+            </style>
+          </head>
+          <body>${printContent.innerHTML}</body>
+        </html>
+      `);
+      WindowPrt.document.close();
+      WindowPrt.focus();
+      WindowPrt.print();
+      WindowPrt.close();
+    }
+  }
+  
 }
