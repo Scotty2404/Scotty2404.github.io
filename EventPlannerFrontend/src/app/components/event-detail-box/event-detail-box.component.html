@@ -37,18 +37,17 @@
 
 
     <div class="button-box">
-
         <div>
-        <button class="raised-buttons" mat-raised-button [routerLink]="['/guesttable/' + event.event_id]">zur Gästeliste</button>
-        <button class="raised-buttons" mat-raised-button [routerLink]="['/survey']">zur Umfrage</button>
-        <button class="raised-buttons" mat-raised-button [routerLink]="['/to-do-list']">zur To-Do-Liste</button>
+            <button class="raised-buttons" mat-raised-button [routerLink]="['/guesttable/' + event.event_id]">zur Gästeliste</button>
+            <button class="raised-buttons" mat-raised-button [routerLink]="['/survey/' + event.event_id]">zur Umfrage</button>
+            <button class="raised-buttons" mat-raised-button [routerLink]="['/to-do-list']">zur To-Do-Liste</button>
         </div>
-
+    
         <div class="icon-buttons">
             <button [routerLink]="['/eventedit/' + event.event_id]" mat-icon-button aria-label="Example icon button with a menu icon" style="margin-right: 20px;">
                 <mat-icon>edit</mat-icon>
             </button>
-
+    
             <button mat-icon-button aria-label="Example icon button with a menu icon" (click)="deleteEvent(event.event_id)">
                 <mat-icon>delete</mat-icon>
             </button>

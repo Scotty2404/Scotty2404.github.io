@@ -28,20 +28,17 @@ export const routes: Routes = [
             { path: 'eventedit/:id', component: EventEditPageComponent },
             { path: 'addevent', component: AddEventPageComponent },
             { path: 'event', component: EventPageComponent },
-            { path: 'survey', component: SurveyPageComponent },
+            { path: 'survey/:id', component: SurveyPageComponent }, // Changed to accept an ID parameter
+            { path: 'survey', component: SurveyPageComponent }, // Keep this for backward compatibility
             { path: 'wishlist', component: EventWishlistPageComponent },
             { path: 'to-do-list', component: EventToDoListPageComponent },
             { path: 'guesttable/:id', component: GuestTablePageComponent },
             { path: 'event/:id', component: EventPageComponent }
         ] 
-
-        
     },
     { path: 'login', component: LoginPageComponent },
     { path: 'qr/event/:id', component: QrEventPageComponent },
     { path: 'EventPlannerFrontend/event/:id', component: QrEventPageComponent },
     { path: 'qrSurvey', component: QrSurveyPageComponent },
-
-
     { path: '**', redirectTo: '' }
 ];

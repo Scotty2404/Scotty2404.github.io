@@ -1,27 +1,31 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { QrDialogComponent } from '../../components/qr-dialog/qr-dialog.component';
 import { ApiService } from '../../services/api.service';
+import { ErrorDialogComponent } from '../../components/error-dialog/error-dialog.component';
 
 @Component({
   selector: 'app-qr-event-page',
   standalone: true,
   imports: [
     FormsModule,
+    ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     CommonModule,
     MatCardModule,
     RouterLink,
-    QrDialogComponent
+    QrDialogComponent,
+    MatDialogModule,
+    ErrorDialogComponent
   ],
   templateUrl: './qr-event-page.component.html',
   styleUrl: './qr-event-page.component.scss'
@@ -35,23 +39,27 @@ export class QrEventPageComponent implements OnInit {
   eventId: any;
   token: any;
   event: any;
-
-  guest = {
-    firstname: '',
-    lastname: '',
-    mail: '',
-    info: '',
-    password: ''
-  };
+  guestForm: FormGroup;
+  formSubmitted = false;
 
   constructor(
     private route: ActivatedRoute,
     private apiService: ApiService,
-    private dialog: MatDialog
-  ) {}
+    private dialog: MatDialog,
+    private fb: FormBuilder
+  ) {
+    // Initialize form with validators
+    this.guestForm = this.fb.group({
+      firstname: ['', [Validators.required, Validators.minLength(2)]],
+      lastname: ['', [Validators.required, Validators.minLength(2)]],
+      mail: ['', [Validators.required, Validators.email]],
+      info: [''],
+      password: ['']
+    });
+  }
 
   ngOnInit(): void {
-    // Hole Event-ID und Token aus der URL
+    // Get event ID and token from the URL
     this.route.params.subscribe(params => {
       this.eventId = params['id'];
       this.route.queryParams.subscribe(queryParams => {
@@ -68,12 +76,13 @@ export class QrEventPageComponent implements OnInit {
       next: (eventData) => {
         this.event = {
           title: eventData.title,
-          date: eventData.startdate,
+          startdate: eventData.startdate,
+          enddate: eventData.enddate,
           image: eventData.image || '/auswahl/hochzeit.jpg',
           street: eventData.street || '',
-          zip: eventData.zip || '',
+          postalCode: eventData.postalCode || '',
           city: eventData.city || '',
-          info: eventData.description
+          description: eventData.description
         };
 
         if (eventData.survey_id) {
@@ -83,6 +92,57 @@ export class QrEventPageComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading event:', error);
+        this.dialog.open(ErrorDialogComponent, {
+          data: { message: 'Fehler beim Laden des Events. Bitte versuche es später noch einmal.' }
+        });
+      }
+    });
+  }
+
+  submitResponse() {
+    this.formSubmitted = true;
+    
+    // Check if form is valid
+    if (!this.guestForm.valid) {
+      this.dialog.open(ErrorDialogComponent, {
+        data: { message: 'Bitte fülle alle erforderlichen Felder korrekt aus (Vorname, Nachname und Email).' }
+      });
+      return;
+    }
+
+    const isYes = this.attending === 'yes';
+    const message = isYes ? 'Du hast erfolgreich zugesagt!' : 'Deine Absage wurde erfolgreich zugeschickt.';
+    const formValues = this.guestForm.value;
+  
+    if (this.attending === 'yes') {
+      if(formValues.password === '') {
+        this.submitWithoutPassword(formValues, 'extra', 1);
+        console.log('Zusage:', formValues);
+      } else {
+        this.submitWithPassword(formValues, 'user', 1);
+        console.log('Zusage:', formValues);
+      }
+      this.responseMessage = 'Du hast erfolgreich zugesagt!';
+    } else if (this.attending === 'no') {
+      if(formValues.password === '') {
+        this.submitWithoutPassword(formValues, 'extra', 0);
+        console.log('Absage:', formValues);
+      } else {
+        this.submitWithPassword(formValues, 'user', 0);
+        console.log('Absage:', formValues);
+      }
+      this.responseMessage = 'Deine Absage wurde gespeichert.';
+    }
+    
+    this.responseSubmitted = true;
+
+    this.dialog.open(QrDialogComponent, {
+      data: {
+        title: isYes ? '🎉 Zusage gespeichert' : '❌ Absage gespeichert',
+        message: message,
+        attending: this.attending,
+        surveyAvailable: this.surveyAvailable,
+        surveyID: this.surveyId
       }
     });
   }
@@ -95,42 +155,67 @@ export class QrEventPageComponent implements OnInit {
       password: result.password
     };
 
-    this.apiService.register(userData).subscribe((response) => {
-      console.log('registration successfull', response);
-      this.apiService.login(userData).subscribe((response) => {
-        console.log('Login successfull', response);
-        localStorage.setItem('token', response.token);
-        const guestData = {
-          type: type,
-          confirmation: confirmation,
-          guest: ''
-        };
-        this.apiService.addGuestToEvent(guestData, this.eventId).subscribe((response) => {
-          console.log('Answer submitted...', response);
-        }, (error) => {
-          console.error('Error while submitting answer...', error);
+    this.apiService.register(userData).subscribe({
+      next: (response) => {
+        console.log('registration successful', response);
+        this.apiService.login(userData).subscribe({
+          next: (response) => {
+            console.log('Login successful', response);
+            localStorage.setItem('token', response.token);
+            const guestData = {
+              type: type,
+              confirmation: confirmation,
+              guest: ''
+            };
+            this.apiService.addGuestToEvent(guestData, this.eventId).subscribe({
+              next: (response) => {
+                console.log('Answer submitted...', response);
+              }, 
+              error: (error) => {
+                console.error('Error while submitting answer...', error);
+                this.dialog.open(ErrorDialogComponent, {
+                  data: { message: 'Fehler beim Speichern der Antwort. Bitte versuche es später noch einmal.' }
+                });
+              }
+            });
+          }, 
+          error: (error) => {
+            console.log('Login failed', error);
+            // If login failed, try to add as guest
+            this.submitWithoutPassword(result, 'extra', confirmation);
+          }
         });
-      }, (error) => {
-        console.log('Login failed', error);
-      });
-    }, (error) => {
-      console.log('Registration failed', error);
-      this.apiService.login(userData).subscribe((response) => {
-        console.log('Login successfull', response);
-        localStorage.setItem('token', response.token);
-        const guestData = {
-          type: type,
-          confirmation: confirmation,
-          guest: ''
-        };
-        this.apiService.addGuestToEvent(guestData, this.eventId).subscribe((response) => {
-          console.log('Answer submitted...', response);
-        }, (error) => {
-          console.error('Error while submitting answer...', error);
+      }, 
+      error: (error) => {
+        console.log('Registration failed', error);
+        this.apiService.login(userData).subscribe({
+          next: (response) => {
+            console.log('Login successful', response);
+            localStorage.setItem('token', response.token);
+            const guestData = {
+              type: type,
+              confirmation: confirmation,
+              guest: ''
+            };
+            this.apiService.addGuestToEvent(guestData, this.eventId).subscribe({
+              next: (response) => {
+                console.log('Answer submitted...', response);
+              }, 
+              error: (error) => {
+                console.error('Error while submitting answer...', error);
+                this.dialog.open(ErrorDialogComponent, {
+                  data: { message: 'Fehler beim Speichern der Antwort. Bitte versuche es später noch einmal.' }
+                });
+              }
+            });
+          }, 
+          error: (error) => {
+            console.log('Login failed', error);
+            // If login failed, try to add as guest
+            this.submitWithoutPassword(result, 'extra', confirmation);
+          }
         });
-      }, (error) => {
-        console.log('Login failed', error);
-      });
+      }
     });
   }
 
@@ -150,37 +235,37 @@ export class QrEventPageComponent implements OnInit {
       }, 
       error: (error) => {
         console.log('Error while submitting Data...', error);
+        this.dialog.open(ErrorDialogComponent, {
+          data: { message: 'Fehler beim Speichern der Antwort. Bitte versuche es später noch einmal.' }
+        });
       }
     });
   }
 
-  submitResponse() {
-    const isYes = this.attending === 'yes';
-    const message = isYes ? 'Du hast erfolgreich zugesagt!' : 'Deine Absage wurde erfolgreich zugeschickt.';
-  
-    if (this.attending === 'yes') {
-      if(this.guest.password === ''){
-        this.submitWithoutPassword(this.guest, 'extra', 1);
-        console.log('Zusage:', this.guest);
-      } else {
-        this.submitWithPassword(this.guest, 'user', 1);
-        console.log('Zusage:', this.guest);
-      }
-      this.responseMessage = 'Du hast erfolgreich zugesagt!';
-    } else if (this.attending === 'no') {
-      this.submitWithPassword(this.guest, 'user', 0);
-      console.log('Absage');
-      this.responseMessage = 'Deine Absage wurde gespeichert.';
-    }
-    this.responseSubmitted = true;
+  // Helper method to check if field is invalid and touched
+  isFieldInvalid(fieldName: string): boolean {
+    const field = this.guestForm.get(fieldName);
+    return !!(field && field.invalid && (field.touched || this.formSubmitted));
+  }
 
-    this.dialog.open(QrDialogComponent, {
-      data: {
-        title: isYes ? '🎉 Zusage gespeichert' : '❌ Absage gespeichert',
-        message: message,
-        attending: this.attending,
-        surveyAvailable: this.surveyAvailable
-      }
-    });
+  // Helper method to get error message for a field
+  getErrorMessage(fieldName: string): string {
+    const field = this.guestForm.get(fieldName);
+    
+    if (!field) return '';
+    
+    if (field.hasError('required')) {
+      return 'Dieses Feld ist erforderlich';
+    }
+    
+    if (field.hasError('email')) {
+      return 'Bitte gib eine gültige E-Mail-Adresse ein';
+    }
+    
+    if (field.hasError('minlength')) {
+      return `Mindestens ${field.errors?.['minlength']?.requiredLength} Zeichen erforderlich`;
+    }
+    
+    return '';
   }
 }

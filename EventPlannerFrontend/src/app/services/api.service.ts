@@ -74,26 +74,6 @@ export class ApiService {
     });
   }
 
-  createSurvey(surveyData: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/surveys/create`, surveyData, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    });
-  }
-
-  getSurvey(surveyId: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/surveys/${surveyId}`);
-  }
-
-  submitSurveyResponse(surveyId: string, answers: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/surveys/${surveyId}/response`, { answers }, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    });
-  }
-
   getGuestsForEvent(eventId: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/events/${eventId}/guests`, {
       headers: {
@@ -111,14 +91,6 @@ export class ApiService {
     });
   }
 
-  getSurveyResults(surveyId: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/surveys/${surveyId}/results`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    });
-  }
-
   getPublicEvent(eventId: string, token: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/events/public-event/${eventId}?token=${token}`);
   }
@@ -127,6 +99,53 @@ export class ApiService {
     return this.http.get(`${this.baseUrl}/events/public-event/${eventId}`, {
       params: {
         token: token
+      }
+    });
+  }
+
+  getEventSurveys(eventId: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/events/${eventId}/surveys`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }
+
+  // Get a specific survey by ID
+  getSurvey(surveyId: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/surveys/${surveyId}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }
+
+  // Get survey results
+  getSurveyResults(surveyId: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/surveys/${surveyId}/results`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }
+
+  // Submit survey response
+  submitSurveyResponse(surveyId: string, answers: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/surveys/${surveyId}/response`, 
+      { answers }, 
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+    );
+  }
+
+  // Create a new survey
+  createSurvey(surveyData: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/surveys/create`, surveyData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
       }
     });
   }

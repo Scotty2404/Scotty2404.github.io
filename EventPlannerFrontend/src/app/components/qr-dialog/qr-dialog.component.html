@@ -3,7 +3,7 @@
   <p>{{ data.message }}</p>
 
   <div *ngIf="data.attending === 'yes'">
-    <p *ngIf="data.surveyAvailable">Der Gastgeber hat eine Umfrage angelegt – <a routerLink="/qrSurvey">Zur Umfrage</a></p>
+    <p *ngIf="data.surveyAvailable">Der Gastgeber hat eine Umfrage angelegt – <a [routerLink]="['/qrSurvey']" [queryParams]="{surveyId: data.surveyID}">hier teilnehmen</a>.</p>
     <p>Du kannst dich <a routerLink="/login">hier einloggen</a>, um deine Eventdaten im Kalender zu sehen.</p>
   </div>
   
