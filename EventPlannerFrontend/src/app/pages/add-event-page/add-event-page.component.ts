@@ -286,52 +286,23 @@ export class AddEventPageComponent implements OnInit {
   }
 
   saveEvent(){
-    console.log('Saving event...');
-    
-    // Wenn keine Fragen vorhanden sind
-    if (this.survey.length === 0) {
-      const eventData = this.transformEventData(0);
-      
-      console.log('Sending event data without survey:', eventData);
-      
-      this.apiService.createEvent(eventData).subscribe({
-        next: (response) => {
-          console.log('Event saved successfully without survey', response);
-          this.router.navigate(['/landing-page']);
-        },
-        error: (error) => {
-          console.log('Saving Event Failed', error);
-          console.log('Request payload:', eventData);
-          alert('Fehler beim Speichern des Events: ' + (error.message || 'Unbekannter Fehler'));
-        }
-      });
-      return;
-    }
-
-    // Mit Umfrage
+    let surveyId = -1;
     this.apiService.createSurvey(this.transfromSurveyData()).subscribe({
       next: (surveyResponse) => {
-        console.log('Survey created:', surveyResponse);
-        const surveyId = surveyResponse.survey_id;
-        const eventData = this.transformEventData(surveyId);
-        
-        console.log('Sending event data with survey:', eventData);
-        
-        this.apiService.createEvent(eventData).subscribe({ 
+        console.log(surveyResponse);
+        surveyId = surveyResponse.survey_id;
+        console.log(this.transformEventData(surveyId));
+
+        this.apiService.createEvent(this.transformEventData(surveyId)).subscribe({ 
           next: (response) => {
-            console.log('Event saved successfully with survey', response);
+            console.log('Event saved successfully', response);
             this.router.navigate(['/landing-page']);
-          }, 
-          error: (error) => {
+          }, error: (error) => {
             console.log('Saving Event Failed', error);
-            console.log('Request payload:', eventData);
-            alert('Fehler beim Speichern des Events: ' + (error.message || 'Unbekannter Fehler'));
           }
         });
-      }, 
-      error: (error) => {
+      }, error: (error) => {
         console.log('Saving survey failed', error);
-        alert('Fehler beim Erstellen der Umfrage: ' + (error.message || 'Unbekannter Fehler'));
       }
     });
   }
@@ -379,9 +350,7 @@ export class AddEventPageComponent implements OnInit {
       console.log('Formular-Status:', this.eventForm.status);
       console.log('Formular-Fehler:', this.getFormValidationErrors());
       
-      if (!questionsValid) {
-        alert('Bitte überprüfen Sie die Umfragefragen. Alle Fragen müssen ausgefüllt sein.');
-      } else {
+      if (questionsValid) {
         alert('Bitte füllen Sie alle erforderlichen Felder aus.');
       }
     }
