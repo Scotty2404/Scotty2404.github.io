@@ -67,7 +67,7 @@ export class AddEventPageComponent implements OnInit {
       postalCode: ['', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
       description: ['', Validators.required],
       image: ['', Validators.required],
-      guestCount: [''], // Optional - kein Validator
+      guestCount: ['', Validators.required],
       timeOption: ['ganztags', Validators.required],
       startTime: [''],
       endTime: [''],

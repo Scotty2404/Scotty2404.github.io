@@ -12,11 +12,11 @@ const testEvent = {
         postal_code: '12345',
         google_maps_link: 'https://maps.google.com'
     }),
-    playlist_id: 123,
+    playlist_id: null,
     startdate: '2025-05-01 10:00:00',
     enddate: '2025-05-01 15:00:00',
     max_guests: 10,
-    survey_id: 456
+    survey_id: null
 };
 
 describe('EventRoutes tests', () => {
@@ -48,6 +48,7 @@ describe('EventRoutes tests', () => {
             .post('/api/events/create')
             .set('Authorization', `Bearer ${token}`)
             .send(testEvent);
+        //console.log(res.body);
         
         expect(res.statusCode).toBe(200);
         expect(res.body).toHaveProperty('event_id');
@@ -85,6 +86,7 @@ describe('EventRoutes tests', () => {
         const res = await request(app)
             .get('/api/events/my-events')
             .set('Authorization', `Bearer ${token}`);
+        //console.log(res.body);
 
         expect(res.statusCode).toBe(200);
         expect(res.body).toBeInstanceOf(Array);

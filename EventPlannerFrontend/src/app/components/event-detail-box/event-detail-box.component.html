@@ -1,69 +1,58 @@
+
 <div class="box-service">
-    @if(isLoaded){
-
-    <div class="event-name">
+<div class="event-name">
 
 
-        <div>
+    <div>
 
-            <img [src]="'http://localhost:5000/public' + event.image" style="width: 100%;">
+        <img [src]="'http://localhost:5000/public' + event.image" style="width: 100%;">
 
+    </div>
+   
+
+</div>
+
+<div class="event-info" >
+
+
+
+    <div>
+
+        <h3 class="title-main"> {{ event.title }} </h3>
+        <hr>
+
+        <div class="option-status">
+            <mat-radio-group aria-label="Wähle den Status">
+              <mat-radio-button value="aktiv" checked>Aktiv</mat-radio-button>
+              <mat-radio-button value="inaktiv">Inaktiv</mat-radio-button>
+            </mat-radio-group>
         </div>
+
     </div>
 
-    <div class="event-info">
+    <div class="countdown-container">
+        <h3>Countdown bis zu {{ event.title }}: 🎉 {{ countdown }}🎉</h3> 
+    </div>
+
+
+
+    <div class="button-box">
+
         <div>
-
-            <h3 class="title-main"> {{ event.title }} </h3>
-            <hr>
-
-            <div class="option-status">
-                <mat-radio-group aria-label="Wähle den Status">
-                    <mat-radio-button value="aktiv" checked>Aktiv</mat-radio-button>
-                    <mat-radio-button value="inaktiv">Inaktiv</mat-radio-button>
-                </mat-radio-group>
-            </div>
+        <button class="raised-buttons" mat-raised-button [routerLink]="['/guesttable/' + event.event_id]">zur Gästeliste</button>
+        <button class="raised-buttons" mat-raised-button [routerLink]="['/survey']">zur Umfrage</button>
+        <button class="raised-buttons" mat-raised-button [routerLink]="['/to-do-list']">zur To-Do-Liste</button>
         </div>
 
-        <p>{{ event.description }}</p>
+        <div class="icon-buttons">
+            <button [routerLink]="['/eventedit/' + event.event_id]" mat-icon-button aria-label="Example icon button with a menu icon" style="margin-right: 20px;">
+                <mat-icon>edit</mat-icon>
+            </button>
 
-        <div class="countdown-container">
-            <h3>Countdown bis zu {{ event.title }}: 🎉 {{ countdown }}🎉</h3> 
-        </div>
-
-        <div class="button-box">
-
-            <button mat-flat-button [routerLink]="['/guesttable/' + event.event_id]">zur Gästeliste</button>
-            <button mat-flat-button [routerLink]="['/survey']">zur Umfrage Übersicht</button>
-            <button mat-flat-button [routerLink]="['/to-do-list']">zur To-Do-Liste</button>
-            <!-- <button mat-flat-button [routerLink]="['/wishlist']">zur Wunschliste</button> -->
-
-
-
-
-            <div class="icon-buttons">
-                <button [routerLink]="'/eventedit/' + event.event_id" mat-icon-button aria-label="Example icon button with a menu icon" style="margin-right: 20px;">
-                    <mat-icon>edit</mat-icon>
-                </button>
-
-                <button mat-icon-button aria-label="Example icon button with a menu icon" (click)="deleteEvent(event.event_id)">
-                    <mat-icon>delete</mat-icon>
-                </button>
-            </div>
+            <button mat-icon-button aria-label="Example icon button with a menu icon" (click)="deleteEvent(event.event_id)">
+                <mat-icon>delete</mat-icon>
+            </button>
         </div>
     </div>
-    }
-    @else {
-        @if(isFailed) {
-            <div class="loading-container">
-                <app-loading-failed-box></app-loading-failed-box>
-            </div>
-        }
-
-        @else {
-            <div class="loading-container">
-                <app-loading-box></app-loading-box>
-            </div>
-        }
-    }
+</div>
 </div>
