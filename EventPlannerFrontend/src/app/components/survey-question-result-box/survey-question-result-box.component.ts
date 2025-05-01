@@ -66,42 +66,40 @@ export class SurveyQuestionResultBoxComponent {
     private apiService: ApiService
   ) {}
 
-  /**
-   * Diese Methode öffnet einen Bestätigungsdialog, um die Umfrage abzuschließen.
-   * Falls der Benutzer bestätigt, wird das 'complete' Event ausgelöst.
-   */
   completeSurvey(survey: Survey): void {
     console.log('completeSurvey was called for survey:', survey);
   
-    // Open the confirmation dialog
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '400px',
-      disableClose: true
-    });
-  
-    console.log('Dialog opened:', dialogRef);
-  
-    // When dialog is closed, check the result
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('Dialog closed, result:', result);
-  
-      // If user confirmed
-      if (result === true) {
-        console.log('User confirmed - completing survey');
+    // Extract survey ID - check all possible properties
+    const surveyId = (survey as any).survey_id || (survey as any).id;
+    
+    console.log('Survey ID extracted:', surveyId);
+    
+    if (surveyId) {
+      // Open the confirmation dialog
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        width: '400px',
+        disableClose: true
+      });
+      
+      console.log('Dialog opened:', dialogRef);
+      
+      // When dialog is closed, check the result
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('Dialog closed, result:', result);
         
-        // Get the survey ID (handle different property names)
-        const surveyId = (survey as any).survey_id || (survey as any).id;
-        
-        if (surveyId) {
+        // If user confirmed
+        if (result === true) {
+          console.log('User confirmed - completing survey with ID:', surveyId);
+          
           // Emit the complete event to be handled by the parent component
           this.complete.emit(survey);
         } else {
-          console.error('Unable to complete survey: No survey ID found');
+          console.log('User canceled - survey will NOT be completed');
         }
-      } else {
-        console.log('User canceled - survey will NOT be completed');
-      }
-    });
+      });
+    } else {
+      console.error('Unable to complete survey: No survey ID found', survey);
+    }
   }
 
   /**

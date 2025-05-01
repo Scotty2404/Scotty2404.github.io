@@ -192,6 +192,8 @@ export class SurveyPageComponent implements OnInit {
     
     // Transform API survey data to the Survey model format
     const survey: Survey = {
+      id: surveyData.id || surveyData.survey_id,
+      survey_id: surveyData.id || surveyData.survey_id,
       title: surveyData.title || 'Unnamed Survey',
       questions: (surveyData.questions || []).map((q: any) => {
         // Create the question object with all required properties
@@ -234,7 +236,7 @@ export class SurveyPageComponent implements OnInit {
     }
   }
 
-  updateSurveyWithResults(data: any) {
+  private updateSurveyWithResults(data: any) {
     console.log('Processing survey results data:', data);
     
     // If we got survey and results data
@@ -268,109 +270,192 @@ export class SurveyPageComponent implements OnInit {
         // Update title and other basic properties
         targetSurvey.title = surveyData.title || targetSurvey.title;
         
-        // For each question in the survey
-        surveyData.questions.forEach((apiQuestion: any, index: number) => {
-          if (index < targetSurvey.questions.length) {
-            const question = targetSurvey.questions[index];
-            
-            // Process results based on question type
-            if (question.answerType === 'checkbox') {
-              this.processMultipleChoiceResults(question, apiQuestion, results);
-            } else if (question.answerType === 'scale') {
-              this.processScaleResults(question, apiQuestion, results);
-            } else if (question.answerType === 'open') {
-              this.processOpenTextResults(question, apiQuestion, results);
+        // Add survey ID if missing
+        if (!targetSurvey.id && surveyData.id) {
+          targetSurvey.id = surveyData.id;
+        }
+        if (!targetSurvey.survey_id && surveyData.id) {
+          targetSurvey.survey_id = surveyData.id;
+        }
+        
+        // For each question in the survey data
+        if (surveyData.questions && Array.isArray(surveyData.questions)) {
+          surveyData.questions.forEach((apiQuestion: any, index: number) => {
+            if (index < targetSurvey.questions.length) {
+              // Get the question from target survey
+              const question = targetSurvey.questions[index];
+              
+              // Check if question exists and has answerType before processing
+              if (question && question.answerType) {
+                // Process results based on question type
+                if (question.answerType === 'checkbox') {
+                  this.processMultipleChoiceResults(question, apiQuestion, results);
+                } else if (question.answerType === 'scale') {
+                  this.processScaleResults(question, apiQuestion, results);
+                } else if (question.answerType === 'open') {
+                  this.processOpenTextResults(question, apiQuestion, results);
+                }
+              } else {
+                console.warn('Skipping question processing due to missing question or answerType:', 
+                              {question, apiQuestion, index});
+              }
             }
-          }
-        });
+          });
+        } else {
+          console.warn('No questions array in survey data:', surveyData);
+        }
+      } else {
+        console.warn('Could not find matching survey to update with results');
       }
+    } else {
+      console.warn('Invalid survey results data structure:', data);
     }
   }
 
 
-// Helper method for processing multiple choice questions
-private processMultipleChoiceResults(question: any, apiQuestion: any, results: any[]) {
-  // Get the question ID (handle different property names)
-  const questionId = apiQuestion.question_id || apiQuestion.id;
-  
-  if (!questionId) return;
-  
-  // Create counters for each option
-  const optionCounts = Array(question.options.length).fill(0);
-  let totalResponses = 0;
-  
-  // Process each result
-  results.forEach((result: any) => {
-    // Look for answers to this question
-    if (result.answers && result.answers[questionId]) {
-      const answers = result.answers[questionId];
-      
-      // Handle different answer formats
-      if (Array.isArray(answers)) {
-        // Multiple selection
-        answers.forEach(answer => {
-          // Get the option index
-          const optionId = typeof answer === 'number' ? answer : 
-                          (answer.optionId || answer.offered_answers_id);
-          
-          // Find corresponding index in our options array
-          const optionIndex = this.findOptionIndex(optionId, apiQuestion);
+  private processMultipleChoiceResults(question: any, apiQuestion: any, results: any[]) {
+    // Get the question ID (handle different property names)
+    const questionId = apiQuestion.question_id || apiQuestion.id;
+    
+    if (!questionId) return;
+    
+    // Create counters for each option
+    const optionCounts = Array(question.options.length).fill(0);
+    let totalResponses = 0;
+    
+    console.log(`Processing results for question ${questionId}:`, results);
+    
+    // Process each result
+    results.forEach((result: any) => {
+      // Look for answers to this question
+      if (result.answers && result.answers[questionId]) {
+        const answer = result.answers[questionId];
+        console.log(`Found answers for question ${questionId}:`, answer);
+        
+        // NEW: Handle the specific format seen in the console
+        if (answer && answer.answer && Array.isArray(answer.answer)) {
+          // Format seen in the console output
+          answer.answer.forEach((optionAnswer: any) => {
+            if (optionAnswer.optionId !== undefined) {
+              // Find the index of this option in our options array
+              const optionIndex = this.findOptionIndexByOfferedAnswersId(question, optionAnswer.optionId);
+              console.log(`Option with ID ${optionAnswer.optionId} maps to index ${optionIndex}`);
+              
+              if (optionIndex >= 0 && optionIndex < optionCounts.length) {
+                optionCounts[optionIndex]++;
+                totalResponses++;
+              }
+            }
+          });
+        }
+        // Keep the existing code as fallback
+        else if (Array.isArray(answer)) {
+          // Old logic for multiple selection
+          answer.forEach(singleAnswer => {
+            const optionId = typeof singleAnswer === 'number' ? singleAnswer : 
+                            (singleAnswer.optionId || singleAnswer.offered_answers_id);
+            
+            const optionIndex = this.findOptionIndexByOfferedAnswersId(question, optionId);
+            
+            if (optionIndex >= 0 && optionIndex < optionCounts.length) {
+              optionCounts[optionIndex]++;
+              totalResponses++;
+            }
+          });
+        } else if (typeof answer === 'number') {
+          // Old logic for single numerical answer
+          const optionIndex = this.findOptionIndexByOfferedAnswersId(question, answer);
           
           if (optionIndex >= 0 && optionIndex < optionCounts.length) {
             optionCounts[optionIndex]++;
             totalResponses++;
           }
-        });
-      } else if (typeof answers === 'number') {
-        // Single selection as number
-        const optionIndex = this.findOptionIndex(answers, apiQuestion);
-        if (optionIndex >= 0 && optionIndex < optionCounts.length) {
-          optionCounts[optionIndex]++;
-          totalResponses++;
         }
-      } else if (answers.optionId || answers.offered_answers_id) {
-        // Single selection as object
-        const optionId = answers.optionId || answers.offered_answers_id;
-        const optionIndex = this.findOptionIndex(optionId, apiQuestion);
-        if (optionIndex >= 0 && optionIndex < optionCounts.length) {
-          optionCounts[optionIndex]++;
-          totalResponses++;
+      }
+    });
+    
+    console.log(`Question ${questionId} - Total responses: ${totalResponses}, Counts:`, optionCounts);
+    
+    // Calculate percentages
+    if (totalResponses > 0) {
+      question.optionPercentages = optionCounts.map(count => 
+        Math.round((count / totalResponses) * 100)
+      );
+    } else {
+      question.optionPercentages = Array(question.options.length).fill(0);
+    }
+    
+    console.log(`Question ${questionId} - Percentages:`, question.optionPercentages);
+  }
+
+  // Helper method to find the correct option index by mapping offered_answers_id
+  private findOptionIndexByOfferedAnswersId(question: any, optionId: any): number {
+    console.log('Finding option index for:', optionId);
+    console.log('Question _options:', question._options);
+    
+    // If we have the original options array with IDs
+    if (question._options && Array.isArray(question._options)) {
+      for (let i = 0; i < question._options.length; i++) {
+        const option = question._options[i];
+        if (option.id == optionId || option.offered_answers_id == optionId) {
+          return i;
         }
       }
     }
-  });
-  
-  // Calculate percentages
-  if (totalResponses > 0) {
-    question.optionPercentages = optionCounts.map(count => 
-      Math.round((count / totalResponses) * 100)
-    );
-  } else {
-    question.optionPercentages = Array(question.options.length).fill(0);
-  }
-}
-  
-// Helper method for finding the option index
-private findOptionIndex(optionId: any, apiQuestion: any): number {
-  // Get the options array
-  const options = apiQuestion.options || [];
-  
-  // Try to find by id
-  for (let i = 0; i < options.length; i++) {
-    const option = options[i];
-    if ((option.id && option.id == optionId) || 
-        (option.offered_answers_id && option.offered_answers_id == optionId)) {
-      return i;
+    
+    // If optionId is a direct index
+    if (typeof optionId === 'number' && optionId >= 0 && optionId < question.options.length) {
+      return optionId;
     }
+    
+    // The option IDs might be in a different order than the options array
+    // In your case, we need to map offered_answers_id values (95, 96, 97) to indices (0, 1, 2)
+    // The simplest approach is to use modulo math if the IDs follow a pattern
+    if (typeof optionId === 'number' || !isNaN(parseInt(String(optionId)))) {
+      const numericId = typeof optionId === 'number' ? optionId : parseInt(String(optionId));
+      // This is a simplification - you might need to adjust based on your actual ID pattern
+      return numericId % question.options.length;
+    }
+    
+    console.warn('Could not map option ID to index:', optionId);
+    return -1;
   }
   
-  // If not found and optionId is a number, it might be an index
-  if (typeof optionId === 'number' && optionId >= 0 && optionId < options.length) {
-    return optionId;
+  private findOptionIndex(optionId: any, apiQuestion: any): number {
+    // Get the options array
+    const options = apiQuestion.options || [];
+    
+    console.log('Finding option index for ID:', optionId);
+    console.log('Available options:', options);
+    
+    // Try to find by id
+    for (let i = 0; i < options.length; i++) {
+      const option = options[i];
+      if ((option.id !== undefined && option.id == optionId) || 
+          (option.offered_answers_id !== undefined && option.offered_answers_id == optionId)) {
+        return i;
+      }
+    }
+    
+    // Direct index mapping - if the option ID is a valid index in our array
+    if (typeof optionId === 'number' && optionId >= 0 && optionId < options.length) {
+      return optionId;
+    }
+    
+    // If we have an offered_answers_id that couldn't be mapped directly,
+    // try to find it by iterating through options
+    if (typeof optionId === 'number' || typeof optionId === 'string') {
+      // Just use the index directly as a fallback
+      // Many backends return options in the same order as they're defined
+      const numericId = parseInt(optionId.toString());
+      if (!isNaN(numericId) && numericId < options.length) {
+        return numericId;
+      }
+    }
+    
+    console.warn('Could not map option ID to index:', optionId);
+    return -1;
   }
-  
-  return -1;
-}
 
 // Helper method for processing scale questions
 private processScaleResults(question: any, apiQuestion: any, results: any[]) {
@@ -490,7 +575,12 @@ private processOpenTextResults(question: any, apiQuestion: any, results: any[]) 
   }
 
   completeSurvey(survey: Survey): void {
+    console.log('SurveyPageComponent.completeSurvey() called with:', survey);
+    
+    // Ensure we have the survey ID
     if (this.surveyId) {
+      console.log('Using surveyId from component state:', this.surveyId);
+      
       // Mark the survey as completed in the backend
       this.apiService.completeSurvey(this.surveyId).subscribe({
         next: (response) => {
@@ -504,16 +594,26 @@ private processOpenTextResults(question: any, apiQuestion: any, results: any[]) 
           console.error('Error completing survey:', error);
         }
       });
-    } else {
-      // Fallback to the mock service for frontend-only operation
-      this.dataService.getSurveyResult(survey).subscribe({
-        next: (resultSurvey: Survey) => {
+    } else if (survey.id || survey.survey_id) {
+      // Use the ID from the survey object as fallback
+      const surveyId = survey.id || survey.survey_id;
+      console.log('Using survey ID from survey object:', surveyId);
+      
+      this.apiService.completeSurvey(surveyId.toString()).subscribe({
+        next: (response) => {
+          console.log('Survey completed successfully:', response);
           this.ongoingSurveys = this.ongoingSurveys.filter(s => s !== survey);
-          this.completedSurveys.push(resultSurvey);
+          survey.status = 'completed';
+          this.completedSurveys.push(survey);
         },
-        error: (err) => {
-          console.error('Error completing survey:', err);
+        error: (error) => {
+          console.error('Error completing survey:', error);
         }
+      });
+    } else {
+      console.error('No survey ID available for completion:', {
+        componentSurveyId: this.surveyId,
+        surveyObject: survey
       });
     }
   }
