@@ -413,6 +413,16 @@ class SurveyService {
             });
         });
     }
+
+    async completeSurvey(surveyId) {
+        return new Promise((resolve, reject) => {
+            const query = 'UPDATE survey SET active = 0 WHERE survey_id = ?';
+            this.db.query(query, [surveyId], (err, result) => {
+                if (err) return reject(err);
+                resolve(result);
+            });
+        });
+    }
 }
 
 module.exports = SurveyService;

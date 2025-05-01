@@ -17,6 +17,13 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { LoadingBoxComponent } from '../../components/loading-box/loading-box.component';
 import { LoadingFailedBoxComponent } from '../../components/loading-failed-box/loading-failed-box.component';
 
+// Interface for survey response data
+interface SurveyResponse {
+  userId: string;
+  userName: string;
+  answers: {[key: string]: any};
+}
+
 @Component({
   selector: 'app-survey-page',
   standalone: true,
@@ -33,7 +40,7 @@ import { LoadingFailedBoxComponent } from '../../components/loading-failed-box/l
     LoadingFailedBoxComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  changeDetection: ChangeDetectionStrategy.Default, // Changed to Default for easier state updates
+  changeDetection: ChangeDetectionStrategy.Default,
   templateUrl: './survey-page.component.html',
   styleUrls: ['./survey-page.component.scss']
 })
@@ -186,15 +193,26 @@ export class SurveyPageComponent implements OnInit {
     // Transform API survey data to the Survey model format
     const survey: Survey = {
       title: surveyData.title || 'Unnamed Survey',
-      questions: (surveyData.questions || []).map((q: any) => ({
-        text: q.questionText,
-        answerType: this.mapQuestionType(q.type),
-        options: q.options ? q.options.map((o: any) => o.text) : [],
-        optionPercentages: q.options ? q.options.map(() => Math.floor(Math.random() * 100)) : [],
-        multipleSelection: q.multipleSelection || false,
-        scaleValue: q.type === 'scale' ? q.minValue || 1 : undefined,
-        answerPercentage: q.type === 'scale' ? Math.floor(Math.random() * 100) : undefined
-      })),
+      questions: (surveyData.questions || []).map((q: any) => {
+        // Create the question object with all required properties
+        const question = {
+          text: q.questionText,
+          answerType: this.mapQuestionType(q.type),
+          options: q.options ? q.options.map((o: any) => o.text) : [],
+          optionPercentages: new Array(q.options ? q.options.length : 0).fill(0),
+          multipleSelection: q.multipleSelection || false,
+          scaleValue: q.type === 'scale' ? q.minValue || 1 : undefined,
+          answerPercentage: 0,
+          answerField: [],
+          // Custom metadata
+          _id: q.id,
+          _options: q.options,
+          _minValue: q.minValue,
+          _maxValue: q.maxValue
+        };
+        
+        return question;
+      }),
       status: 'ongoing' // Default status
     };
     
@@ -217,96 +235,197 @@ export class SurveyPageComponent implements OnInit {
   }
 
   updateSurveyWithResults(data: any) {
-    console.log('Updating survey with results:', data);
+    console.log('Processing survey results data:', data);
     
-    // If we received complete survey and results data
+    // If we got survey and results data
     if (data.survey && data.results) {
-      const survey = data.survey;
+      const surveyData = data.survey;
       const results = data.results;
       
-      // Update our ongoing surveys with real data
-      if (this.ongoingSurveys.length > 0) {
-        this.ongoingSurveys[0].title = survey.title || this.ongoingSurveys[0].title;
+      // Determine which surveys array to update
+      let targetSurvey;
+      
+      // Check if the survey is in ongoingSurveys
+      const ongoingIndex = this.ongoingSurveys.findIndex(
+        s => (s as any).survey_id == surveyData.id || (s as any).id == surveyData.id
+      );
+      
+      if (ongoingIndex >= 0) {
+        targetSurvey = this.ongoingSurveys[ongoingIndex];
+      } else {
+        // Check if the survey is in completedSurveys
+        const completedIndex = this.completedSurveys.findIndex(
+          s => (s as any).survey_id == surveyData.id || (s as any).id == surveyData.id
+        );
         
-        // Update each question with real results
-        survey.questions.forEach((question: any, index: number) => {
-          if (index < this.ongoingSurveys[0].questions.length) {
-            // Update option percentages from results
-            this.updateQuestionResults(this.ongoingSurveys[0].questions[index], question, results);
+        if (completedIndex >= 0) {
+          targetSurvey = this.completedSurveys[completedIndex];
+        }
+      }
+      
+      // If we found the survey to update
+      if (targetSurvey) {
+        // Update title and other basic properties
+        targetSurvey.title = surveyData.title || targetSurvey.title;
+        
+        // For each question in the survey
+        surveyData.questions.forEach((apiQuestion: any, index: number) => {
+          if (index < targetSurvey.questions.length) {
+            const question = targetSurvey.questions[index];
+            
+            // Process results based on question type
+            if (question.answerType === 'checkbox') {
+              this.processMultipleChoiceResults(question, apiQuestion, results);
+            } else if (question.answerType === 'scale') {
+              this.processScaleResults(question, apiQuestion, results);
+            } else if (question.answerType === 'open') {
+              this.processOpenTextResults(question, apiQuestion, results);
+            }
           }
         });
       }
     }
   }
 
-  updateQuestionResults(question: any, apiQuestion: any, results: any[]) {
-    // Calculate result percentages based on the answers
-    if (question.answerType === 'checkbox' && apiQuestion.options) {
-      // Count responses for each option
-      const optionCounts = new Array(apiQuestion.options.length).fill(0);
-      let totalResponses = 0;
-      
-      // Process each response
-      results.forEach((response: any) => {
-        if (response.answers && response.answers[apiQuestion.id]) {
-          const answer = response.answers[apiQuestion.id];
-          if (Array.isArray(answer)) {
-            // For multiple selection questions
-            answer.forEach((ans: any) => {
-              const optionIndex = this.findOptionIndex(ans, apiQuestion.options);
-              if (optionIndex >= 0) {
-                optionCounts[optionIndex]++;
-                totalResponses++;
-              }
-            });
-          } else if (typeof answer === 'object') {
-            // For single selection
-            const optionIndex = this.findOptionIndex(answer, apiQuestion.options);
-            if (optionIndex >= 0) {
-              optionCounts[optionIndex]++;
-              totalResponses++;
-            }
-          }
-        }
-      });
-      
-      // Calculate percentages
-      if (totalResponses > 0) {
-        question.optionPercentages = optionCounts.map(count => 
-          Math.round((count / totalResponses) * 100)
-        );
-      }
-    } else if (question.answerType === 'scale') {
-      // Calculate average rating
-      let totalScore = 0;
-      let count = 0;
-      
-      results.forEach((response: any) => {
-        if (response.answers && response.answers[apiQuestion.id]) {
-          const value = response.answers[apiQuestion.id];
-          if (typeof value === 'number') {
-            totalScore += value;
-            count++;
-          }
-        }
-      });
-      
-      if (count > 0) {
-        question.scaleValue = Math.round(totalScore / count);
-        question.answerPercentage = Math.round((question.scaleValue / apiQuestion.maxValue) * 100);
-      }
-    }
-  }
 
-  findOptionIndex(answer: any, options: any[]): number {
-    // Find the index of the option based on ID or text
-    if (answer.optionId !== undefined) {
-      return options.findIndex(opt => opt.id === answer.optionId);
-    } else if (answer.optionText) {
-      return options.findIndex(opt => opt.text === answer.optionText);
+// Helper method for processing multiple choice questions
+private processMultipleChoiceResults(question: any, apiQuestion: any, results: any[]) {
+  // Get the question ID (handle different property names)
+  const questionId = apiQuestion.question_id || apiQuestion.id;
+  
+  if (!questionId) return;
+  
+  // Create counters for each option
+  const optionCounts = Array(question.options.length).fill(0);
+  let totalResponses = 0;
+  
+  // Process each result
+  results.forEach((result: any) => {
+    // Look for answers to this question
+    if (result.answers && result.answers[questionId]) {
+      const answers = result.answers[questionId];
+      
+      // Handle different answer formats
+      if (Array.isArray(answers)) {
+        // Multiple selection
+        answers.forEach(answer => {
+          // Get the option index
+          const optionId = typeof answer === 'number' ? answer : 
+                          (answer.optionId || answer.offered_answers_id);
+          
+          // Find corresponding index in our options array
+          const optionIndex = this.findOptionIndex(optionId, apiQuestion);
+          
+          if (optionIndex >= 0 && optionIndex < optionCounts.length) {
+            optionCounts[optionIndex]++;
+            totalResponses++;
+          }
+        });
+      } else if (typeof answers === 'number') {
+        // Single selection as number
+        const optionIndex = this.findOptionIndex(answers, apiQuestion);
+        if (optionIndex >= 0 && optionIndex < optionCounts.length) {
+          optionCounts[optionIndex]++;
+          totalResponses++;
+        }
+      } else if (answers.optionId || answers.offered_answers_id) {
+        // Single selection as object
+        const optionId = answers.optionId || answers.offered_answers_id;
+        const optionIndex = this.findOptionIndex(optionId, apiQuestion);
+        if (optionIndex >= 0 && optionIndex < optionCounts.length) {
+          optionCounts[optionIndex]++;
+          totalResponses++;
+        }
+      }
     }
-    return -1;
+  });
+  
+  // Calculate percentages
+  if (totalResponses > 0) {
+    question.optionPercentages = optionCounts.map(count => 
+      Math.round((count / totalResponses) * 100)
+    );
+  } else {
+    question.optionPercentages = Array(question.options.length).fill(0);
   }
+}
+  
+// Helper method for finding the option index
+private findOptionIndex(optionId: any, apiQuestion: any): number {
+  // Get the options array
+  const options = apiQuestion.options || [];
+  
+  // Try to find by id
+  for (let i = 0; i < options.length; i++) {
+    const option = options[i];
+    if ((option.id && option.id == optionId) || 
+        (option.offered_answers_id && option.offered_answers_id == optionId)) {
+      return i;
+    }
+  }
+  
+  // If not found and optionId is a number, it might be an index
+  if (typeof optionId === 'number' && optionId >= 0 && optionId < options.length) {
+    return optionId;
+  }
+  
+  return -1;
+}
+
+// Helper method for processing scale questions
+private processScaleResults(question: any, apiQuestion: any, results: any[]) {
+  const questionId = apiQuestion.question_id || apiQuestion.id;
+  if (!questionId) return;
+  
+  let totalScore = 0;
+  let count = 0;
+  
+  results.forEach((result: any) => {
+    if (result.answers && result.answers[questionId] !== undefined) {
+      const answer = result.answers[questionId];
+      if (typeof answer === 'number') {
+        totalScore += answer;
+        count++;
+      } else if (answer.scale_answer !== undefined) {
+        totalScore += answer.scale_answer;
+        count++;
+      }
+    }
+  });
+  
+  if (count > 0) {
+    const avgScore = totalScore / count;
+    question.scaleValue = Math.round(avgScore);
+    
+    // Calculate percentage of max value
+    const maxValue = apiQuestion.maxValue || apiQuestion.max_value || 5;
+    question.answerPercentage = Math.round((avgScore / maxValue) * 100);
+  } else {
+    question.scaleValue = 0;
+    question.answerPercentage = 0;
+  }
+}
+
+// Helper method for processing text questions
+private processOpenTextResults(question: any, apiQuestion: any, results: any[]) {
+  const questionId = apiQuestion.question_id || apiQuestion.id;
+  if (!questionId) return;
+  
+  const textAnswers: string[] = [];
+  
+  results.forEach((result: any) => {
+    if (result.answers && result.answers[questionId]) {
+      const answer = result.answers[questionId];
+      if (typeof answer === 'string' && answer.trim() !== '') {
+        textAnswers.push(answer);
+      } else if (answer.text_answer && answer.text_answer.trim() !== '') {
+        textAnswers.push(answer.text_answer);
+      }
+    }
+  });
+  
+  question.answerField = textAnswers;
+}
 
   openDialog(): void {
     const dialogRef = this.dialog.open(SurveyDialogComponent, {
@@ -373,13 +492,20 @@ export class SurveyPageComponent implements OnInit {
   completeSurvey(survey: Survey): void {
     if (this.surveyId) {
       // Mark the survey as completed in the backend
-      // This would typically call an API endpoint like PATCH /surveys/{id}/complete
-      // Since we don't have this endpoint, we'll simulate it
-      this.ongoingSurveys = this.ongoingSurveys.filter(s => s !== survey);
-      survey.status = 'completed';
-      this.completedSurveys.push(survey);
+      this.apiService.completeSurvey(this.surveyId).subscribe({
+        next: (response) => {
+          console.log('Survey completed successfully:', response);
+          // Move the survey from ongoing to completed
+          this.ongoingSurveys = this.ongoingSurveys.filter(s => s !== survey);
+          survey.status = 'completed';
+          this.completedSurveys.push(survey);
+        },
+        error: (error) => {
+          console.error('Error completing survey:', error);
+        }
+      });
     } else {
-      // Use the mock service for frontend-only operation
+      // Fallback to the mock service for frontend-only operation
       this.dataService.getSurveyResult(survey).subscribe({
         next: (resultSurvey: Survey) => {
           this.ongoingSurveys = this.ongoingSurveys.filter(s => s !== survey);

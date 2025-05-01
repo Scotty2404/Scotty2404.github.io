@@ -220,21 +220,28 @@ export class QrEventPageComponent implements OnInit {
   }
 
   submitWithoutPassword(result: any, type: string, confirmation: number) {
+    console.log('Form values before submission:', result);
+    
     const guestData = {
       type: type,
       confirmation: confirmation,
       guest: {
         firstname: result.firstname,
-        lastname: result.lastname
+        lastname: result.lastname,
+        mail: result.mail,
+        info: result.info || ''
       }
     };
-
+  
+    console.log('Guest data structure:', guestData);
+  
     this.apiService.addGuestToEvent(guestData, this.eventId).subscribe({
       next: (res) => {
         console.log('Answer submitted... ', res);
       }, 
       error: (error) => {
         console.log('Error while submitting Data...', error);
+        console.log('Error details:', error.error);
         this.dialog.open(ErrorDialogComponent, {
           data: { message: 'Fehler beim Speichern der Antwort. Bitte versuche es später noch einmal.' }
         });

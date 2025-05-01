@@ -149,4 +149,12 @@ export class ApiService {
       }
     });
   }
+
+  completeSurvey(surveyId: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/surveys/${surveyId}/complete`, {}, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }
 }

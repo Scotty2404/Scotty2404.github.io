@@ -150,4 +150,43 @@ router.get('/:surveyId/results', authMiddleware, async (req, res) => {
     }
 });
 
+router.post('/:surveyId/complete', authMiddleware, async (req, res) => {
+    try {
+        const surveyService = new SurveyService(global.db);
+        const surveyId = req.params.surveyId;
+        
+        // Check if the user has permission to complete this survey
+        const survey = await surveyService.getSurvey(surveyId);
+        if (!survey) {
+            return res.status(404).json({ 
+                success: false,
+                error: 'Survey not found' 
+            });
+        }
+
+        // Check if the user is the creator of the survey
+        if (survey.createdBy !== req.user) {
+            return res.status(403).json({ 
+                success: false,
+                error: 'Not authorized to complete this survey' 
+            });
+        }
+
+        // Mark the survey as completed
+        await surveyService.completeSurvey(surveyId);
+        
+        res.json({
+            success: true,
+            message: 'Survey marked as completed'
+        });
+    } catch (error) {
+        console.error('Error completing survey:', error);
+        res.status(500).json({ 
+            success: false,
+            error: 'Failed to complete survey',
+            message: error.message 
+        });
+    }
+});
+
 module.exports = router;
