@@ -41,6 +41,8 @@ export class QrEventPageComponent implements OnInit {
   event: any;
   guestForm: FormGroup;
   formSubmitted = false;
+  isLoggedIn = false;
+  currentUser: any = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -59,6 +61,9 @@ export class QrEventPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Check if user is already logged in
+    this.checkLoginStatus();
+    
     // Get event ID and token from the URL
     this.route.params.subscribe(params => {
       this.eventId = params['id'];
@@ -69,6 +74,43 @@ export class QrEventPageComponent implements OnInit {
         }
       });
     });
+  }
+
+  checkLoginStatus() {
+    // Check if there's a token in localStorage
+    const token = localStorage.getItem('token');
+    
+    if (token) {
+      this.isLoggedIn = true;
+      
+      // Get user data if logged in
+      this.apiService.getUser().subscribe({
+        next: (userData) => {
+          this.currentUser = userData;
+          
+          // Pre-fill the form with user data
+          this.guestForm.patchValue({
+            firstname: userData.firstname,
+            lastname: userData.lastname,
+            mail: userData.email
+          });
+          
+          // Disable the fields that should not be editable when logged in
+          this.guestForm.get('firstname')?.disable();
+          this.guestForm.get('lastname')?.disable();
+          this.guestForm.get('mail')?.disable();
+          
+          // Remove password field as it's not needed
+          this.guestForm.removeControl('password');
+        },
+        error: (error) => {
+          console.error('Error fetching user data:', error);
+          this.isLoggedIn = false;
+          // If there was an error, the token might be invalid
+          localStorage.removeItem('token');
+        }
+      });
+    }
   }
 
   loadEvent(eventId: string, token: string) {
@@ -102,34 +144,51 @@ export class QrEventPageComponent implements OnInit {
   submitResponse() {
     this.formSubmitted = true;
     
-    // Check if form is valid
-    if (!this.guestForm.valid) {
+    // If user is not logged in, validate all fields
+    if (!this.isLoggedIn && !this.guestForm.valid) {
       this.dialog.open(ErrorDialogComponent, {
         data: { message: 'Bitte fülle alle erforderlichen Felder korrekt aus (Vorname, Nachname und Email).' }
+      });
+      return;
+    }
+    
+    // If user is logged in, only validate info field
+    if (this.isLoggedIn && this.guestForm.get('info')?.invalid) {
+      this.dialog.open(ErrorDialogComponent, {
+        data: { message: 'Bitte überprüfe deine Eingabe im Infofeld.' }
       });
       return;
     }
 
     const isYes = this.attending === 'yes';
     const message = isYes ? 'Du hast erfolgreich zugesagt!' : 'Deine Absage wurde erfolgreich zugeschickt.';
-    const formValues = this.guestForm.value;
+    const formValues = this.isLoggedIn ? 
+      {
+        firstname: this.currentUser.firstname,
+        lastname: this.currentUser.lastname,
+        mail: this.currentUser.email,
+        info: this.guestForm.get('info')?.value
+      } : 
+      this.guestForm.value;
   
     if (this.attending === 'yes') {
-      if(formValues.password === '') {
-        this.submitWithoutPassword(formValues, 'extra', 1);
-        console.log('Zusage:', formValues);
+      if (this.isLoggedIn) {
+        // User is already logged in, just add to event
+        this.addLoggedInUserToEvent('user', 1, formValues.info);
+      } else if (formValues.password === '') {
+        this.submitWithoutPassword(formValues, 'user', 1);
       } else {
         this.submitWithPassword(formValues, 'user', 1);
-        console.log('Zusage:', formValues);
       }
       this.responseMessage = 'Du hast erfolgreich zugesagt!';
     } else if (this.attending === 'no') {
-      if(formValues.password === '') {
-        this.submitWithoutPassword(formValues, 'extra', 0);
-        console.log('Absage:', formValues);
+      if (this.isLoggedIn) {
+        // User is already logged in, just add to event
+        this.addLoggedInUserToEvent('user', 0, formValues.info);
+      } else if (formValues.password === '') {
+        this.submitWithoutPassword(formValues, 'user', 0);
       } else {
         this.submitWithPassword(formValues, 'user', 0);
-        console.log('Absage:', formValues);
       }
       this.responseMessage = 'Deine Absage wurde gespeichert.';
     }
@@ -147,104 +206,144 @@ export class QrEventPageComponent implements OnInit {
     });
   }
 
-  submitWithPassword(result: any, type: string, confirmation: number) {
+  // Add already logged in user to event
+  addLoggedInUserToEvent(type: string, confirmation: number, info: string = '') {
+    const guestData = {
+      type: type,
+      confirmation: confirmation,
+      guest: {
+        info: info
+      }
+    };
+    
+    this.apiService.addGuestToEvent(guestData, this.eventId).subscribe({
+      next: (response) => {
+        console.log('Answer submitted for logged in user...', response);
+      },
+      error: (error) => {
+        console.error('Error while submitting answer...', error);
+        this.dialog.open(ErrorDialogComponent, {
+          data: { message: 'Fehler beim Speichern der Antwort. Bitte versuche es später noch einmal.' }
+        });
+      }
+    });
+  }
+
+  private generateRandomPassword(length: number = 20): string {
+    const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+';
+    let password = '';
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * charset.length);
+      password += charset[randomIndex];
+    }
+    return password;
+  }
+
+  submitWithoutPassword(result: any, type: string, confirmation: number) {
+    console.log('Form values before submission:', result);
+    
+    // Generate a random password
+    const randomPassword = this.generateRandomPassword();
+    console.log('Generated random password for auto-registration');
+    
+    // Register and login the user with the random password
     const userData = {
       firstname: result.firstname,
       lastname: result.lastname,
-      email: result.mail,
-      password: result.password
+      email: result.mail || result.email,
+      password: randomPassword
     };
-
+    
+    // Try to register the user first
     this.apiService.register(userData).subscribe({
       next: (response) => {
-        console.log('registration successful', response);
-        this.apiService.login(userData).subscribe({
+        console.log('Auto-registration successful with random password', response);
+        // After successful registration, login the user
+        this.loginUserAndAddToEvent(userData, type, confirmation, result.info);
+      },
+      error: (error) => {
+        // If registration fails (likely because user already exists), try to login directly
+        console.log('Auto-registration failed, trying login', error);
+        this.loginUserAndAddToEvent(userData, type, confirmation, result.info);
+      }
+    });
+  }
+
+  // New helper method for login and adding to event
+  private loginUserAndAddToEvent(userData: any, type: string, confirmation: number, info: string = '') {
+    this.apiService.login(userData).subscribe({
+      next: (response) => {
+        console.log('Login successful', response);
+        // Store the token
+        localStorage.setItem('token', response.token);
+        
+        // Add user to event
+        const guestData = {
+          type: type,
+          confirmation: confirmation,
+          guest: {
+            info: info
+          }
+        };
+        
+        this.apiService.addGuestToEvent(guestData, this.eventId).subscribe({
           next: (response) => {
-            console.log('Login successful', response);
-            localStorage.setItem('token', response.token);
-            const guestData = {
-              type: type,
-              confirmation: confirmation,
-              guest: ''
-            };
-            this.apiService.addGuestToEvent(guestData, this.eventId).subscribe({
-              next: (response) => {
-                console.log('Answer submitted...', response);
-              }, 
-              error: (error) => {
-                console.error('Error while submitting answer...', error);
-                this.dialog.open(ErrorDialogComponent, {
-                  data: { message: 'Fehler beim Speichern der Antwort. Bitte versuche es später noch einmal.' }
-                });
-              }
-            });
-          }, 
+            console.log('Answer submitted...', response);
+          },
           error: (error) => {
-            console.log('Login failed', error);
-            // If login failed, try to add as guest
-            this.submitWithoutPassword(result, 'extra', confirmation);
+            console.error('Error while submitting answer...', error);
+            this.dialog.open(ErrorDialogComponent, {
+              data: { message: 'Fehler beim Speichern der Antwort. Bitte versuche es später noch einmal.' }
+            });
           }
         });
-      }, 
+      },
       error: (error) => {
-        console.log('Registration failed', error);
-        this.apiService.login(userData).subscribe({
-          next: (response) => {
-            console.log('Login successful', response);
-            localStorage.setItem('token', response.token);
-            const guestData = {
-              type: type,
-              confirmation: confirmation,
-              guest: ''
-            };
-            this.apiService.addGuestToEvent(guestData, this.eventId).subscribe({
-              next: (response) => {
-                console.log('Answer submitted...', response);
-              }, 
-              error: (error) => {
-                console.error('Error while submitting answer...', error);
-                this.dialog.open(ErrorDialogComponent, {
-                  data: { message: 'Fehler beim Speichern der Antwort. Bitte versuche es später noch einmal.' }
-                });
-              }
-            });
+        console.log('Login failed', error);
+        // As a last resort, submit as guest with the original guest structure
+        const guestData = {
+          type: 'extra',
+          confirmation: confirmation,
+          guest: {
+            firstname: userData.firstname,
+            lastname: userData.lastname,
+            mail: userData.email,
+            info: info
+          }
+        };
+        
+        this.apiService.addGuestToEvent(guestData, this.eventId).subscribe({
+          next: (res) => {
+            console.log('Answer submitted as guest... ', res);
           }, 
           error: (error) => {
-            console.log('Login failed', error);
-            // If login failed, try to add as guest
-            this.submitWithoutPassword(result, 'extra', confirmation);
+            console.log('Error while submitting data...', error);
+            this.dialog.open(ErrorDialogComponent, {
+              data: { message: 'Fehler beim Speichern der Antwort. Bitte versuche es später noch einmal.' }
+            });
           }
         });
       }
     });
   }
 
-  submitWithoutPassword(result: any, type: string, confirmation: number) {
-    console.log('Form values before submission:', result);
-    
-    const guestData = {
-      type: type,
-      confirmation: confirmation,
-      guest: {
-        firstname: result.firstname,
-        lastname: result.lastname,
-        mail: result.mail,
-        info: result.info || ''
-      }
+  submitWithPassword(result: any, type: string, confirmation: number) {
+    const userData = {
+      firstname: result.firstname,
+      lastname: result.lastname,
+      email: result.mail || result.email,
+      password: result.password
     };
-  
-    console.log('Guest data structure:', guestData);
-  
-    this.apiService.addGuestToEvent(guestData, this.eventId).subscribe({
-      next: (res) => {
-        console.log('Answer submitted... ', res);
+
+    this.apiService.register(userData).subscribe({
+      next: (response) => {
+        console.log('registration successful', response);
+        this.loginUserAndAddToEvent(userData, type, confirmation, result.info);
       }, 
       error: (error) => {
-        console.log('Error while submitting Data...', error);
-        console.log('Error details:', error.error);
-        this.dialog.open(ErrorDialogComponent, {
-          data: { message: 'Fehler beim Speichern der Antwort. Bitte versuche es später noch einmal.' }
-        });
+        console.log('Registration failed', error);
+        // Try logging in if registration fails
+        this.loginUserAndAddToEvent(userData, type, confirmation, result.info);
       }
     });
   }

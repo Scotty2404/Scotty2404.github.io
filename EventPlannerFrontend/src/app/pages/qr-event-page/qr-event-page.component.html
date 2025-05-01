@@ -17,9 +17,12 @@
   </div>
 
   <!-- Form bei Ja/Nein -->
-  <form *ngIf="attending !== null" [formGroup]="guestForm" (ngSubmit)="submitResponse()" class="form-section">
-    <p><strong>Bitte fülle die erforderlichen Felder aus:</strong></p>
+<!-- Form bei Ja/Nein -->
+<form *ngIf="attending !== null" [formGroup]="guestForm" (ngSubmit)="submitResponse()" class="form-section">
+  <p><strong>Bitte fülle die erforderlichen Felder aus:</strong></p>
 
+  <!-- Show these fields only if user is not logged in -->
+  <ng-container *ngIf="!isLoggedIn">
     <mat-form-field appearance="fill">
       <mat-label>Vorname *</mat-label>
       <input matInput formControlName="firstname">
@@ -37,22 +40,32 @@
       <input matInput type="email" formControlName="mail">
       <mat-error *ngIf="isFieldInvalid('mail')">{{ getErrorMessage('mail') }}</mat-error>
     </mat-form-field>
+  </ng-container>
+  
+  <!-- Show for both logged in and not logged in users -->
+  <mat-form-field appearance="fill">
+    <mat-label>Weitere Info (optional)</mat-label>
+    <textarea matInput rows="3" formControlName="info"></textarea>
+  </mat-form-field>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Weitere Info (optional)</mat-label>
-      <textarea matInput rows="3" formControlName="info"></textarea>
-    </mat-form-field>
-
+  <!-- Only show password field if user is not logged in -->
+  <ng-container *ngIf="!isLoggedIn">
     <p class="password-hint">Möchtest du später alle Infos sehen? Lege ein Passwort fest, um dich auf der Website einzuloggen.</p>
     <mat-form-field appearance="fill">
       <mat-label>Passwort (optional)</mat-label>
       <input matInput type="password" formControlName="password">
     </mat-form-field>
+  </ng-container>
 
-    <div class="submit-button">
-      <button mat-flat-button color="accent" type="submit">Antwort absenden</button>
-    </div>
-  </form>
+  <!-- Show user info if logged in -->
+  <div *ngIf="isLoggedIn && currentUser" class="user-info">
+    <p><strong>Angemeldet als:</strong> {{ currentUser.firstname }} {{ currentUser.lastname }} ({{ currentUser.email }})</p>
+  </div>
+
+  <div class="submit-button">
+    <button mat-flat-button color="accent" type="submit">Antwort absenden</button>
+  </div>
+</form>
 
   <div *ngIf="responseSubmitted" class="confirmation">
     <p><strong>{{ responseMessage }}</strong></p>
