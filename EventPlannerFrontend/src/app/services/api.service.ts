@@ -20,6 +20,11 @@ export class ApiService {
     return this.http.post(`${this.baseUrl}/auth/login`, loginData);
   }
 
+  logout(): void {
+    // Clear the authentication token from localStorage
+    localStorage.removeItem('token');
+  }
+
   getUser():Observable<any>{
     return this.http.get<any>(`${this.baseUrl}/auth/me`, {
       headers: {

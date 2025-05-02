@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 
 import { ApiService } from '../../services/api.service';
 
@@ -14,10 +14,10 @@ import { MatNavList } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 
 import { LandingPageComponent } from '../landing-page/landing-page.component';
-import { CalendarPageComponent } from '../calendar-page/calendar-page.component';
+// Remove this import
+// import { CalendarPageComponent } from '../calendar-page/calendar-page.component';
 import { ContactPageComponent } from '../contact-page/contact-page.component';
 import { ImprintPageComponent } from '../imprint-page/imprint-page.component';
-import { subscribe } from 'diagnostics_channel';
 import { MatDialog } from '@angular/material/dialog';
 import { SettingsDialogComponent } from '../../components/settings-dialog/settings-dialog.component';
 
@@ -36,7 +36,8 @@ import { SettingsDialogComponent } from '../../components/settings-dialog/settin
     MatNavList,
     MatMenuModule,
     LandingPageComponent,
-    CalendarPageComponent,
+    // Remove this from imports
+    // CalendarPageComponent,
     ContactPageComponent,
     ImprintPageComponent,
     SettingsDialogComponent
@@ -44,14 +45,18 @@ import { SettingsDialogComponent } from '../../components/settings-dialog/settin
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss'
 })
-export class MainLayoutComponent implements OnInit{
+export class MainLayoutComponent implements OnInit {
   userName: string = '';
 
   ngOnInit() {
     this.getUserName();
   }
 
-  constructor(private apiService: ApiService, private dialog: MatDialog) {}
+  constructor(
+    private apiService: ApiService, 
+    private dialog: MatDialog,
+    private router: Router
+  ) {}
 
   getUserName() {
     this.apiService.getUser().subscribe((response) => {
@@ -68,6 +73,8 @@ export class MainLayoutComponent implements OnInit{
     });
   }
   
-
-  
+  logout() {
+    this.apiService.logout();
+    this.router.navigate(['/login']);
+  }
 }

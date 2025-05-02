@@ -17,7 +17,8 @@
   @if(isLoaded){
     <div class="calendar-container">
       <mat-card class="mat-card">
-      <mat-calendar [(selected)]="selectedDate"></mat-calendar>
+      <!-- Use the dateClass callback function to add custom CSS classes to dates -->
+      <mat-calendar [(selected)]="selectedDate" [dateClass]="dateClass"></mat-calendar>
     
       <div class="event-list">
         <h3>Events am {{ selectedDate | date: 'fullDate' }}:</h3>
@@ -25,10 +26,10 @@
         <div *ngFor="let event of getEventsForSelectedDate()" 
              class="event-item"
              [style.borderLeftColor]="getColor(event.owner)">
-          {{ event.title }}
+          <div class="event-title">{{ event.title }}</div>
+          <div class="event-time">{{ formatEventTime(event.startdate) }} Uhr</div>
           <span class="event-type">({{ event.owner === 1 ? 'Mein Event' : event.confirmation === 1 ? 'zugesagt' : 'abgesagt' }})</span>
         </div>
-
       </div>
     </mat-card>
     </div>
@@ -52,8 +53,5 @@
   }
 
   }
-
-
-
-
-  
+</div>
+</body>
