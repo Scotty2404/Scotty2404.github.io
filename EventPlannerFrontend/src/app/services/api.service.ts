@@ -176,8 +176,8 @@ export class ApiService {
       }
     });
   }
-
-  // Update an event with a survey ID
+  
+  // In api.service.ts:
   updateEventSurvey(eventId: string, surveyId: string): Observable<any> {
     return this.http.post(`${this.baseUrl}/events/my-events/${eventId}/update-survey`, 
       { survey_id: surveyId }, 

@@ -558,11 +558,12 @@ router.post('/:eventId/guests/add', authMiddleware, async (req, res) => {
     }
 });
 
-// Update event survey
 router.post('/my-events/:id/update-survey', authMiddleware, async(req, res) => {
     try {
       const eventId = req.params.id;
       const { survey_id } = req.body;
+
+      console.log(survey_id, req.body)
       
       if (!survey_id) {
         return res.status(400).json({ error: "Survey ID is required" });

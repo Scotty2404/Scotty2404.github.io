@@ -567,13 +567,20 @@ private processScaleResults(question: any, apiQuestion: any, results: any[]) {
     });
   }
 
-  private updateEventWithSurvey(eventId: string, surveyId: string): void {
-    this.apiService.updateEventSurvey(eventId, surveyId).subscribe({
+  private updateEventWithSurvey(eventId: string, surveyId: string | number): void {
+    const surveyIdStr = surveyId.toString();
+    console.log(`Attempting to update event ${eventId} with survey ID ${surveyIdStr}`);
+    
+    this.apiService.updateEventSurvey(eventId, surveyIdStr).subscribe({
       next: (response) => {
-        console.log('Event updated with survey ID:', response);
+        console.log('Event updated with survey ID successfully:', response);
       },
       error: (error) => {
         console.error('Error updating event with survey ID:', error);
+        // Add a more detailed error log to help debug
+        console.error('Error status:', error.status);
+        console.error('Error message:', error.message);
+        console.error('Error details:', error.error);
       }
     });
   }
