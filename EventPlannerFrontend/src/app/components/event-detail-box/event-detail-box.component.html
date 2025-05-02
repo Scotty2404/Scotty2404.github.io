@@ -40,7 +40,7 @@
         <div>
             <button class="raised-buttons" mat-raised-button [routerLink]="['/guesttable/' + event.event_id]">zur Gästeliste</button>
             <button class="raised-buttons" mat-raised-button [routerLink]="['/survey/' + event.event_id]">zur Umfrage</button>
-            <button class="raised-buttons" mat-raised-button [routerLink]="['/to-do-list']">zur To-Do-Liste</button>
+            <button class="raised-buttons" mat-raised-button [routerLink]="['/to-do-list/' + event.event_id]">zur To-Do-Liste</button>
         </div>
     
         <div class="icon-buttons">

@@ -31,7 +31,7 @@ export const routes: Routes = [
             { path: 'survey/:id', component: SurveyPageComponent }, // Changed to accept an ID parameter
             { path: 'survey', component: SurveyPageComponent }, // Keep this for backward compatibility
             { path: 'wishlist', component: EventWishlistPageComponent },
-            { path: 'to-do-list', component: EventToDoListPageComponent },
+            { path: 'to-do-list/:id', component: EventToDoListPageComponent },
             { path: 'guesttable/:id', component: GuestTablePageComponent },
             { path: 'event/:id', component: EventPageComponent }
         ] 

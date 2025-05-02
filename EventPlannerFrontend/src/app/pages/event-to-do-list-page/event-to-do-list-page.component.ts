@@ -13,7 +13,7 @@ import { MatListModule } from '@angular/material/list';
 import { LoadingBoxComponent } from '../../components/loading-box/loading-box.component';
 import { LoadingFailedBoxComponent } from '../../components/loading-failed-box/loading-failed-box.component';
 import { MatCardModule } from '@angular/material/card';
-
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-event-to-do-list-page',
@@ -25,9 +25,13 @@ import { MatCardModule } from '@angular/material/card';
 export class EventToDoListPageComponent {
   isLoaded = true;
   isFailed = false;
-
+  eventId: string | null = null;
   newTodo = '';
   todos: { text: string; completed: boolean }[] = [];
+
+  constructor(
+    private route: ActivatedRoute
+  ) {}
 
   addTodo() {
     if (this.newTodo.trim()) {
@@ -38,6 +42,10 @@ export class EventToDoListPageComponent {
 
   deleteTodo(todo: { text: string; completed: boolean }) {
     this.todos = this.todos.filter(t => t !== todo);
+  }
+
+  ngOnInit(): void {
+    this.eventId = this.route.snapshot.paramMap.get('id');
   }
 
 }

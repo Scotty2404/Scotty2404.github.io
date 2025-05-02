@@ -6,7 +6,7 @@
     <p>
       <!-- Link zur Startseite, mit Angular-Routing -->
       <a [routerLink]="['/start']" class="breadcrumb-link">Home</a> 
-      <a [routerLink]="['/start']" class="breadcrumb-link"> /Evenet Ansicht</a> /Umfrage
+      <a [routerLink]="['/event/' + eventId]" class="breadcrumb-link"> /Evenet Ansicht</a> /Umfrage
 
       <!-- Aktuelle Position in der Navigation -->
 
@@ -16,7 +16,7 @@
   <!-- Titelbereich der Seite mit Zurück-Button und Hauptüberschrift -->
   <div class="title">
     <!-- Zurück-Button zur Startseite (Angular Routing) -->
-    <button mat-icon-button [routerLink]="['/start']" class="btn-back">
+    <button mat-icon-button [routerLink]="['/event/' + eventId]" class="btn-back">
       <!-- Material Icon für den "Zurück"-Pfeil -->
       <mat-icon>arrow_back</mat-icon>
     </button>

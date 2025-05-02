@@ -4,12 +4,12 @@
   <div class="breadcrumb">
     <p>
       <a [routerLink]="['/start']" class="breadcrumb-link">Home</a> 
-      <a [routerLink]="['/start']" class="breadcrumb-link"> /Event Ansicht</a> /ToDo Liste
+      <a [routerLink]="['/event/' + eventId]" class="breadcrumb-link"> /Event Ansicht</a> /ToDo Liste
     </p>
   </div>
 
   <div class="title">
-    <button mat-icon-button [routerLink]="['/start']" class="btn-back">
+    <button mat-icon-button [routerLink]="['/event/' + eventId]" class="btn-back">
       <mat-icon>arrow_back</mat-icon>
     </button>
     <h1>To-Do-Liste</h1>
