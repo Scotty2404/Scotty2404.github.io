@@ -45,13 +45,17 @@
           </mat-form-field>
 
           <!-- Scale -->
-          <mat-form-field *ngIf="question.type === 'scale'" class="full-width">
-            <mat-label>Bewertung ({{ question.minValue }} - {{ question.maxValue }})</mat-label>
-            <mat-slider [formControlName]="question.id.toString()" thumbLabel discrete 
-                        [min]="question.minValue" [max]="question.maxValue" step="1">
-              <input matSliderThumb>
+          <div *ngIf="question.type === 'scale'" class="scale-container">
+            <mat-label>Bewertung ({{ question.minValue || 1 }} - {{ question.maxValue || 5 }})</mat-label>
+            <mat-slider 
+              [min]="question.minValue || 1" 
+              [max]="question.maxValue || 5" 
+              step="1" 
+              [discrete]="true">
+              <input matSliderThumb [formControlName]="question.id.toString()">
             </mat-slider>
-          </mat-form-field>
+            <div class="scale-value">Deine Auswahl: {{ getFormControl(question.id.toString()).value }}</div>
+          </div>
         </mat-card-content>
       </mat-card>
     </div>

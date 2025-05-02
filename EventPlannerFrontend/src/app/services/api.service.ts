@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -131,13 +133,30 @@ export class ApiService {
 
   // Submit survey response
   submitSurveyResponse(surveyId: string, answers: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/surveys/${surveyId}/response`, 
-      { answers }, 
+    const formattedAnswers = answers;
+  
+    return this.http.post(`${this.baseUrl}/surveys/${surveyId}/response`,
+      { answers },
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       }
+    ).pipe(
+      catchError((error) => {
+        console.error('Error submitting survey:', error);
+  
+        let errorMessage = 'Fehler beim Senden der Umfrage';
+        if (error.error?.message) {
+          errorMessage += ': ' + error.error.message;
+        } else if (error.message) {
+          errorMessage += ': ' + error.message;
+        }
+  
+        console.log('Survey submission failed with answers:', formattedAnswers);
+  
+        return throwError(() => new Error(errorMessage));
+      })
     );
   }
 

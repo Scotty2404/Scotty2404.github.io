@@ -206,28 +206,45 @@ export class QrEventPageComponent implements OnInit {
     });
   }
 
-  // Add already logged in user to event
-  addLoggedInUserToEvent(type: string, confirmation: number, info: string = '') {
-    const guestData = {
-      type: type,
-      confirmation: confirmation,
-      guest: {
-        info: info
-      }
-    };
-    
-    this.apiService.addGuestToEvent(guestData, this.eventId).subscribe({
-      next: (response) => {
-        console.log('Answer submitted for logged in user...', response);
-      },
-      error: (error) => {
-        console.error('Error while submitting answer...', error);
+// Add already logged in user to event
+addLoggedInUserToEvent(type: string, confirmation: number, info: string = '') {
+  const guestData = {
+    type: type,
+    confirmation: confirmation,
+    guest: {
+      info: info
+    }
+  };
+  
+  this.apiService.addGuestToEvent(guestData, this.eventId).subscribe({
+    next: (response) => {
+      console.log('Answer submitted for logged in user...', response);
+      this.responseSubmitted = true;
+    },
+    error: (error) => {
+      console.error('Error while submitting answer...', error);
+      
+      // Check if error is because user is already registered
+      if (error.status === 400 && 
+         (error.error?.message?.includes('already exists') || 
+          error.error?.message?.includes('User already'))) {
+        
+        this.dialog.open(ErrorDialogComponent, {
+          data: { message: 'Du bist bereits für dieses Event angemeldet. Deine Antwort wurde aktualisiert.' }
+        });
+        
+        // Still consider it submitted since the user is already registered
+        this.responseSubmitted = true;
+        
+      } else {
+        // For other errors, show generic error message
         this.dialog.open(ErrorDialogComponent, {
           data: { message: 'Fehler beim Speichern der Antwort. Bitte versuche es später noch einmal.' }
         });
       }
-    });
-  }
+    }
+  });
+}
 
   private generateRandomPassword(length: number = 20): string {
     const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+';

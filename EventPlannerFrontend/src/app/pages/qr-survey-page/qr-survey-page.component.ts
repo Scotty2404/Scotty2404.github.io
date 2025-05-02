@@ -132,33 +132,73 @@ export class QrSurveyPageComponent implements OnInit {
   onSubmit(): void {
     if (this.surveyForm.valid) {
       const answersGroup = this.surveyForm.get('answers') as FormGroup;
-      const formattedAnswers: any = {};
-
+      const formattedAnswers: Record<string, number | number[] | string> = {};
+  
       this.survey.questions.forEach((question: any) => {
         const questionId = question.id.toString();
         const control = answersGroup.get(questionId);
-
+  
         if (question.type === 'multiple' && question.multipleSelection) {
-          // Konvertiere Boolean-Array zu Index-Array
-          const selectedIndices = (control as FormArray).controls
-            .map((control, index) => control.value ? index : -1)
-            .filter(index => index !== -1);
-          formattedAnswers[questionId] = selectedIndices;
+          // For multiple selection, collect indices of selected options
+          const selectedIndices: number[] = [];
+          const formArray = control as FormArray;
+          
+          // Only add indices where the value is true (checked)
+          formArray.controls.forEach((ctrl, index) => {
+            if (ctrl.value === true) {
+              selectedIndices.push(index);
+            }
+          });
+          
+          // Only include the field if at least one option is selected
+          if (selectedIndices.length > 0) {
+            formattedAnswers[questionId] = selectedIndices;
+          }
+        } else if (question.type === 'multiple' && !question.multipleSelection) {
+          // For single selection radio buttons, just use the value directly
+          // Only include if a value was selected
+          if (control?.value !== null && control?.value !== undefined) {
+            formattedAnswers[questionId] = control?.value;
+          }
+        } else if (question.type === 'scale') {
+          // For scale questions, ensure we have a numeric value
+          const value = control?.value;
+          if (value !== null && value !== undefined) {
+            // The backend is expecting scale values to be directly assigned,
+            // not as indices or options like multiple choice questions
+            formattedAnswers[questionId] = Number(value);
+            
+            // Log more details for debugging
+            console.log(`Scale question ${questionId} value:`, value);
+          }
         } else {
-          formattedAnswers[questionId] = control?.value;
+          // For text questions, include only if not empty
+          const value = control?.value;
+          if (value !== null && value !== undefined && value !== '') {
+            formattedAnswers[questionId] = value;
+          }
         }
       });
-
-      // Sende Antworten an das Backend
-      this.apiService.submitSurveyResponse(this.survey.id, formattedAnswers).subscribe({
-        next: () => {
-          this.submitted = true;
-        },
-        error: (error) => {
-          console.error('Error submitting survey:', error);
-          this.error = 'Fehler beim Senden der Umfrage';
-        }
-      });
+  
+      console.log('Formatted answers:', formattedAnswers);
+  
+      // Only submit if we have at least one answer
+      if (Object.keys(formattedAnswers).length > 0) {
+        // Send answers to the backend
+        this.apiService.submitSurveyResponse(this.survey.id, formattedAnswers).subscribe({
+          next: () => {
+            this.submitted = true;
+          },
+          error: (error) => {
+            console.error('Error submitting survey:', error);
+            this.error = 'Fehler beim Senden der Umfrage: ' + (error.error?.message || 'Unbekannter Fehler');
+          }
+        });
+      } else {
+        this.error = 'Bitte beantworte mindestens eine Frage.';
+      }
+    } else {
+      this.error = 'Bitte überprüfe deine Antworten.';
     }
   }
 }

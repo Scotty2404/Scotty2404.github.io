@@ -96,6 +96,18 @@ button {
   }
 }
 
+.scale-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+.scale-value {
+  margin-top: 8px;
+  font-size: 0.9em;
+  color: #666;
+}
 
 
 
