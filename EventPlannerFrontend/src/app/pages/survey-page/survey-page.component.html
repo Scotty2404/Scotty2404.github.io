@@ -30,13 +30,13 @@
     <!-- Prüfen, ob die Daten erfolgreich geladen wurden -->
     @if(isLoaded){
 
-    <!-- Bereich für Aktionen wie "Neue Umfrage hinzufügen" -->
-    <div *ngIf="completedSurveys.length === 0 && ongoingSurveys.length === 0" class="table-btn">
-      <!-- Floating Action Button (FAB) von Angular Material, ruft openDialog() auf Klick -->
+    <!-- Button for adding a new survey, visible if we're viewing a specific event or if no surveys exist yet -->
+    <div class="table-btn">
+      <!-- Floating Action Button (FAB) to add a new survey -->
       <button mat-fab extended (click)="openDialog()">
-        <!-- "Plus"-Icon aus Angular Material -->
+        <!-- "Plus"-Icon from Angular Material -->
         <mat-icon>add</mat-icon> 
-        <!-- Beschriftung des Buttons -->
+        <!-- Button text -->
         Umfrage hinzufügen
       </button>
     </div>

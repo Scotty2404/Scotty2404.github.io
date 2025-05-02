@@ -520,16 +520,16 @@ private processScaleResults(question: any, apiQuestion: any, results: any[]) {
       disableClose: true,
       data: {}
     });
-
+  
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         console.log('New survey created:', result);
-
+  
         // If we have an event ID, associate the survey with this event
-        if (this.eventId && result) {
+        if (this.eventId !== null && result) {
           // Prepare survey data for API
           const surveyData = {
-            title: result.title || 'Neue Umfrage',
+            title: `Umfrage für ${result.title || 'Event'}`,
             description: 'Event-Umfrage',
             questions: result.questions.map((q: any) => ({
               question: q.text,
@@ -543,9 +543,14 @@ private processScaleResults(question: any, apiQuestion: any, results: any[]) {
           this.apiService.createSurvey(surveyData).subscribe({
             next: (response) => {
               console.log('Survey saved successfully:', response);
-              if (response && response.success) {
-                // Convert back to our model format
+              if (response && response.success && response.survey_id) {
+                // After creating survey, update the event with the survey ID
+                // Use non-null assertion operator to tell TypeScript that eventId is definitely not null here
+                this.updateEventWithSurvey(this.eventId!, response.survey_id);
+                
+                // Convert back to our model format and add to UI
                 const newSurvey = this.processSurveyData(response.data);
+                newSurvey.id = response.survey_id;
                 this.ongoingSurveys.push(newSurvey);
               }
             },
@@ -558,6 +563,17 @@ private processScaleResults(question: any, apiQuestion: any, results: any[]) {
           this.ongoingSurveys.push(result);
           this.dataService.addSurvey(result);
         }
+      }
+    });
+  }
+
+  private updateEventWithSurvey(eventId: string, surveyId: string): void {
+    this.apiService.updateEventSurvey(eventId, surveyId).subscribe({
+      next: (response) => {
+        console.log('Event updated with survey ID:', response);
+      },
+      error: (error) => {
+        console.error('Error updating event with survey ID:', error);
       }
     });
   }

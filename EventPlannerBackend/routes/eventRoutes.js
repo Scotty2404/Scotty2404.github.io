@@ -471,141 +471,6 @@ router.get('/public-event/:eventId', async (req, res) => {
     }
 });
 
-// create survey
-// router.post('/survey/create', authMiddleware, async (req, res) => {
-//     let surveyId;
-//     try {
-//         const { 
-//             description,
-//             questions
-//         } = req.body;
-
-//         if(!Array.isArray(questions)){
-//             return res.status(400).json({ message: 'Invalid request body.' });
-//         }
-
-//         // Insert event into the database first to get the survey ID
-//         const surveyResult = await queryAsync(`
-//             INSERT INTO event_management.survey ( description, active) VALUES (?, 1)`,
-//             [description]
-//         );
-
-//         const surveyId = surveyResult.insertId;
-
-//         for(const question of questions) {
-//             const qResult = await queryAsync(
-//                 'INSERT INTO event_management.question ( question_text) VALUES (?)',
-//                 [question.question_text]
-//             );
-
-//             const questionId = qResult.insertId;
-
-//             await queryAsync(
-//                 'INSERT INTO event_management.survey_question (survey_id, question_id) VALUES (?, ?)',
-//                 [surveyId, questionId]
-//             );
-
-//             for(const answerText of question.offered_answer) {
-//                 const aResult = await queryAsync(
-//                     'INSERT INTO event_management.offeredanswers (answer_text) VALUES (?)',
-//                     [answerText]
-//                 );
-
-//                 const answerId = aResult.insertId;
-
-//                 await queryAsync (
-//                     'INSERT INTO event_management.question_offeredanswers (question_id, offered_answers_id) VALUES (?, ?)',
-//                     [questionId, answerId]
-//                 );
-//             }
-//         }
-
-//         const survey = await queryAsync(
-//             `SELECT s.*, q.question_id, q.question_text, o.offered_answers_id, o.answer_text
-//             FROM event_management.survey s
-//              LEFT JOIN event_management.survey_question x ON s.survey_id = x.survey_id
-//              LEFT JOIN event_management.question q ON x.question_id = q.question_id
-//              LEFT JOIN event_management.question_offeredanswers y ON q.question_id = y.question_id
-//              LEFT JOIN event_management.offeredanswers o ON y.offered_answers_id = o.offered_answers_id
-
-//             WHERE s.survey_id = ?`,
-//             [surveyId]
-//         );
-
-//         console.log(survey);
-
-//         res.json(survey[0] || { message: "No survey Data found." });
-//         /*
-//         db.query(
-//             'INSERT INTO event_management.survey ( description, active) VALUES (?, 1)',
-//             [description, 1],
-//             async (err, result) => {
-//                 if (err) {
-//                     return res.status(500).json({ error: err.message });
-//                 }
-
-//                 surveyId = result.insertId;
-                
-//                 // save questions
-//                 for (const question of questions) {
-//                     db.query(`
-//                         INSERT INTO event_management.question (question_text) VALUES (?)`,
-//                     [question.question_text], async (err, result) => {
-//                         if(err) {
-//                             return res.status(500).json({ error: err.message });
-//                         }
-
-//                         const questionId = result.insertId;
-
-//                         // relationship survey <=> question
-//                         db.query(`
-//                             INSERT INTO event_management.survey_question (survey_id, question_id) VALUES (?, ?)`,
-//                         [surveyId, questionId]);
-
-//                         // offered answers
-//                         for (const answerText of question.offered_answer) {
-//                             console.log(answerText);
-//                             db.query(`
-//                                 INSERT INTO event_management.offeredanswers (answer_text) VALUES (?)`,
-//                             [answerText], async (err, result) => {
-//                                 if(err) {
-//                                     return res.status(500).json({ error: err.message });
-//                                 }
-//                                 const answerId = result.insertId;
-
-//                                 // relationship offeredAnswer <=> question
-//                                 db.query(`
-//                                     INSERT INTO event_management.question_offeredanswers (question_id, offered_answers_id) VALUES (?, ?)`,
-//                                 [questionId, answerId]);
-//                             });
-//                         }
-                        
-//                     });
-//                 }
-//                 db.query(`
-//                     SELECT s.*, q.question_id, q.question_text, o.offered_answers_id, o.answer_text
-//                     FROM event_management.survey s
-//                     LEFT JOIN event_management.survey_question x ON s.survey_id = x.survey_id
-//                     LEFT JOIN event_management.question q ON x.question_id = q.question_id
-//                     LEFT JOIN event_management.question_offeredanswers y ON q.question_id = y.question_id
-//                     LEFT JOIN event_management.offeredanswers o ON y.offered_answers_id = o.offered_answers_id
-
-//                     WHERE s.survey_id = ?
-//                 `, [surveyId], (err, surveys) => {
-//                     if (err) {
-//                         return res.status(500).json({ error: err.message });
-//                     }
-//                     console.log(surveys[0]);
-//                     res.json(surveys[0]);
-//                 });
-//             }
-//         );*/
-
-//     } catch (err) {
-//         res.status(500).json({ error: err.message });
-//     }
-// });
-
 // Get Guests for Event from EventId
 router.get('/:eventId/guests', authMiddleware, async(req, res) => {
     try {
@@ -692,5 +557,41 @@ router.post('/:eventId/guests/add', authMiddleware, async (req, res) => {
         return res.status(500).json({ message: 'Error while inserting guest to Event' });
     }
 });
+
+// Update event survey
+router.post('/my-events/:id/update-survey', authMiddleware, async(req, res) => {
+    try {
+      const eventId = req.params.id;
+      const { survey_id } = req.body;
+      
+      if (!survey_id) {
+        return res.status(400).json({ error: "Survey ID is required" });
+      }
+  
+      // Update event with survey_id
+      db.query(
+        'UPDATE event_management.event SET survey_id = ? WHERE event_id = ?',
+        [survey_id, eventId],
+        (err, result) => {
+          if (err) {
+            return res.status(500).json({ error: err.message });
+          }
+          
+          if (result.affectedRows === 0) {
+            return res.status(404).json({ error: "Event not found" });
+          }
+          
+          res.json({ 
+            success: true, 
+            message: "Event updated with survey ID successfully",
+            eventId,
+            surveyId: survey_id
+          });
+        }
+      );
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
 
 module.exports = router;
