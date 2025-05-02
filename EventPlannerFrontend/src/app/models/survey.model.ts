@@ -5,6 +5,8 @@ export interface Question {
   options?: string[];
   optionPercentages?: number[];
   scaleValue?: number;
+  minValue?: number;
+  maxValue?: number;
   answerPercentage?: number;
   answerField?: string[];
 }

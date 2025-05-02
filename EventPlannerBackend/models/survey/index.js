@@ -1,6 +1,3 @@
-// EventPlannerBackend/models/survey/index.js
-// Exportiere alle Survey-Klassen von einem zentralen Punkt
-
 // BaseQuestion Klasse
 class BaseQuestion {
     constructor(id, questionText, type) {

@@ -124,7 +124,7 @@ class SurveyService {
                     results[0].description,
                     results[0].created_by
                 );
-    
+                survey.active = results[0].active === 1; // Convert database 1/0 to boolean true/false
                 const questionMap = new Map();
     
                 results.forEach(row => {

@@ -109,6 +109,26 @@ button {
   color: #666;
 }
 
+.inactive-survey {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin: 20px auto;
+  max-width: 600px;
+  text-align: center;
+}
 
+.inactive-survey h2 {
+  margin-bottom: 16px;
+  color: #d32f2f; /* Red color to indicate survey is closed */
+}
 
-
+.inactive-survey button {
+  margin-top: 20px;
+  align-self: center !important;
+}

@@ -12,7 +12,14 @@
     <p>Ihre Antworten wurden erfolgreich übermittelt.</p>
   </div>
 
-  <form *ngIf="survey && !isLoading && !error && !submitted" [formGroup]="surveyForm" (ngSubmit)="onSubmit()" class="survey-form">
+  <!-- New section to show when survey is inactive -->
+  <div *ngIf="survey && !survey.active && !isLoading && !error && !submitted" class="inactive-survey">
+    <h2>Umfrage nicht mehr verfügbar</h2>
+    <p>Diese Umfrage wurde bereits abgeschlossen und nimmt keine weiteren Antworten mehr an.</p>
+    <button mat-raised-button color="primary" routerLink="">Zur Startseite</button>
+  </div>
+
+  <form *ngIf="survey && survey.active && !isLoading && !error && !submitted" [formGroup]="surveyForm" (ngSubmit)="onSubmit()" class="survey-form">
     <h1>{{ survey.title }}</h1>
     <p *ngIf="survey.description">{{ survey.description }}</p>
 

@@ -79,7 +79,7 @@ export class SurveyPageComponent implements OnInit {
   loadEventSurveys(eventId: string) {
     this.isLoaded = false;
     this.isFailed = false;
-
+  
     // First, get event details to find the survey ID
     this.apiService.getEventById(eventId).subscribe({
       next: (eventData) => {
@@ -96,8 +96,15 @@ export class SurveyPageComponent implements OnInit {
                 // Process the survey based on status
                 const survey = this.processSurveyData(surveyData.data);
                 
-                // For demonstration, treat existing surveys as ongoing
-                this.ongoingSurveys = [survey];
+                // Check if the survey is active or completed
+                if (surveyData.data.active === false) {
+                  survey.status = 'completed';
+                  this.completedSurveys = [survey];
+                } else {
+                  console.log("Survey active?: " + surveyData.data.active)
+                  survey.status = 'ongoing';
+                  this.ongoingSurveys = [survey];
+                }
                 
                 // Now fetch the results
                 this.loadSurveyResults(eventData.survey_id);
@@ -151,40 +158,7 @@ export class SurveyPageComponent implements OnInit {
       this.ongoingSurveys = this.dataService.surveyList.filter(survey => survey.status === 'ongoing');
       this.completedSurveys = this.dataService.surveyList.filter(survey => survey.status === 'completed');
       this.isLoaded = true;
-    } else {
-      // If no surveys in the service, try to load sample data
-      this.loadSampleSurveys();
     }
-  }
-
-  loadSampleSurveys() {
-    // Create some sample surveys if needed
-    const sampleSurvey: Survey = {
-      title: 'Sample Survey',
-      questions: [
-        {
-          text: 'What is your favorite color?',
-          answerType: 'checkbox',
-          options: ['Red', 'Blue', 'Green', 'Yellow'],
-          optionPercentages: [25, 40, 20, 15],
-        },
-        {
-          text: 'How would you rate this event?',
-          answerType: 'scale',
-          scaleValue: 4,
-          answerPercentage: 80
-        }
-      ],
-      status: 'ongoing'
-    };
-    
-    // Add to our list
-    this.ongoingSurveys = [sampleSurvey];
-    
-    // Add to the service for future reference
-    this.dataService.addSurvey(sampleSurvey);
-    
-    this.isLoaded = true;
   }
 
   processSurveyData(surveyData: any): Survey {
@@ -215,7 +189,8 @@ export class SurveyPageComponent implements OnInit {
         
         return question;
       }),
-      status: 'ongoing' // Default status
+      // Set status based on active flag
+      status: surveyData.active === 0 ? 'completed' : 'ongoing'
     };
     
     console.log('Processed survey:', survey);
@@ -468,11 +443,17 @@ private processScaleResults(question: any, apiQuestion: any, results: any[]) {
   results.forEach((result: any) => {
     if (result.answers && result.answers[questionId] !== undefined) {
       const answer = result.answers[questionId];
+      
+      // Handle different formats of scale answers
       if (typeof answer === 'number') {
         totalScore += answer;
         count++;
-      } else if (answer.scale_answer !== undefined) {
+      } else if (answer && answer.scale_answer !== undefined) {
         totalScore += answer.scale_answer;
+        count++;
+      } else if (typeof answer === 'object' && answer.answer !== undefined) {
+        // Additional format seen in some responses
+        totalScore += Number(answer.answer);
         count++;
       }
     }
@@ -483,34 +464,53 @@ private processScaleResults(question: any, apiQuestion: any, results: any[]) {
     question.scaleValue = Math.round(avgScore);
     
     // Calculate percentage of max value
-    const maxValue = apiQuestion.maxValue || apiQuestion.max_value || 5;
-    question.answerPercentage = Math.round((avgScore / maxValue) * 100);
+    const maxValue = apiQuestion.maxValue || apiQuestion._maxValue || 5;
+    const minValue = apiQuestion.minValue || apiQuestion._minValue || 1;
+    const range = maxValue - minValue;
+    
+    // Calculate percentage
+    if (range > 0) {
+      const normalizedValue = (avgScore - minValue) / range;
+      question.answerPercentage = Math.round(normalizedValue * 100);
+    } else {
+      question.answerPercentage = Math.round((avgScore / maxValue) * 100);
+    }
+    
+    console.log(`Scale question ${questionId}: avgScore=${avgScore}, percentage=${question.answerPercentage}%`);
   } else {
     question.scaleValue = 0;
     question.answerPercentage = 0;
   }
 }
 
-// Helper method for processing text questions
-private processOpenTextResults(question: any, apiQuestion: any, results: any[]) {
-  const questionId = apiQuestion.question_id || apiQuestion.id;
-  if (!questionId) return;
-  
-  const textAnswers: string[] = [];
-  
-  results.forEach((result: any) => {
-    if (result.answers && result.answers[questionId]) {
-      const answer = result.answers[questionId];
-      if (typeof answer === 'string' && answer.trim() !== '') {
-        textAnswers.push(answer);
-      } else if (answer.text_answer && answer.text_answer.trim() !== '') {
-        textAnswers.push(answer.text_answer);
+  // Helper method for processing text questions
+  private processOpenTextResults(question: any, apiQuestion: any, results: any[]) {
+    const questionId = apiQuestion.question_id || apiQuestion.id;
+    if (!questionId) return;
+    
+    const textAnswers: string[] = [];
+    
+    results.forEach((result: any) => {
+      if (result.answers && result.answers[questionId] !== undefined) {
+        const answer = result.answers[questionId];
+        
+        // Handle different formats of text answers
+        if (typeof answer === 'string' && answer.trim() !== '') {
+          textAnswers.push(answer);
+        } else if (answer && answer.text_answer && answer.text_answer.trim() !== '') {
+          textAnswers.push(answer.text_answer);
+        } else if (typeof answer === 'object' && answer.answer !== undefined) {
+          // Additional format seen in some responses
+          if (typeof answer.answer === 'string' && answer.answer.trim() !== '') {
+            textAnswers.push(answer.answer);
+          }
+        }
       }
-    }
-  });
-  
-  question.answerField = textAnswers;
-}
+    });
+    
+    console.log(`Text question ${questionId}: ${textAnswers.length} answers collected`);
+    question.answerField = textAnswers;
+  }
 
   openDialog(): void {
     const dialogRef = this.dialog.open(SurveyDialogComponent, {

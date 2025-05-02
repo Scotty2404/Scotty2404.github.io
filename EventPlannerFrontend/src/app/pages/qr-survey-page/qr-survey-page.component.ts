@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -34,11 +35,13 @@ import { QrSurveyDialogComponent } from '../../components/qr-survey-dialog/qr-su
     ReactiveFormsModule,
     MatCheckboxModule,
     MatDividerModule,
-    QrSurveyDialogComponent
+    QrSurveyDialogComponent,
+    RouterLink
   ],
   templateUrl: './qr-survey-page.component.html',
   styleUrl: './qr-survey-page.component.scss'
 })
+
 export class QrSurveyPageComponent implements OnInit {
   surveyForm: FormGroup;
   survey: any;
@@ -75,6 +78,16 @@ export class QrSurveyPageComponent implements OnInit {
     this.apiService.getSurvey(surveyId).subscribe({
       next: (response) => {
         this.survey = response.data;
+        
+        // Check if the survey is active
+        if (this.survey && this.survey.active === false) {
+          // If survey exists but is not active, set active to false
+          this.survey.active = false;
+        } else if (this.survey) {
+          // Otherwise, if the survey exists, it's active
+          this.survey.active = true;
+        }
+        
         this.setupForm();
         this.isLoading = false;
       },
@@ -131,6 +144,12 @@ export class QrSurveyPageComponent implements OnInit {
   }
 
   onSubmit(): void {
+
+    if (!this.survey.active) {
+      this.error = 'Diese Umfrage wurde bereits abgeschlossen und nimmt keine weiteren Antworten mehr an.';
+      return;
+    }
+
     if (this.surveyForm.valid) {
       const answersGroup = this.surveyForm.get('answers') as FormGroup;
       const formattedAnswers: Record<string, number | number[] | string> = {};

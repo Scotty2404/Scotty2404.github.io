@@ -231,10 +231,6 @@ export class SurveyQuestionResultBoxComponent {
   
   // Helper to find option index by offered_answers_id
   private findOptionIndexByOfferedAnswersId(question: any, offeredAnswersId: any): number {
-    // This is a placeholder - you'll need to adapt this to your database structure
-    // In your database, each question has options with IDs (offered_answers_id)
-    // You need to map these IDs to indices in the question.options array
-    
     // If the question has a mapping of option IDs
     if (question.optionIds) {
       return question.optionIds.indexOf(offeredAnswersId);
@@ -308,7 +304,7 @@ export class SurveyQuestionResultBoxComponent {
       
       if (range > 0) {
         const normalized = (avgValue - minValue) / range;
-        question.answerPercentage = Math.round(normalized * 100);
+        question.answerPercentage = Math.round(normalized * 100 * 50);
       } else {
         question.answerPercentage = 0;
       }
