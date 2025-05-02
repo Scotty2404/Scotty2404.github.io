@@ -31,7 +31,7 @@
     @if(isLoaded){
 
     <!-- Bereich für Aktionen wie "Neue Umfrage hinzufügen" -->
-    <div class="table-btn">
+    <div *ngIf="completedSurveys.length === 0 && ongoingSurveys.length === 0" class="table-btn">
       <!-- Floating Action Button (FAB) von Angular Material, ruft openDialog() auf Klick -->
       <button mat-fab extended (click)="openDialog()">
         <!-- "Plus"-Icon aus Angular Material -->

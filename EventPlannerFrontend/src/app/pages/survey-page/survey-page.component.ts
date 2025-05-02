@@ -5,6 +5,7 @@ import { MatIcon } from '@angular/material/icon';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { ChangeDetectionStrategy, signal } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { CommonModule } from '@angular/common';
 
 // Importing project-internal services, models, and components
 import { DataService } from '../../services/data.service';
@@ -37,7 +38,8 @@ interface SurveyResponse {
     MatExpansionModule,
     MatAccordion,
     LoadingBoxComponent,
-    LoadingFailedBoxComponent
+    LoadingFailedBoxComponent,
+    CommonModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.Default,
@@ -180,11 +182,11 @@ export class SurveyPageComponent implements OnInit {
           scaleValue: q.type === 'scale' ? q.minValue || 1 : undefined,
           answerPercentage: 0,
           answerField: [],
+          minValue: q.minValue,
+          maxValue: q.maxValue,
           // Custom metadata
           _id: q.id,
           _options: q.options,
-          _minValue: q.minValue,
-          _maxValue: q.maxValue
         };
         
         return question;

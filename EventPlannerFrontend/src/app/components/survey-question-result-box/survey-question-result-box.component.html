@@ -89,14 +89,14 @@
           <div class="answer scale">
             <!-- Slider zur Anzeige des Skalenwerts -->
             <mat-slider 
-              [min]="question.minValue || 1" 
-              [max]="question.maxValue || 100" 
+              [min]="question.minValue || question.minValue || 1" 
+              [max]="question.maxValue || question.maxValue || 5" 
               step="1">
-              <input matSliderThumb [value]="question.scaleValue || question.minValue || 1" disabled />
+              <input matSliderThumb [value]="question.scaleValue || (question.minValue || question.minValue || 1)" disabled />
             </mat-slider>
             <div class="scale-info">
-              Durchschnittswert: {{ question.scaleValue || 0 }} 
-              (Skala: {{ question.minValue || 1 }} - {{ question.maxValue || 5 }})
+              &Oslash; {{ question.scaleValue || 0 }} 
+              | Skala: {{ question.minValue || question.minValue || 1 }} - {{ question.maxValue || question.maxValue || 5 }}
             </div>
           </div>
         </div>

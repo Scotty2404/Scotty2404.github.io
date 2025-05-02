@@ -149,99 +149,97 @@ export class AddEventPageComponent implements OnInit {
   }
   
   private transformEventData(surveyId: number) {
-    const formData = this.eventForm.value;
+      const formData = this.eventForm.value;
 
-    let startdate, enddate, eventVenue;
+      let startdate, enddate, eventVenue;
 
-    //Start- und Endzeit setzen
-    const eventDate = new Date(formData.date);
-    const year = eventDate.getFullYear();
-    const month = (eventDate.getMonth() + 1).toString().padStart(2, '0');
-    const day = eventDate.getDate().toString().padStart(2, '0');
-    
-    const formattedDate = `${year}-${month}-${day}`;
+      //Start- und Endzeit setzen
+      const eventDate = new Date(formData.date);
+      const year = eventDate.getFullYear();
+      const month = (eventDate.getMonth() + 1).toString().padStart(2, '0');
+      const day = eventDate.getDate().toString().padStart(2, '0');
+      
+      const formattedDate = `${year}-${month}-${day}`;
 
-    if(formData.timeOption === 'ganztags') {
-      startdate = `${formattedDate}T00:00:00`;
-      enddate = `${formattedDate}T23:59:59`;
-    } else if(formData.timeOption === 'startzeit') {
-      startdate = `${formattedDate}T${formData.startTime}:00`;
-      enddate = `${formattedDate}T23:59:59`;
-    } else if (formData.timeOption === 'start_endzeit') {
-      startdate = `${formattedDate}T${formData.startTime}:00`;
-      enddate = `${formattedDate}T${formData.endTime}:00`;
-    }
-
-    //Venue Setzten
-    eventVenue = {
-      street: formData.street,
-      city: formData.city,
-      postal_code: formData.postalCode,
-      google_maps_link: `https://www.google.com/maps/place/${encodeURIComponent(formData.street + ', ' + formData.postalCode + ' ' + formData.city)}`
-    };
-
-    //Image setzten
-    let image;
-    this.selectedFile ? image = this.selectedFile : image = formData.image;
-
-    const resultData = new FormData();
-
-    resultData.append('title', formData.title);
-    resultData.append('description', formData.description);
-    resultData.append('venue', JSON.stringify(eventVenue));
-    resultData.append('startdate', startdate!);
-    resultData.append('enddate', enddate!);
-    
-    // Gästeanzahl korrekt behandeln
-    if (formData.guestCount && formData.guestCount !== '') {
-      resultData.append('max_guests', formData.guestCount.toString());
-    } else {
-      resultData.append('max_guests', '0'); // Standardwert, wenn leer
-    }
-    
-    // Bild korrekt verarbeiten
-    if (this.selectedFile) {
-      resultData.append('image', this.selectedFile);
-    } else if (typeof formData.image === 'string') {
-      // Bei vorhandener Bildauswahl: Verwende die URL als String
-      const imageUrl = formData.image;
-      // Falls ein Standard-Bild aus dem Array verwendet wird
-      if (this.standardImages.includes(imageUrl)) {
-        resultData.append('image', imageUrl);
-      } else {
-        // Wenn es ein Base64-String ist (durch FileReader)
-        // Konvertiere und sende als File-Objekt
-        try {
-          const byteString = atob(imageUrl.split(',')[1]);
-          const mimeString = imageUrl.split(',')[0].split(':')[1].split(';')[0];
-          const ab = new ArrayBuffer(byteString.length);
-          const ia = new Uint8Array(ab);
-          for (let i = 0; i < byteString.length; i++) {
-            ia[i] = byteString.charCodeAt(i);
-          }
-          const blob = new Blob([ab], { type: mimeString });
-          const file = new File([blob], 'image.png', { type: mimeString });
-          resultData.append('image', file);
-        } catch (e) {
-          console.error('Error converting base64 to file:', e);
-          // Fallback: Sende eine Standardbild-URL
-          resultData.append('image', this.standardImages[0]);
-        }
+      if(formData.timeOption === 'ganztags') {
+        startdate = `${formattedDate}T00:00:00`;
+        enddate = `${formattedDate}T23:59:59`;
+      } else if(formData.timeOption === 'startzeit') {
+        startdate = `${formattedDate}T${formData.startTime}:00`;
+        enddate = `${formattedDate}T23:59:59`;
+      } else if (formData.timeOption === 'start_endzeit') {
+        startdate = `${formattedDate}T${formData.startTime}:00`;
+        enddate = `${formattedDate}T${formData.endTime}:00`;
       }
-    } else {
-      // Fallback für den Fall, dass kein Bild ausgewählt wurde
-      resultData.append('image', this.standardImages[0]);
-    }
-    
-    // Wenn eine Umfrage erstellt wurde, füge survey_id hinzu
-    if (surveyId > 0) {
-      resultData.append('survey_id', surveyId.toString());
-    } else {
-      // Bei keiner Umfrage
-      resultData.append('survey_id', '0');
-    }
 
-    return resultData;
+      //Venue Setzten
+      eventVenue = {
+        street: formData.street,
+        city: formData.city,
+        postal_code: formData.postalCode,
+        google_maps_link: `https://www.google.com/maps/place/${encodeURIComponent(formData.street + ', ' + formData.postalCode + ' ' + formData.city)}`
+      };
+
+      //Image setzten
+      let image;
+      this.selectedFile ? image = this.selectedFile : image = formData.image;
+
+      const resultData = new FormData();
+
+      resultData.append('title', formData.title);
+      resultData.append('description', formData.description);
+      resultData.append('venue', JSON.stringify(eventVenue));
+      resultData.append('startdate', startdate!);
+      resultData.append('enddate', enddate!);
+      
+      // Gästeanzahl korrekt behandeln
+      if (formData.guestCount && formData.guestCount !== '') {
+        resultData.append('max_guests', formData.guestCount.toString());
+      } else {
+        resultData.append('max_guests', '0'); // Standardwert, wenn leer
+      }
+      
+      // Bild korrekt verarbeiten
+      if (this.selectedFile) {
+        resultData.append('image', this.selectedFile);
+      } else if (typeof formData.image === 'string') {
+        // Bei vorhandener Bildauswahl: Verwende die URL als String
+        const imageUrl = formData.image;
+        // Falls ein Standard-Bild aus dem Array verwendet wird
+        if (this.standardImages.includes(imageUrl)) {
+          resultData.append('image', imageUrl);
+        } else {
+          // Wenn es ein Base64-String ist (durch FileReader)
+          // Konvertiere und sende als File-Objekt
+          try {
+            const byteString = atob(imageUrl.split(',')[1]);
+            const mimeString = imageUrl.split(',')[0].split(':')[1].split(';')[0];
+            const ab = new ArrayBuffer(byteString.length);
+            const ia = new Uint8Array(ab);
+            for (let i = 0; i < byteString.length; i++) {
+              ia[i] = byteString.charCodeAt(i);
+            }
+            const blob = new Blob([ab], { type: mimeString });
+            const file = new File([blob], 'image.png', { type: mimeString });
+            resultData.append('image', file);
+          } catch (e) {
+            console.error('Error converting base64 to file:', e);
+            // Fallback: Sende eine Standardbild-URL
+            resultData.append('image', this.standardImages[0]);
+          }
+        }
+      } else {
+        // Fallback für den Fall, dass kein Bild ausgewählt wurde
+        resultData.append('image', this.standardImages[0]);
+      }
+      
+      // Wenn eine Umfrage-ID übergeben wurde und sie > 0 ist, füge survey_id hinzu
+      if (surveyId > 0) {
+        resultData.append('survey_id', surveyId.toString());
+      }
+      // Wichtig: Bei surveyId <= 0 wird KEIN survey_id-Parameter hinzugefügt!
+
+      return resultData;
   }
 
   private transfromSurveyData() {
@@ -286,13 +284,28 @@ export class AddEventPageComponent implements OnInit {
   }
 
   saveEvent(){
+    // Falls keine Fragen vorhanden sind, erstelle Event ohne Survey
+    if (this.survey.length === 0) {
+      // Event ohne Survey erstellen
+      this.apiService.createEvent(this.transformEventData(-1)).subscribe({ 
+        next: (response) => {
+          console.log('Event saved successfully without survey', response);
+          this.router.navigate(['/landing-page']);
+        }, error: (error) => {
+          console.log('Saving Event Failed', error);
+        }
+      });
+      return;
+    }
+  
+    // Falls Fragen vorhanden sind, erstelle Survey und dann Event
     let surveyId = -1;
     this.apiService.createSurvey(this.transfromSurveyData()).subscribe({
       next: (surveyResponse) => {
         console.log(surveyResponse);
         surveyId = surveyResponse.survey_id;
         console.log(this.transformEventData(surveyId));
-
+  
         this.apiService.createEvent(this.transformEventData(surveyId)).subscribe({ 
           next: (response) => {
             console.log('Event saved successfully', response);
