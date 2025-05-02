@@ -9,6 +9,7 @@ export interface Question {
   maxValue?: number;
   answerPercentage?: number;
   answerField?: string[];
+  multipleSelection?: number;
 }
 
 export interface Survey {

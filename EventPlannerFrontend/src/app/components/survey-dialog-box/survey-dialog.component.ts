@@ -11,6 +11,7 @@ import { MatListItem } from '@angular/material/list';
 import { MatIcon } from '@angular/material/icon';
 import { Question } from '../../models/survey.model';
 import { MatSelectModule } from '@angular/material/select';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 // Definiert die SurveyDialog-Komponente
 @Component({
@@ -27,7 +28,8 @@ import { MatSelectModule } from '@angular/material/select';
     MatList,
     MatListItem,
     MatIcon,
-    MatSelectModule
+    MatSelectModule,
+    MatButtonToggleModule,
   ],
   templateUrl: './survey-dialog.component.html',  // Der Pfad zur HTML-Vorlage für den Dialog
   styleUrls: ['./survey-dialog.component.scss']  // Der Pfad zu den Styles für den Dialog
@@ -36,12 +38,12 @@ export class SurveyDialogComponent {
   // Initialisierung des Umfrage-Objekts mit einem leeren Titel und einer leeren Fragenliste
   survey = { title: '', questions: [] as Question[] };  
 
-  // Definition einer neuen Frage, die im Dialog bearbeitet wird.
-  newQuestion: Question = {  
+  newQuestion: Question = {
     text: '',  // Fragetext
     answerType: 'checkbox',  // Standard-Fragetyp: 'checkbox'
     options: [],  // Optionen für die Frage, wenn sie eine Checkbox-Frage ist.
-    optionPercentages: []  // Prozentuale Verteilung der Optionen (nur relevant für Skalierungsfragen)
+    optionPercentages: [],   // Prozentuale Verteilung der Optionen
+    multipleSelection: 0  // Add this property with default value false
   };
 
   // Variable, um die Optionen als String zu speichern und später in ein Array zu konvertieren

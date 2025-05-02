@@ -30,8 +30,8 @@
     <!-- Prüfen, ob die Daten erfolgreich geladen wurden -->
     @if(isLoaded){
 
-    <!-- Button for adding a new survey, visible if we're viewing a specific event or if no surveys exist yet -->
-    <div class="table-btn">
+    <!-- Button for adding a new survey -->
+    <div *ngIf="ongoingSurveys.length === 0 && completedSurveys.length === 0" class="table-btn">
       <!-- Floating Action Button (FAB) to add a new survey -->
       <button mat-fab extended (click)="openDialog()">
         <!-- "Plus"-Icon from Angular Material -->

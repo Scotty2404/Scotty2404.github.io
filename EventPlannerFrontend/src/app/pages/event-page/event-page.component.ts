@@ -63,7 +63,7 @@ export class EventPageComponent implements OnInit {
     if(start === end) {
       this.eventTime = `Am ${start.toLocaleDateString('de-DE')} um ${start.toLocaleTimeString('de-DE')} Uhr`;
     } else {
-      this.eventTime = `Vom ${start.toLocaleDateString('de-DE')} um ${start.toLocaleTimeString('de-DE')} Uhr bis zum ${end.toLocaleDateString('de-DE')} um ${end.toLocaleTimeString('de-DE')} Uhr`;
+      this.eventTime = `Vom ${start.toLocaleDateString('de-DE')} um ${start.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', hour12: false })} Uhr bis zum ${end.toLocaleDateString('de-DE')} um ${end.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', hour12: false })} Uhr`;
     }
 
     return;

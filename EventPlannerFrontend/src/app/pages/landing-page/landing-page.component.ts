@@ -55,9 +55,9 @@ export class LandingPageComponent implements OnInit{
     let eventTime;
 
     if(start === end) {
-      eventTime = `${start.toLocaleDateString('de-DE')} : ${start.toLocaleTimeString('de-DE')} Uhr`;
+      eventTime = `${start.toLocaleDateString('de-DE')} : ${start.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', hour12: false })} Uhr`;
     } else {
-      eventTime = `${start.toLocaleDateString('de-DE')} : ${start.toLocaleTimeString('de-DE')} - ${end.toLocaleTimeString('de-DE')} Uhr`;
+      eventTime = `${start.toLocaleDateString('de-DE')} : ${start.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', hour12: false })} - ${end.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', hour12: false })} Uhr`;
     }
 
     return eventTime;
