@@ -7,7 +7,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { MatRadioModule } from '@angular/material/radio';  // HINZUGEFÜGT
+import { MatRadioModule } from '@angular/material/radio';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -19,8 +19,6 @@ import { Validators, ValidatorFn, AbstractControl, ValidationErrors } from '@ang
 import { MatDialog } from '@angular/material/dialog';
 import { QrSurveyDialogComponent } from '../../components/qr-survey-dialog/qr-survey-dialog.component';
 
-
-
 @Component({
   selector: 'app-qr-survey-page',
   imports: [
@@ -30,7 +28,7 @@ import { QrSurveyDialogComponent } from '../../components/qr-survey-dialog/qr-su
     MatSliderModule,
     MatCardModule,
     MatButtonModule,
-    MatRadioModule,  // HINZUGEFÜGT
+    MatRadioModule,
     FormsModule,
     CommonModule,
     ReactiveFormsModule,
@@ -52,7 +50,8 @@ export class QrSurveyPageComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private dialog: MatDialog
   ) {
     this.surveyForm = this.fb.group({
       answers: this.fb.group({})
@@ -108,7 +107,9 @@ export class QrSurveyPageComponent implements OnInit {
           answersGroup.addControl(question.id.toString(), new FormControl(''));
           break;
         case 'scale':
-          answersGroup.addControl(question.id.toString(), new FormControl(question.minValue));
+          // Start with the minimum value instead of null
+          const minValue = question.minValue || 1;
+          answersGroup.addControl(question.id.toString(), new FormControl(minValue));
           break;
       }
     });
@@ -161,15 +162,23 @@ export class QrSurveyPageComponent implements OnInit {
             formattedAnswers[questionId] = control?.value;
           }
         } else if (question.type === 'scale') {
-          // For scale questions, ensure we have a numeric value
           const value = control?.value;
           if (value !== null && value !== undefined) {
-            // The backend is expecting scale values to be directly assigned,
-            // not as indices or options like multiple choice questions
-            formattedAnswers[questionId] = Number(value);
+            // For scale questions, we need to ensure the value is within the valid range
+            // and convert it to a format the backend expects
             
-            // Log more details for debugging
-            console.log(`Scale question ${questionId} value:`, value);
+            // Get min and max values for this question
+            const minValue = question.minValue || 1;
+            const maxValue = question.maxValue || 5;
+            
+            // Ensure value is within range
+            let scaledValue = Math.min(Math.max(Number(value), minValue), maxValue);
+            
+            // The API expects values as direct answers, not indices
+            formattedAnswers[questionId] = scaledValue;
+            
+            // Log for debugging
+            console.log(`Scale question ${questionId} value:`, scaledValue);
           }
         } else {
           // For text questions, include only if not empty
@@ -188,6 +197,10 @@ export class QrSurveyPageComponent implements OnInit {
         this.apiService.submitSurveyResponse(this.survey.id, formattedAnswers).subscribe({
           next: () => {
             this.submitted = true;
+            // Open success dialog
+            this.dialog.open(QrSurveyDialogComponent, {
+              width: '400px'
+            });
           },
           error: (error) => {
             console.error('Error submitting survey:', error);
