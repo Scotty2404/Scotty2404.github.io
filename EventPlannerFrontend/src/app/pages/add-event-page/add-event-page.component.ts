@@ -115,7 +115,9 @@ export class AddEventPageComponent implements OnInit {
       question: ['', Validators.required],
       answerType: ['multiple', Validators.required],
       answers: this.fb.array([]),
-      multipleSelection: [false] // Standardmäßig false
+      multipleSelection: [false], // Standardmäßig false
+      minValue: [1], // Default min value for scale questions
+      maxValue: [5]  // Default max value for scale questions
     });
   
     // Füge eine leere Antwort für Multiple Choice hinzu
@@ -261,8 +263,8 @@ export class AddEventPageComponent implements OnInit {
             question: q.question,
             answerType: 'scale',
             answers: [],
-            minValue: 1,
-            maxValue: 5
+            minValue: q.minValue || 1, // Use the value from form data
+            maxValue: q.maxValue || 5  // Use the value from form data
           };
         } else if (q.answerType === 'open') {
           return {

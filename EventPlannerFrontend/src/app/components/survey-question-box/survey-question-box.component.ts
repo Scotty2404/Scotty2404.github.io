@@ -79,12 +79,31 @@ export class SurveyQuestionBoxComponent {
     const answersArray = this.questionForm.get('answers') as FormArray;
     
     if (value === 'multiple') {
-      // Für Multiple Choice mindestens eine Antwort
+      // For Multiple Choice at least one answer
       if (answersArray.length === 0) {
         answersArray.push(new FormControl('', Validators.required));
       }
+      
+      // Make sure min/max values are available but not required
+      if (!this.questionForm.get('minValue')) {
+        this.questionForm.addControl('minValue', new FormControl(1));
+      }
+      if (!this.questionForm.get('maxValue')) {
+        this.questionForm.addControl('maxValue', new FormControl(5));
+      }
+    } else if (value === 'scale') {
+      // For scale questions, ensure min/max are added and required
+      if (!this.questionForm.get('minValue')) {
+        this.questionForm.addControl('minValue', new FormControl(1, Validators.required));
+      }
+      if (!this.questionForm.get('maxValue')) {
+        this.questionForm.addControl('maxValue', new FormControl(5, Validators.required));
+      }
+      
+      // Clear answers as they're not needed for scale
+      answersArray.clear();
     } else {
-      // Für andere Typen keine Antworten
+      // For other types no answers needed
       answersArray.clear();
     }
   }
