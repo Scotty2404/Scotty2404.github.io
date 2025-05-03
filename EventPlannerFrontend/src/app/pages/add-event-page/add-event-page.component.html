@@ -131,8 +131,6 @@
                           </div>
                           
                           
-                        
-                
                         <div>
                             <!-- Frage hinzufügen nur anzeigen, wenn mindestens eine Frage existiert -->
                             <button mat-raised-button color="primary" (click)="addQuestion()" *ngIf="survey.length > 0">
@@ -147,29 +145,19 @@
                     </form>
                     </mat-card-content>
                 </mat-card>
-                
+            </div>
+        }
+        @else {
+            @if(isFailed) {
+                <div class="loading-container">
+                    <app-loading-failed-box></app-loading-failed-box>
                 </div>
-                    
             }
-            
-            @else {
-            
-                @if(isFailed) {
-            
-                    <div class="loading-container">
-                        <app-loading-failed-box></app-loading-failed-box>
-                    </div>
-                }
-        
-                @else { 
-                    <div class="loading-container">
-                        <app-loading-box></app-loading-box>
-                    </div>
-                }
-            
+            @else { 
+                <div class="loading-container">
+                    <app-loading-box></app-loading-box>
+                </div>
             }
-        
+        }
     </div>
-    
-    
-    </body>  
+</body>

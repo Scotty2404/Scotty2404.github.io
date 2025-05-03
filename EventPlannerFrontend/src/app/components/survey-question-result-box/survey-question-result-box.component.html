@@ -1,26 +1,24 @@
 <mat-card *ngFor="let survey of data" class="survey-box">
-  <!-- Die *ngFor-Direktive iteriert über jedes Element im 'data' Array und erstellt für jedes eine MatCard (Material Card) -->
-  <!-- Jede MatCard stellt eine Umfrage dar -->
 
   <div class="card-header">
     <!-- Header-Bereich der Umfragekarte, der Steuerungselemente für Aktionen enthält -->
-
-    <!-- Zeigt den "Abschließen"-Button an, falls der Button aktiv sein soll (z.B. für laufende Umfragen) -->
-    <button *ngIf="showCompleteButton"
+  
+    <!-- Show the Complete button only for ongoing surveys -->
+    <button *ngIf="showCompleteButton && survey.status !== 'completed'"
             mat-icon-button
             (click)="completeSurvey(survey)"  
             matTooltip="Umfrage abschließen">
       <!-- Tooltip wird angezeigt, wenn der Benutzer mit der Maus über den Button fährt -->
       <mat-icon style="color: green;">check_circle</mat-icon>  <!-- Das Symbol für "Abschließen" -->
     </button>
-
-    <!-- Wenn der 'showCompleteButton' nicht aktiv ist (d.h. Umfrage abgeschlossen), wird ein anderes Icon angezeigt -->
-    <mat-icon *ngIf="!showCompleteButton"
+  
+    <!-- Show the "Completed" icon for completed surveys -->
+    <mat-icon *ngIf="survey.status === 'completed'"
               color="primary"
               matTooltip="Abgeschlossen">
       done_all
     </mat-icon>
-
+  
     <!-- Button zum Aktualisieren der Umfrageergebnisse -->
     <button mat-icon-button
             (click)="updateSurveyResults(survey)"  
@@ -66,36 +64,44 @@
             <div class="question">{{ question.text }}</div>  <!-- Fragetext anzeigen -->
             <div class="answer">
               <!-- Liste der Antworten für offene Fragen anzeigen -->
-              <mat-list role="list" *ngIf="question.answerField && question.answerField.length > 0; else noAnswers">
-                <ng-container *ngFor="let answer of question.answerField">
-                  <mat-list-item role="listitem">{{ answer }}</mat-list-item>  <!-- Zeigt jede Antwort als Listenelement -->
+              <mat-list role="list">
+                <ng-container *ngIf="question.answerField && question.answerField.length > 0; else noAnswers">
+                  <mat-list-item role="listitem" *ngFor="let answer of question.answerField">
+                    {{ answer }}
+                  </mat-list-item>  <!-- Zeigt jede Antwort als Listenelement -->
                 </ng-container>
+                <ng-template #noAnswers>
+                  <!-- Falls keine Antworten vorhanden sind, wird eine alternative Nachricht angezeigt -->
+                  <p>Keine Antworten vorhanden.</p>
+                </ng-template>
               </mat-list>
-              <ng-template #noAnswers>
-                <!-- Falls keine Antworten vorhanden sind, wird eine alternative Nachricht angezeigt -->
-                <p>Keine Antworten vorhanden.</p>
-              </ng-template>
             </div>
           </div>
         </ng-container>
       </mat-tab>
 
-      <!-- Tab für Skalenfragen -->
-      <mat-tab label="Scale">
-        <ng-container *ngFor="let question of survey.questions">
-          <!-- Iteriert durch alle Fragen der Umfrage und zeigt nur die Skalenfragen an -->
-          <div *ngIf="question.answerType === 'scale'" class="question-row">
-            <div class="question">{{ question.text }}</div>  <!-- Fragetext anzeigen -->
-            <div class="answer scale">
-              <!-- Slider zur Anzeige des Skalenwerts (z.B. 0-100) -->
-              <mat-slider min="0" max="100" step="1">
-                <input matSliderThumb [value]="question.answerPercentage" disabled />  <!-- Der Schieberegler zeigt den Durchschnittswert an -->
-              </mat-slider>
-              <div>{{ question.answerPercentage }}%</div>  <!-- Der aktuelle Wert der Skalenantwort als Prozent anzeigen -->
+    <!-- Tab für Skalenfragen -->
+    <mat-tab label="Scale">
+      <ng-container *ngFor="let question of survey.questions">
+        <!-- Iteriert durch alle Fragen der Umfrage und zeigt nur die Skalenfragen an -->
+        <div *ngIf="question.answerType === 'scale'" class="question-row">
+          <div class="question">{{ question.text }}</div>  <!-- Fragetext anzeigen -->
+          <div class="answer scale">
+            <!-- Slider zur Anzeige des Skalenwerts -->
+            <mat-slider 
+              [min]="question.minValue || question.minValue || 1" 
+              [max]="question.maxValue || question.maxValue || 5" 
+              step="1">
+              <input matSliderThumb [value]="question.scaleValue || (question.minValue || question.minValue || 1)" disabled />
+            </mat-slider>
+            <div class="scale-info">
+              &Oslash; {{ question.scaleValue || 0 }} 
+              | Skala: {{ question.minValue || question.minValue || 1 }} - {{ question.maxValue || question.maxValue || 5 }}
             </div>
           </div>
-        </ng-container>
-      </mat-tab>
+        </div>
+      </ng-container>
+    </mat-tab>
 
     </mat-tab-group>
   </mat-card-content>

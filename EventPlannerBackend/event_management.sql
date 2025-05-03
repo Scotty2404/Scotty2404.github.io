@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 21. Mrz 2025 um 14:18
+-- Erstellungszeit: 03. Mai 2025 um 13:48
 -- Server-Version: 10.4.32-MariaDB
 -- PHP-Version: 8.2.12
 
@@ -31,7 +31,9 @@ CREATE TABLE `answer` (
   `answer_id` int(11) NOT NULL,
   `survey_id` int(11) NOT NULL,
   `question_id` int(11) NOT NULL,
-  `offered_answers_id` int(11) NOT NULL,
+  `offered_answers_id` int(11) DEFAULT NULL,
+  `text_answer` text DEFAULT NULL,
+  `scale_answer` int(11) DEFAULT NULL,
   `user_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -92,13 +94,6 @@ CREATE TABLE `playlist` (
   `playlist_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Daten für Tabelle `playlist`
---
-
-INSERT INTO `playlist` (`playlist_id`) VALUES
-(1);
-
 -- --------------------------------------------------------
 
 --
@@ -120,7 +115,12 @@ CREATE TABLE `qr_code` (
 
 CREATE TABLE `question` (
   `question_id` int(11) NOT NULL,
-  `question_text` text NOT NULL
+  `question_text` text NOT NULL,
+  `type` enum('multiple','scale','text') NOT NULL DEFAULT 'text',
+  `min_value` int(11) DEFAULT NULL,
+  `max_value` int(11) DEFAULT NULL,
+  `max_length` int(11) DEFAULT 500,
+  `multiple_selection` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -143,8 +143,11 @@ CREATE TABLE `question_offeredanswers` (
 
 CREATE TABLE `survey` (
   `survey_id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
   `description` text DEFAULT NULL,
-  `active` tinyint(1) DEFAULT 0
+  `created_by` int(11) NOT NULL,
+  `active` tinyint(1) DEFAULT 0,
+  `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -178,7 +181,7 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`user_id`, `firstname`, `lastname`, `email`, `password`) VALUES
-(1, 'Max', 'Mustermann', 'max.mustermann@beispiel.de', '$2b$10$roR7Tb1Y/pwnAs314HSjHeh0I.1NI5i8Um.eaN8VzWL0t7v2lEsfW');
+(1, 'test', 'test', 'test', '$2b$10$T7hUuWp5tJB/aqX5ztHqMu.Vdk.WEG3Jzgnnk8/NZb4wu4MQW/XSe');
 
 -- --------------------------------------------------------
 
@@ -217,10 +220,11 @@ CREATE TABLE `venue` (
 --
 ALTER TABLE `answer`
   ADD PRIMARY KEY (`answer_id`),
-  ADD UNIQUE KEY `survey_id` (`survey_id`,`question_id`,`user_id`),
+  ADD UNIQUE KEY `unique_answer` (`survey_id`,`question_id`,`user_id`,`offered_answers_id`),
   ADD KEY `question_id` (`question_id`),
   ADD KEY `offered_answers_id` (`offered_answers_id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `idx_answer_user_survey` (`user_id`,`survey_id`);
 
 --
 -- Indizes für die Tabelle `event`
@@ -262,7 +266,8 @@ ALTER TABLE `qr_code`
 -- Indizes für die Tabelle `question`
 --
 ALTER TABLE `question`
-  ADD PRIMARY KEY (`question_id`);
+  ADD PRIMARY KEY (`question_id`),
+  ADD KEY `idx_question_type` (`type`);
 
 --
 -- Indizes für die Tabelle `question_offeredanswers`
@@ -276,7 +281,8 @@ ALTER TABLE `question_offeredanswers`
 -- Indizes für die Tabelle `survey`
 --
 ALTER TABLE `survey`
-  ADD PRIMARY KEY (`survey_id`);
+  ADD PRIMARY KEY (`survey_id`),
+  ADD KEY `idx_survey_created_by` (`created_by`);
 
 --
 -- Indizes für die Tabelle `survey_question`
@@ -339,7 +345,7 @@ ALTER TABLE `offeredanswers`
 -- AUTO_INCREMENT für Tabelle `playlist`
 --
 ALTER TABLE `playlist`
-  MODIFY `playlist_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `playlist_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT für Tabelle `qr_code`
@@ -424,6 +430,12 @@ ALTER TABLE `extra_guests`
 ALTER TABLE `question_offeredanswers`
   ADD CONSTRAINT `question_offeredanswers_ibfk_1` FOREIGN KEY (`question_id`) REFERENCES `question` (`question_id`),
   ADD CONSTRAINT `question_offeredanswers_ibfk_2` FOREIGN KEY (`offered_answers_id`) REFERENCES `offeredanswers` (`offered_answers_id`);
+
+--
+-- Constraints der Tabelle `survey`
+--
+ALTER TABLE `survey`
+  ADD CONSTRAINT `fk_survey_created_by` FOREIGN KEY (`created_by`) REFERENCES `user` (`user_id`);
 
 --
 -- Constraints der Tabelle `survey_question`

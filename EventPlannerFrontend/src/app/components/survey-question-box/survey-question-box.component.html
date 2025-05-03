@@ -2,14 +2,13 @@
 
     <mat-form-field>
         <mat-label>select</mat-label>
-        <mat-select formControlName="answerType" [(ngModel)]="selectedValue">
+        <mat-select formControlName="answerType">
           <mat-option *ngFor="let option of options" [value]="option.value">
             {{ option.viewValue }}
           </mat-option>
         </mat-select>
-      </mat-form-field>
+    </mat-form-field>
       
-
     <mat-form-field appearance="outline">
       <mat-label>Frage {{ questionIndex + 1 }}</mat-label>
       <input matInput formControlName="question" required />
@@ -56,9 +55,6 @@
         
       </div>
 
-
-
-  
     <div style=" display: flex; justify-content: space-between;">
       
       <div>
@@ -70,6 +66,13 @@
         <mat-icon>delete</mat-icon>
       </button></div>
 
+      
+      <mat-button-toggle-group *ngIf="questionForm.get('answerType')?.value === 'multiple'" 
+          formControlName="multipleSelection" 
+          [value]="false">
+          <mat-button-toggle [value]="false">eine Antwortmöglichkeit</mat-button-toggle>
+          <mat-button-toggle [value]="true">mehrere Antwortmöglichkeiten</mat-button-toggle>
+      </mat-button-toggle-group>
         
       
     </div>

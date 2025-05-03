@@ -7,3 +7,10 @@ mat-dialog-content {
 mat-form-field {
     width: 100%;  /* Sorgt dafür, dass jedes Formularfeld die gesamte verfügbare Breite einnimmt */
 }
+
+.scale-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+  }

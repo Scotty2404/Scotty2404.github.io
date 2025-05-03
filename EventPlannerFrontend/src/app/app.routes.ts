@@ -1,3 +1,4 @@
+// src/app/app.routes.ts
 import { Routes } from '@angular/router';
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 import { CalendarPageComponent } from './pages/calendar-page/calendar-page.component';
@@ -14,12 +15,13 @@ import { EventToDoListPageComponent } from './pages/event-to-do-list-page/event-
 import { GuestTablePageComponent } from './pages/guest-table-page/guest-table-page.component';
 import { QrEventPageComponent } from './pages/qr-event-page/qr-event-page.component';
 import { QrSurveyPageComponent } from './pages/qr-survey-page/qr-survey-page.component';
-
+import { AuthGuard } from './services/auth.guard';
 
 export const routes: Routes = [
     { 
         path: '', 
-        component: MainLayoutComponent, 
+        component: MainLayoutComponent,
+        canActivate: [AuthGuard], 
         children: [
             { path: '', component: LandingPageComponent },
             { path: 'calendar', component: CalendarPageComponent },
@@ -28,19 +30,17 @@ export const routes: Routes = [
             { path: 'eventedit/:id', component: EventEditPageComponent },
             { path: 'addevent', component: AddEventPageComponent },
             { path: 'event', component: EventPageComponent },
+            { path: 'survey/:id', component: SurveyPageComponent },
             { path: 'survey', component: SurveyPageComponent },
             { path: 'wishlist', component: EventWishlistPageComponent },
-            { path: 'to-do-list', component: EventToDoListPageComponent },
+            { path: 'to-do-list/:id', component: EventToDoListPageComponent },
             { path: 'guesttable/:id', component: GuestTablePageComponent },
             { path: 'event/:id', component: EventPageComponent }
         ] 
-
-        
     },
     { path: 'login', component: LoginPageComponent },
+    { path: 'qr/event/:id', component: QrEventPageComponent },
     { path: 'EventPlannerFrontend/event/:id', component: QrEventPageComponent },
     { path: 'qrSurvey', component: QrSurveyPageComponent },
-
-
     { path: '**', redirectTo: '' }
 ];

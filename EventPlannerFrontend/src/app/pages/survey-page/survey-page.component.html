@@ -6,7 +6,7 @@
     <p>
       <!-- Link zur Startseite, mit Angular-Routing -->
       <a [routerLink]="['/start']" class="breadcrumb-link">Home</a> 
-      <a [routerLink]="['/start']" class="breadcrumb-link"> /Evenet Ansicht</a> /Umfrage
+      <a [routerLink]="['/event/' + eventId]" class="breadcrumb-link"> /Evenet Ansicht</a> /Umfrage
 
       <!-- Aktuelle Position in der Navigation -->
 
@@ -16,7 +16,7 @@
   <!-- Titelbereich der Seite mit Zurück-Button und Hauptüberschrift -->
   <div class="title">
     <!-- Zurück-Button zur Startseite (Angular Routing) -->
-    <button mat-icon-button [routerLink]="['/start']" class="btn-back">
+    <button mat-icon-button [routerLink]="['/event/' + eventId]" class="btn-back">
       <!-- Material Icon für den "Zurück"-Pfeil -->
       <mat-icon>arrow_back</mat-icon>
     </button>
@@ -30,13 +30,13 @@
     <!-- Prüfen, ob die Daten erfolgreich geladen wurden -->
     @if(isLoaded){
 
-    <!-- Bereich für Aktionen wie "Neue Umfrage hinzufügen" -->
-    <div class="table-btn">
-      <!-- Floating Action Button (FAB) von Angular Material, ruft openDialog() auf Klick -->
+    <!-- Button for adding a new survey -->
+    <div *ngIf="ongoingSurveys.length === 0 && completedSurveys.length === 0" class="table-btn">
+      <!-- Floating Action Button (FAB) to add a new survey -->
       <button mat-fab extended (click)="openDialog()">
-        <!-- "Plus"-Icon aus Angular Material -->
+        <!-- "Plus"-Icon from Angular Material -->
         <mat-icon>add</mat-icon> 
-        <!-- Beschriftung des Buttons -->
+        <!-- Button text -->
         Umfrage hinzufügen
       </button>
     </div>

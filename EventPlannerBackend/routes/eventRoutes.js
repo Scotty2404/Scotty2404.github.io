@@ -432,7 +432,8 @@ router.get('/public-event/:eventId', async (req, res) => {
         // Check if the event exists with this token
         // Properly join the tables using qr_id
         db.query(
-            `SELECT e.event_id, e.title, e.startdate, e.enddate, e.description, e.image, e.access_token, v.street, v.city, v.postal_code, v.google_maps_link, q.access_token as qr_access_token
+            `SELECT e.event_id, e.title, e.startdate, e.enddate, e.description, 
+                    e.access_token, e.survey_id, q.access_token as qr_access_token
              FROM event e
              LEFT JOIN qr_code q ON e.qr_id = q.qr_id
              LEFT JOIN event_management.venue v ON e.venue_id = v.venue_id
@@ -456,6 +457,7 @@ router.get('/public-event/:eventId', async (req, res) => {
                     startdate: event.startdate,
                     enddate: event.enddate,
                     description: event.description,
+                    survey_id: event.survey_id,  // Include survey_id in response
                     image: event.image,
                     street: event.street,
                     city: event.city,
@@ -465,73 +467,6 @@ router.get('/public-event/:eventId', async (req, res) => {
         );
     } catch (err) {
         console.error("Route error:", err);
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// create survey
-router.post('/survey/create', authMiddleware, async (req, res) => {
-    try {
-        const { 
-            description,
-            questions
-        } = req.body;
-
-        if(!Array.isArray(questions)){
-            return res.status(400).json({ message: 'Invalid request body.' });
-        }
-
-        // Insert event into the database first to get the survey ID
-        const surveyResult = await queryAsync(`
-            INSERT INTO event_management.survey ( description, active) VALUES (?, 1)`,
-            [description]
-        );
-
-        const surveyId = surveyResult.insertId;
-
-        for(const question of questions) {
-            const qResult = await queryAsync(
-                'INSERT INTO event_management.question ( question_text) VALUES (?)',
-                [question.question_text]
-            );
-
-            const questionId = qResult.insertId;
-
-            await queryAsync(
-                'INSERT INTO event_management.survey_question (survey_id, question_id) VALUES (?, ?)',
-                [surveyId, questionId]
-            );
-
-            for(const answerText of question.offered_answer) {
-                const aResult = await queryAsync(
-                    'INSERT INTO event_management.offeredanswers (answer_text) VALUES (?)',
-                    [answerText]
-                );
-
-                const answerId = aResult.insertId;
-
-                await queryAsync (
-                    'INSERT INTO event_management.question_offeredanswers (question_id, offered_answers_id) VALUES (?, ?)',
-                    [questionId, answerId]
-                );
-            }
-        }
-
-        const survey = await queryAsync(
-            `SELECT s.*, q.question_id, q.question_text, o.offered_answers_id, o.answer_text
-            FROM event_management.survey s
-             LEFT JOIN event_management.survey_question x ON s.survey_id = x.survey_id
-             LEFT JOIN event_management.question q ON x.question_id = q.question_id
-             LEFT JOIN event_management.question_offeredanswers y ON q.question_id = y.question_id
-             LEFT JOIN event_management.offeredanswers o ON y.offered_answers_id = o.offered_answers_id
-
-            WHERE s.survey_id = ?`,
-            [surveyId]
-        );
-
-        res.json(survey[0] || { message: "No survey Data found." });
-
-    } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
@@ -622,5 +557,42 @@ router.post('/:eventId/guests/add', authMiddleware, async (req, res) => {
         return res.status(500).json({ message: 'Error while inserting guest to Event' });
     }
 });
+
+router.post('/my-events/:id/update-survey', authMiddleware, async(req, res) => {
+    try {
+      const eventId = req.params.id;
+      const { survey_id } = req.body;
+
+      console.log(survey_id, req.body)
+      
+      if (!survey_id) {
+        return res.status(400).json({ error: "Survey ID is required" });
+      }
+  
+      // Update event with survey_id
+      db.query(
+        'UPDATE event_management.event SET survey_id = ? WHERE event_id = ?',
+        [survey_id, eventId],
+        (err, result) => {
+          if (err) {
+            return res.status(500).json({ error: err.message });
+          }
+          
+          if (result.affectedRows === 0) {
+            return res.status(404).json({ error: "Event not found" });
+          }
+          
+          res.json({ 
+            success: true, 
+            message: "Event updated with survey ID successfully",
+            eventId,
+            surveyId: survey_id
+          });
+        }
+      );
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
 
 module.exports = router;

@@ -11,6 +11,7 @@ import { MatListItem } from '@angular/material/list';
 import { MatIcon } from '@angular/material/icon';
 import { Question } from '../../models/survey.model';
 import { MatSelectModule } from '@angular/material/select';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 // Definiert die SurveyDialog-Komponente
 @Component({
@@ -27,7 +28,8 @@ import { MatSelectModule } from '@angular/material/select';
     MatList,
     MatListItem,
     MatIcon,
-    MatSelectModule
+    MatSelectModule,
+    MatButtonToggleModule,
   ],
   templateUrl: './survey-dialog.component.html',  // Der Pfad zur HTML-Vorlage für den Dialog
   styleUrls: ['./survey-dialog.component.scss']  // Der Pfad zu den Styles für den Dialog
@@ -36,12 +38,12 @@ export class SurveyDialogComponent {
   // Initialisierung des Umfrage-Objekts mit einem leeren Titel und einer leeren Fragenliste
   survey = { title: '', questions: [] as Question[] };  
 
-  // Definition einer neuen Frage, die im Dialog bearbeitet wird.
-  newQuestion: Question = {  
+  newQuestion: Question = {
     text: '',  // Fragetext
     answerType: 'checkbox',  // Standard-Fragetyp: 'checkbox'
     options: [],  // Optionen für die Frage, wenn sie eine Checkbox-Frage ist.
-    optionPercentages: []  // Prozentuale Verteilung der Optionen (nur relevant für Skalierungsfragen)
+    optionPercentages: [],   // Prozentuale Verteilung der Optionen
+    multipleSelection: 0  // Add this property with default value false
   };
 
   // Variable, um die Optionen als String zu speichern und später in ein Array zu konvertieren
@@ -52,7 +54,18 @@ export class SurveyDialogComponent {
   showScaleError = false;
   showTextError = false;
 
-  constructor(public dialogRef: MatDialogRef<SurveyDialogComponent>) {}  // Referenz zum Dialog, um ihn zu schließen.
+  constructor(public dialogRef: MatDialogRef<SurveyDialogComponent>) {
+    // Initialize newQuestion with default values
+    this.newQuestion = {
+      text: '',
+      answerType: 'checkbox',
+      options: [],
+      optionPercentages: [],
+      minValue: 1,
+      maxValue: 5,
+      scaleValue: 1
+    };
+  }
 
   // Diese Methode wird aufgerufen, wenn sich der Options-String ändert.
   onOptionsChange(value: string): void {
@@ -63,6 +76,7 @@ export class SurveyDialogComponent {
       .filter(Boolean);  // Filtert leere Optionen heraus (z. B. nach doppeltem Komma).
   }
 
+  // Diese Methode wird aufgerufen, wenn der Benutzer eine neue Frage hinzufügen möchte.
   // Diese Methode wird aufgerufen, wenn der Benutzer eine neue Frage hinzufügen möchte.
   onNextQuestion(): void {
     let hasError = false;
@@ -95,6 +109,9 @@ export class SurveyDialogComponent {
         hasError = true;
       } else {
         this.showScaleError = false;
+        // Save both min and max values for scale questions
+        this.newQuestion.minValue = this.newQuestion.minValue || 1;
+        this.newQuestion.maxValue = this.newQuestion.maxValue || 5;
         this.newQuestion.optionPercentages = [this.newQuestion.scaleValue];  // Skalenwert speichern
       }
     }
@@ -112,7 +129,9 @@ export class SurveyDialogComponent {
       text: '',
       answerType: 'checkbox',
       options: [],
-      optionPercentages: []
+      optionPercentages: [],
+      minValue: 1,
+      maxValue: 5
     };
     this.optionsAsString = '';
   }
@@ -134,13 +153,17 @@ export class SurveyDialogComponent {
       this.newQuestion.options = this.newQuestion.options || [];
     }
 
-    // Für Skalierungsfragen speichern wir den Skalenwert, wenn er nicht null ist
+    // Für Skalierungsfragen speichern wir den Skalenwert und min/max values
     if (this.newQuestion.answerType === 'scale' && this.newQuestion.scaleValue != null) {
       this.newQuestion.optionPercentages = [this.newQuestion.scaleValue];
+      this.newQuestion.minValue = this.newQuestion.minValue || 1;
+      this.newQuestion.maxValue = this.newQuestion.maxValue || 5;
     }
 
-    // Die letzte Frage zur Umfrage hinzufügen
-    this.survey.questions.push(this.newQuestion);
+    // Die letzte Frage zur Umfrage hinzufügen, wenn sie nicht leer ist
+    if (this.newQuestion.text && this.newQuestion.text.trim() !== '') {
+      this.survey.questions.push(this.newQuestion);
+    }
 
     // Dialog schließen und die Umfrage übergeben
     this.dialogRef.close(this.survey);
