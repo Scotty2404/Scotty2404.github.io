@@ -260,82 +260,101 @@ class SurveyService {
 
     insertAnswer(surveyId, questionId, userId, answer) {
         return new Promise((resolve, reject) => {
-            // Zuerst alte Antworten löschen
-            const deleteQuery = 'DELETE FROM answer WHERE survey_id = ? AND question_id = ? AND user_id = ?';
+            // First get the question type to determine how to handle the answer
+            const getQuestionTypeQuery = 'SELECT type FROM question WHERE question_id = ?';
             
-            this.db.query(deleteQuery, [surveyId, questionId, userId], (deleteErr) => {
-                if (deleteErr) return reject(deleteErr);
+            this.db.query(getQuestionTypeQuery, [questionId], (err, results) => {
+                if (err) return reject(err);
+                if (results.length === 0) return reject(new Error(`Question with ID ${questionId} not found`));
                 
-                // Bei Multiple Choice mit Mehrfachauswahl: Mehrere Einträge
-                if (Array.isArray(answer)) {
-                    if (answer.length === 0) {
-                        // Keine Antworten ausgewählt
-                        return resolve(null);
-                    }
+                const questionType = results[0].type;
+                
+                // Delete any previous answers for this question
+                const deleteQuery = 'DELETE FROM answer WHERE survey_id = ? AND question_id = ? AND user_id = ?';
+                
+                this.db.query(deleteQuery, [surveyId, questionId, userId], (deleteErr) => {
+                    if (deleteErr) return reject(deleteErr);
                     
-                    const promises = answer.map(optionIndex => {
-                        // Erst die korrekte offered_answers_id für den Index finden
-                        return new Promise((res, rej) => {
-                            const query = `
-                                SELECT oa.offered_answers_id 
-                                FROM offeredanswers oa
-                                JOIN question_offeredanswers qoa ON oa.offered_answers_id = qoa.offered_answers_id
-                                WHERE qoa.question_id = ?
-                                ORDER BY oa.offered_answers_id
-                                LIMIT 1 OFFSET ?
-                            `;
-                            this.db.query(query, [questionId, optionIndex], (err, results) => {
-                                if (err) {
-                                    return rej(err);
-                                }
-                                if (results.length === 0) {
-                                    return rej(new Error(`No option found at index ${optionIndex}`));
-                                }
-                                
-                                const correctOptionId = results[0].offered_answers_id;
-                                const insertQuery = 'INSERT INTO answer (survey_id, question_id, user_id, offered_answers_id) VALUES (?, ?, ?, ?)';
-                                this.db.query(insertQuery, [surveyId, questionId, userId, correctOptionId], 
+                    // Handle the answer based on question type
+                    if (questionType === 'multiple') {
+                        this.handleMultipleChoiceAnswer(surveyId, questionId, userId, answer)
+                            .then(resolve)
+                            .catch(reject);
+                    } else if (questionType === 'scale') {
+                        // For scale questions, store directly as scale_answer
+                        const query = 'INSERT INTO answer (survey_id, question_id, user_id, scale_answer) VALUES (?, ?, ?, ?)';
+                        this.db.query(query, [surveyId, questionId, userId, answer], 
+                            (err, result) => err ? reject(err) : resolve(result));
+                    } else if (questionType === 'text') {
+                        // For text questions, store as text_answer
+                        const query = 'INSERT INTO answer (survey_id, question_id, user_id, text_answer) VALUES (?, ?, ?, ?)';
+                        this.db.query(query, [surveyId, questionId, userId, answer], 
+                            (err, result) => err ? reject(err) : resolve(result));
+                    } else {
+                        reject(new Error(`Unsupported question type: ${questionType}`));
+                    }
+                });
+            });
+        });
+    }
+    
+    // Helper method to handle multiple choice answers
+    handleMultipleChoiceAnswer(surveyId, questionId, userId, answer) {
+        return new Promise((resolve, reject) => {
+            if (Array.isArray(answer)) {
+                // Multiple selection case
+                if (answer.length === 0) {
+                    return resolve(null); // No answers selected
+                }
+                
+                const promises = answer.map(optionIndex => {
+                    return this.findOptionIdByIndex(questionId, optionIndex)
+                        .then(optionId => {
+                            const insertQuery = 'INSERT INTO answer (survey_id, question_id, user_id, offered_answers_id) VALUES (?, ?, ?, ?)';
+                            return new Promise((res, rej) => {
+                                this.db.query(insertQuery, [surveyId, questionId, userId, optionId], 
                                     (err, result) => err ? rej(err) : res(result));
                             });
                         });
-                    });
-                    Promise.all(promises).then(resolve).catch(reject);
-                } else if (typeof answer === 'number' && !Number.isNaN(answer) && questionId) {
-                    // Für einzelne Multiple-Choice-Antworten
-                    // Erst die korrekte offered_answers_id für den Index finden
-                    const query = `
-                        SELECT oa.offered_answers_id 
-                        FROM offeredanswers oa
-                        JOIN question_offeredanswers qoa ON oa.offered_answers_id = qoa.offered_answers_id
-                        WHERE qoa.question_id = ?
-                        ORDER BY oa.offered_answers_id
-                        LIMIT 1 OFFSET ?
-                    `;
-                    this.db.query(query, [questionId, answer], (err, results) => {
-                        if (err) {
-                            return reject(err);
-                        }
-                        if (results.length === 0) {
-                            return reject(new Error(`No option found at index ${answer}`));
-                        }
-                        
-                        const correctOptionId = results[0].offered_answers_id;
+                });
+                
+                Promise.all(promises).then(resolve).catch(reject);
+            } else if (typeof answer === 'number' && !Number.isNaN(answer) && questionId) {
+                // Single selection case
+                this.findOptionIdByIndex(questionId, answer)
+                    .then(optionId => {
                         const insertQuery = 'INSERT INTO answer (survey_id, question_id, user_id, offered_answers_id) VALUES (?, ?, ?, ?)';
-                        this.db.query(insertQuery, [surveyId, questionId, userId, correctOptionId], 
+                        this.db.query(insertQuery, [surveyId, questionId, userId, optionId], 
                             (err, result) => err ? reject(err) : resolve(result));
-                    });
-                } else {
-                    // Für Textantworten und Skala
-                    const query = 'INSERT INTO answer (survey_id, question_id, user_id, text_answer, scale_answer) VALUES (?, ?, ?, ?, ?)';
-                    const params = [
-                        surveyId,
-                        questionId,
-                        userId,
-                        typeof answer === 'string' ? answer : null, // für Textantworten
-                        typeof answer === 'number' ? answer : null // für Skala
-                    ];
-                    this.db.query(query, params, (err, result) => err ? reject(err) : resolve(result));
+                    })
+                    .catch(reject);
+            } else {
+                reject(new Error(`Invalid answer format for multiple choice question: ${answer}`));
+            }
+        });
+    }
+    
+    // Helper to find the correct option ID by index
+    findOptionIdByIndex(questionId, index) {
+        return new Promise((resolve, reject) => {
+            const query = `
+                SELECT oa.offered_answers_id 
+                FROM offeredanswers oa
+                JOIN question_offeredanswers qoa ON oa.offered_answers_id = qoa.offered_answers_id
+                WHERE qoa.question_id = ?
+                ORDER BY oa.offered_answers_id
+                LIMIT 1 OFFSET ?
+            `;
+            
+            this.db.query(query, [questionId, index], (err, results) => {
+                if (err) {
+                    return reject(err);
                 }
+                if (results.length === 0) {
+                    return reject(new Error(`No option found at index ${index} for question ${questionId}`));
+                }
+                
+                resolve(results[0].offered_answers_id);
             });
         });
     }
