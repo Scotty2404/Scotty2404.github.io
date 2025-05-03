@@ -524,19 +524,33 @@ private processScaleResults(question: any, apiQuestion: any, results: any[]) {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         console.log('New survey created:', result);
-  
+    
         // If we have an event ID, associate the survey with this event
         if (this.eventId !== null && result) {
           // Prepare survey data for API
           const surveyData = {
             title: `Umfrage für ${result.title || 'Event'}`,
             description: 'Event-Umfrage',
-            questions: result.questions.map((q: any) => ({
-              question: q.text,
-              answerType: this.mapQuestionTypeToBackend(q.answerType),
-              answers: q.options || [],
-              multipleSelection: q.multipleSelection || false
-            }))
+            questions: result.questions.map((q: any) => {
+              // Map to the backend format, ensuring all necessary fields
+              const baseQuestion = {
+                question: q.text,
+                answerType: this.mapQuestionTypeToBackend(q.answerType),
+                answers: q.options || [],
+                multipleSelection: q.multipleSelection || false
+              };
+              
+              // Add specific properties based on question type
+              if (q.answerType === 'scale') {
+                return {
+                  ...baseQuestion,
+                  minValue: q.minValue || 1,
+                  maxValue: q.maxValue || 5
+                };
+              }
+              
+              return baseQuestion;
+            })
           };
           
           // Save the survey via API
@@ -545,7 +559,6 @@ private processScaleResults(question: any, apiQuestion: any, results: any[]) {
               console.log('Survey saved successfully:', response);
               if (response && response.success && response.survey_id) {
                 // After creating survey, update the event with the survey ID
-                // Use non-null assertion operator to tell TypeScript that eventId is definitely not null here
                 this.updateEventWithSurvey(this.eventId!, response.survey_id);
                 
                 // Convert back to our model format and add to UI

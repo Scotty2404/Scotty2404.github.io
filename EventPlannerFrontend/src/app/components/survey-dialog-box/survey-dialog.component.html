@@ -43,15 +43,27 @@
     Bitte gib mindestens zwei gültige Antwortmöglichkeiten an. <!-- Fehleranzeige, wenn weniger als zwei Optionen eingegeben wurden -->
   </div>
 
-  <!-- Eingabefeld für Skalenwert (nur sichtbar bei Skalierungsfragen) -->
-  <mat-form-field *ngIf="newQuestion.answerType === 'scale'">
-    <mat-label>Skalenwert (z.B. 0 - 100)</mat-label>
-    <input matInput type="number" [(ngModel)]="newQuestion.scaleValue" min="0" max="100"> <!-- Eingabefeld für numerischen Skalenwert -->
-  </mat-form-field>
+  <!-- Eingabefelder für Skalenwert (nur sichtbar bei Skalierungsfragen) -->
+  <div *ngIf="newQuestion.answerType === 'scale'" class="scale-inputs">
+    <mat-form-field appearance="outline">
+      <mat-label>Minimalwert</mat-label>
+      <input matInput type="number" [(ngModel)]="newQuestion.minValue" min="0" max="1000">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Maximalwert</mat-label>
+      <input matInput type="number" [(ngModel)]="newQuestion.maxValue" min="1" max="1000">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" style="display: none;">
+      <mat-label>Startwert</mat-label>
+      <input matInput type="number" [(ngModel)]="newQuestion.scaleValue" [min]="newQuestion.minValue || 0" [max]="newQuestion.maxValue || 100">
+    </mat-form-field>
+  </div>
 
   <!-- Fehleranzeige bei fehlendem Skalenwert -->
   <div *ngIf="showScaleError" style="color: red; font-size: 0.9rem; margin-bottom: 10px;">
-    Bitte gib einen Skalenwert an. <!-- Fehlermeldung, wenn kein Skalenwert eingegeben wurde -->
+    Bitte gib die Skalenwerte an.
   </div>
 
   <!-- "Antwortfeld" wird bei offenen Fragen angezeigt, ist jedoch deaktiviert -->
