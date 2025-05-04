@@ -3,6 +3,7 @@
 This is the backend server for the EventPlanner project. To use this server, you need to have MySQL installed and added to your system's PATH.
 
 Please make sure MySQL is installed before proceeding.
+!Also set a Database password in the .env file in the Backend!
 
 ## Server
 
