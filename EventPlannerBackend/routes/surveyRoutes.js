@@ -38,7 +38,7 @@ router.post('/create', authMiddleware, async (req, res) => {
                     maxLength: q.maxLength || 500
                 };
             })
-        };
+        }; 
 
         const survey = await surveyService.createSurvey(transformedData, userId);
         res.status(201).json({

@@ -118,24 +118,14 @@ describe('EventRoutes tests', () => {
 
     afterAll(async () => {
         await new Promise((resolve, reject) => {
-            global.db.query(
-                'DELETE FROM event_management.event WHERE title = ?'
-                , [testEvent.title], (err) => {
-                    if(err) reject(err);
-                    resolve();
-                });
-        });
-        await new Promise((resolve, reject) => {
-            global.db.query(
-                'DELETE FROM event_management.user WHERE email = ?'
-                , [testUser.email], (err) => {
-                    if (err) reject(err);
-                    resolve();
-            });
-        });
-
-        await new Promise((resolve, reject) => {
-            global.db.end((err) => {
+            global.db.query(`
+                SET FOREIGN_KEY_CHECKS = 0;
+                TRUNCATE TABLE user_event;
+                TRUNCATE TABLE event;
+                TRUNCATE TABLE survey;
+                TRUNCATE TABLE user;
+                SET FOREIGN_KEY_CHECKS = 1;
+            `, (err) => {
                 if (err) reject(err);
                 else resolve();
             });

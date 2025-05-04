@@ -183,7 +183,6 @@ export class EventEditPageComponent implements OnInit {
       google_maps_link: googleMapsLink,
     };
     
-    //Image setzten !Achtung custom images werden noch nicht berücksichtigt!
     let image;
     this.selectedFile ? image = this.selectedFile : image = formData.image;
 

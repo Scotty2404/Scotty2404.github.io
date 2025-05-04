@@ -19,6 +19,7 @@ Get-Content "$backendPath\.env" | ForEach-Object {
 $dbName = $env:DB_NAME
 $dbUser = $env:DB_USER
 $dbPassword = $env:DB_PASSWORD
+$testdbName = $env:TEST_DB_NAME
 
 # --- check for mysql ---
 $mysqlPath = Get-Command "mysql.exe" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source
@@ -30,7 +31,7 @@ if(-not $mysqlPath) {
 
 # --- Try initializing MySQL ---
 Write-Host "`nStarting MySQL initiation..."
-$initResult = & ".\mysql_setup.ps1" -mysqlPath $mysqlPath -dbName $dbName -dbUser $dbUser -dbPassword $dbPassword -sqlFile $sqlFile
+$initResult = & ".\mysql_setup.ps1" -mysqlPath $mysqlPath -dbName $dbName -dbUser $dbUser -dbPassword $dbPassword -sqlFile $sqlFile -testdbName $testdbName
 
 if($LASTEXITCODE -eq 0) {
     Write-Host "MySql initiation succeeded."

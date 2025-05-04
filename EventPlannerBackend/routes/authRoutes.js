@@ -12,6 +12,7 @@ const authMiddleware = (req, res, next) => {
     try {
         const verified = jwt.verify(token.replace("Bearer ", ""), process.env.JWT_SECRET);
         req.user = verified.id;
+        console.log('user id :', verified.id);
         next();
     } catch (err) {
         res.status(400).json({ error: "Token ungültig" });

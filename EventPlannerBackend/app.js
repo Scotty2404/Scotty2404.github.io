@@ -6,6 +6,7 @@ const mysql = require('mysql2');
 
 const { router: authRoutes } = require('./routes/authRoutes');
 const eventRoutes = require('./routes/eventRoutes');
+const surveyRoutes = require('./routes/surveyRoutes');
 
 const app = express();
 app.use(express.json());
@@ -14,18 +15,21 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
+app.use('/api/surveys', surveyRoutes);
 
 // Datenbank konfigurieren
 const dbConfig = {
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'event_management'
+    database: process.env.DB_NAME || 'event_management',
+    multipleStatements: false
 };
 
 // Wenn umgebungsvariable auf test gesetzt ist, test-db verwenden
 if(process.env.NODE_ENV === 'test') {
     dbConfig.database = process.env.TEST_DB_NAME || 'event_management_test';
+    dbConfig.multipleStatements = true
 }
 
 // MySQL Verbindung erstellen

@@ -432,7 +432,7 @@ router.get('/public-event/:eventId', async (req, res) => {
         // Check if the event exists with this token
         // Properly join the tables using qr_id
         db.query(
-            `SELECT e.event_id, e.title, e.startdate, e.enddate, e.description, 
+            `SELECT e.event_id, e.title, e.startdate, e.enddate, e.description, e.image, v.street, v.city, v.postal_code,
                     e.access_token, e.survey_id, q.access_token as qr_access_token
              FROM event e
              LEFT JOIN qr_code q ON e.qr_id = q.qr_id
