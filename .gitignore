@@ -7,4 +7,3 @@ dist/
 /dist
 .vscode
 */.env
-.env.example
