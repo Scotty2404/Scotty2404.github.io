@@ -372,31 +372,36 @@ export class SurveyPageComponent implements OnInit {
     
     // If we have the original options array with IDs
     if (question._options && Array.isArray(question._options)) {
-      for (let i = 0; i < question._options.length; i++) {
-        const option = question._options[i];
-        if (option.id == optionId || option.offered_answers_id == optionId) {
-          return i;
+        for (let i = 0; i < question._options.length; i++) {
+            const option = question._options[i];
+            if (option.id == optionId || option.offered_answers_id == optionId) {
+                return i;
+            }
         }
-      }
     }
     
     // If optionId is a direct index
     if (typeof optionId === 'number' && optionId >= 0 && optionId < question.options.length) {
-      return optionId;
+        return optionId;
     }
     
-    // The option IDs might be in a different order than the options array
-    // In your case, we need to map offered_answers_id values (95, 96, 97) to indices (0, 1, 2)
-    // The simplest approach is to use modulo math if the IDs follow a pattern
+    // For offered_answers_id values, map them directly to sequential indices
+    // This is a more reliable method than using modulo
     if (typeof optionId === 'number' || !isNaN(parseInt(String(optionId)))) {
-      const numericId = typeof optionId === 'number' ? optionId : parseInt(String(optionId));
-      // This is a simplification - you might need to adjust based on your actual ID pattern
-      return numericId % question.options.length;
+        const numericId = typeof optionId === 'number' ? optionId : parseInt(String(optionId));
+        // Calculate the index based on the lowest offered_answers_id in your data
+        // Assuming the first option has offered_answers_id = 7, then baseId = 7
+        const baseId = 7;  // Adjust this value to match your data!
+        const index = numericId - baseId;
+        
+        if (index >= 0 && index < question.options.length) {
+            return index;
+        }
     }
     
     console.warn('Could not map option ID to index:', optionId);
     return -1;
-  }
+}
   
   private findOptionIndex(optionId: any, apiQuestion: any): number {
     // Get the options array
