@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Configure CORS for cross-origin requests
 app.use(cors({
-  origin: 'http://localhost:4200',
+  origin: 'http://192.168.0.138/',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
@@ -91,7 +91,7 @@ app.get('/api/test-db', (req, res) => {
 
 // Set port and start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`));
 
 // Export app for testing purposes
 module.exports = app;
