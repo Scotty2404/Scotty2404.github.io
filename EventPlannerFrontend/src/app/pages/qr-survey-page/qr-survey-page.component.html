@@ -1,0 +1,74 @@
+<div class="survey-container">
+  <div *ngIf="isLoading" class="loading">
+    Lade Umfrage...
+  </div>
+
+  <div *ngIf="error" class="error">
+    {{ error }}
+  </div>
+
+  <div *ngIf="submitted" class="success">
+    <h2>Vielen Dank!</h2>
+    <p>Ihre Antworten wurden erfolgreich übermittelt.</p>
+  </div>
+
+  <!-- New section to show when survey is inactive -->
+  <div *ngIf="survey && !survey.active && !isLoading && !error && !submitted" class="inactive-survey">
+    <h2>Umfrage nicht mehr verfügbar</h2>
+    <p>Diese Umfrage wurde bereits abgeschlossen und nimmt keine weiteren Antworten mehr an.</p>
+    <button mat-raised-button color="primary" routerLink="">Zur Startseite</button>
+  </div>
+
+  <form *ngIf="survey && survey.active && !isLoading && !error && !submitted" [formGroup]="surveyForm" (ngSubmit)="onSubmit()" class="survey-form">
+    <h1>{{ survey.title }}</h1>
+    <p *ngIf="survey.description">{{ survey.description }}</p>
+
+    <div formGroupName="answers">
+      <mat-card *ngFor="let question of survey.questions" class="survey-card">
+        <mat-card-title class="survey-title">{{ question.questionText }}</mat-card-title>
+        <mat-card-content>
+        <!-- Multiple Choice (Einzelauswahl) -->
+        <mat-radio-group *ngIf="question.type === 'multiple' && !question.multipleSelection" 
+                        [formControlName]="question.id.toString()">
+          <mat-radio-button *ngFor="let option of question.options" [value]="option.id">
+            {{ option.text }}
+          </mat-radio-button>
+        </mat-radio-group>
+
+        <!-- Multiple Choice (Mehrfachauswahl) -->
+        <div *ngIf="question.type === 'multiple' && question.multipleSelection">
+          <div *ngFor="let option of question.options; let i = index" class="checkbox-item">
+            <mat-checkbox [formControl]="getFormArrayControlAt(question.id, i)">
+              {{ option.text }}
+            </mat-checkbox>
+          </div>
+        </div>
+
+          <!-- Text -->
+          <mat-form-field *ngIf="question.type === 'text'" appearance="outline" class="full-width">
+            <mat-label>Ihre Antwort</mat-label>
+            <textarea matInput [formControlName]="question.id.toString()" rows="4"
+                      [maxLength]="question.maxLength || 500"></textarea>
+          </mat-form-field>
+
+          <!-- Scale -->
+          <div *ngIf="question.type === 'scale'" class="scale-container">
+            <mat-label>Bewertung ({{ question.minValue || 1 }} - {{ question.maxValue || 5 }})</mat-label>
+            <mat-slider 
+              [min]="question.minValue || 1" 
+              [max]="question.maxValue || 5" 
+              step="1" 
+              [discrete]="true">
+              <input matSliderThumb [formControlName]="question.id.toString()">
+            </mat-slider>
+            <div class="scale-value">Deine Auswahl: {{ getFormControl(question.id.toString()).value }}</div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="text-center">
+      <button mat-raised-button color="accent" type="submit" class="submit-button">Absenden</button>
+    </div>
+  </form>
+</div>

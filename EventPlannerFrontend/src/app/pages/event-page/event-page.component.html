@@ -1,0 +1,176 @@
+<body>
+  <div class="breadcrumb">
+      <p>
+          <a [routerLink]="['/start']" class="breadcrumb-link">Home </a> /Event ansicht
+      </p>
+  </div>
+  
+  <div class="title">
+          <button mat-icon-button [routerLink]="['/start']" class="btn-back">
+                  <mat-icon>arrow_back</mat-icon>
+          </button>
+          <h1>Dein Event</h1>
+  </div>
+        
+    
+    
+  <div class="content-container">
+
+
+    @if(isLoaded){
+
+      <div class="content">
+
+        <div class="event-box">
+        
+            <app-event-detail-box>
+            </app-event-detail-box>
+
+        </div>
+
+        <div>
+          <div class="event-details-container">
+
+            <mat-card>
+              <h2>Alle Infos zu deinem Event:</h2>
+            
+              <div class="event-info">
+                <h3>{{ event.title }}</h3>
+                <p>{{ eventTime }} in {{ event.city }}</p>
+            
+                <h4>Details:</h4>
+                <p>{{ event.description }}</p>
+            
+                <h4>Gästeanzahl:</h4>
+                <p>{{ event.max_guests }}</p>
+              </div>
+            </mat-card>
+          </div>   
+
+          <div class="qr-code-section">
+                    
+            <h3>Dein QR-Code:</h3>
+            <div class="qr-code-container">
+              <img 
+                [src]="'http://localhost:5000/public' + event.qr_image" 
+                alt="QR Code" 
+                class="qr-code-image"
+              >
+              <a 
+                [href]="'http://localhost:5000/public' + event.qr_image" 
+                download="Event_QR_Code.png"
+                class="download-button"
+              >
+                <button mat-raised-button color="primary">
+                  <mat-icon>download</mat-icon> Download QR
+                </button>
+              </a>
+            </div>
+        </div>     
+      </div> 
+
+      <hr>
+      
+
+      <div class="einladung">
+        
+        <h3>Oder gleich eine fertige Einladung:</h3>
+
+        
+
+          <div class="mail-card">
+            <h1>{{ event.title }}</h1>
+            <hr>
+            <h3 class="mail-h3">
+                {{ eventTime }}
+            </h3>
+            <p>
+              {{ event.description }}
+            </p>
+            
+            
+            <!-- Beispielbild -->
+            <img class="example" [src]="'http://localhost:5000/public' + event.image" alt="Bild zum Event">
+                
+                
+            <!-- Location -->
+            <h3 style="margin-bottom: 20px;">Mit Google-Maps direkt zur Location:</h3>
+            <div>
+            <ng-container *ngIf="event.google_maps_link; else noLink">
+              <a [href]="event.google_maps_link">Route auf der Karte ansehen</a>
+              <iframe 
+                [src]="googleMapsUrl" 
+                width="70%" 
+                height="250" 
+                style="border:0; border-radius: 10px;" 
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade">
+              </iframe>
+            </ng-container>
+            <ng-template #noLink>
+                <p style="color: #324a9a;">Die Kartenansicht ist aktuell noch nicht verfügbar.</p>
+            </ng-template>
+            </div>
+            <!-- QR-Code -->
+            <div class="mail-qr-code">
+              <h2>Zur An-/Abmeldung bei EventAcces:</h2>
+              <a [href]="event.url">
+                <img 
+                  [src]="'http://localhost:5000/public' + event.qr_image" 
+                  alt="QR Code" 
+                  class="qr-code-image"
+                  style="width: 50%;"
+                >
+              </a>
+            </div>
+                
+            
+            <div class="instructions">
+              <strong>So funktioniert’s:</strong><br>
+              📱 Öffne die Kamera-App auf deinem Smartphone<br>
+              🔍 Richte die Kamera auf den QR-Code oben<br>
+              🌐 Klicke auf den angezeigten Link<br>
+              ✅ Sag zu oder ab – ganz einfach!
+            </div>
+            <div class="logo">
+                
+              <img src="/finalLogo.png" alt="EventAccess Logo" style="max-width: 200px;" />
+            </div>
+
+            
+          </div>
+
+          <div>
+                  <button mat-fab extended color="primary" (click)="printInvitation()">
+                    <mat-icon>download</mat-icon> Einladung drucken / speichern
+                  </button>
+                  
+                  
+                </div>
+
+          
+        </div>
+      </div>
+        
+    }
+
+    @else {
+
+      @if(isFailed) {
+          
+          <div class="loading-container">
+              <app-loading-failed-box></app-loading-failed-box>
+          </div>
+      }
+
+      @else { 
+          <div class="loading-container">
+              <app-loading-box></app-loading-box>
+          </div>
+      }
+
+    }
+
+  </div>
+</body>

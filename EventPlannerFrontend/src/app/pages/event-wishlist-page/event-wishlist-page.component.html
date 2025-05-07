@@ -1,0 +1,32 @@
+<div class="status-container">
+  <div class="back-button">
+    <button mat-flat-button [routerLink]="['/start']">zurück</button>
+  </div>
+
+  <div class="box-service">
+    <h3 class="title">Meine Wunschliste 🎁</h3>
+
+    <div class="add-item centered">
+      <mat-form-field class="full-width larger-input">
+        <input matInput placeholder="Wunschartikel">
+      </mat-form-field>
+      <mat-form-field class="full-width larger-input">
+        <input matInput placeholder="Link zum Artikel">
+      </mat-form-field>
+      <button mat-flat-button>Hinzufügen</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Art</th>
+          <th>Link</th>
+          <th>Aktionen</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Hier können die Wunschliste-Daten eingefügt werden -->
+      </tbody>
+    </table>
+  </div> 
+</div>

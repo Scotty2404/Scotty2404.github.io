@@ -1,0 +1,108 @@
+<mat-card *ngFor="let survey of data" class="survey-box">
+
+  <div class="card-header">
+    <!-- Header-Bereich der Umfragekarte, der Steuerungselemente für Aktionen enthält -->
+  
+    <!-- Show the Complete button only for ongoing surveys -->
+    <button *ngIf="showCompleteButton && survey.status !== 'completed'"
+            mat-icon-button
+            (click)="completeSurvey(survey)"  
+            matTooltip="Umfrage abschließen">
+      <!-- Tooltip wird angezeigt, wenn der Benutzer mit der Maus über den Button fährt -->
+      <mat-icon style="color: green;">check_circle</mat-icon>  <!-- Das Symbol für "Abschließen" -->
+    </button>
+  
+    <!-- Show the "Completed" icon for completed surveys -->
+    <mat-icon *ngIf="survey.status === 'completed'"
+              color="primary"
+              matTooltip="Abgeschlossen">
+      done_all
+    </mat-icon>
+  
+    <!-- Button zum Aktualisieren der Umfrageergebnisse -->
+    <button mat-icon-button
+            (click)="updateSurveyResults(survey)"  
+            matTooltip="Aktualisieren">
+      <mat-icon>refresh</mat-icon>  <!-- Symbol für das Aktualisieren -->
+    </button>
+  </div>
+
+  <!-- Titel der Umfrage wird im Card-Title angezeigt -->
+  <mat-card-title>{{ survey.title }}</mat-card-title>
+
+  <mat-card-content>
+    <!-- Inhalt der Karte, hier die Tabs für unterschiedliche Antworttypen -->
+    <mat-tab-group [(selectedIndex)]="selectedAnswerTypeIndex">
+      <!-- Tab-Gruppe, die den aktuell ausgewählten Tab speichert -->
+      
+      <!-- Tab für Checkbox-Fragen -->
+      <mat-tab label="Checkbox">
+        <ng-container *ngFor="let question of survey.questions">
+          <!-- Iteriert durch alle Fragen der Umfrage und zeigt nur die Checkbox-Fragen an -->
+          <div *ngIf="question.answerType === 'checkbox'" class="question-row">
+            <div class="question">{{ question.text }}</div>  <!-- Fragetext anzeigen -->
+            <div class="answer checkbox-result">
+              <!-- Abschnitt, um die Antwortoptionen anzuzeigen -->
+              <div *ngFor="let option of question.options; let i = index" class="option-row">
+                <div class="option-label">{{ option }}</div>  <!-- Anzeige der einzelnen Optionen -->
+                <div class="option-percentage">{{ question.optionPercentages?.[i] || 0 }}%</div>  <!-- Anzeige der prozentualen Verteilung der Option -->
+                <mat-progress-bar mode="determinate"
+                                  [value]="question.optionPercentages?.[i] || 0"
+                                  class="option-bar">
+                </mat-progress-bar>  <!-- Fortschrittsbalken, der den Prozentsatz visuell darstellt -->
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </mat-tab>
+
+      <!-- Tab für offene Fragen -->
+      <mat-tab label="Open">
+        <ng-container *ngFor="let question of survey.questions">
+          <!-- Iteriert durch alle Fragen der Umfrage und zeigt nur die offenen Fragen an -->
+          <div *ngIf="question.answerType === 'open'" class="question-row">
+            <div class="question">{{ question.text }}</div>  <!-- Fragetext anzeigen -->
+            <div class="answer">
+              <!-- Liste der Antworten für offene Fragen anzeigen -->
+              <mat-list role="list">
+                <ng-container *ngIf="question.answerField && question.answerField.length > 0; else noAnswers">
+                  <mat-list-item role="listitem" *ngFor="let answer of question.answerField">
+                    {{ answer }}
+                  </mat-list-item>  <!-- Zeigt jede Antwort als Listenelement -->
+                </ng-container>
+                <ng-template #noAnswers>
+                  <!-- Falls keine Antworten vorhanden sind, wird eine alternative Nachricht angezeigt -->
+                  <p>Keine Antworten vorhanden.</p>
+                </ng-template>
+              </mat-list>
+            </div>
+          </div>
+        </ng-container>
+      </mat-tab>
+
+    <!-- Tab für Skalenfragen -->
+    <mat-tab label="Scale">
+      <ng-container *ngFor="let question of survey.questions">
+        <!-- Iteriert durch alle Fragen der Umfrage und zeigt nur die Skalenfragen an -->
+        <div *ngIf="question.answerType === 'scale'" class="question-row">
+          <div class="question">{{ question.text }}</div>  <!-- Fragetext anzeigen -->
+          <div class="answer scale">
+            <!-- Slider zur Anzeige des Skalenwerts -->
+            <mat-slider 
+              [min]="question.minValue || question.minValue || 1" 
+              [max]="question.maxValue || question.maxValue || 5" 
+              step="1">
+              <input matSliderThumb [value]="question.scaleValue || (question.minValue || question.minValue || 1)" disabled />
+            </mat-slider>
+            <div class="scale-info">
+              &Oslash; {{ question.scaleValue || 0 }} 
+              | Skala: {{ question.minValue || question.minValue || 1 }} - {{ question.maxValue || question.maxValue || 5 }}
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </mat-tab>
+
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>

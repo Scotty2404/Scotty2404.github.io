@@ -1,0 +1,109 @@
+<!-- Hauptcontainer der gesamten Seite -->
+<div class="page-container">
+
+  <!-- Breadcrumb-Navigation oben auf der Seite -->
+  <div class="breadcrumb">
+    <p>
+      <!-- Link zur Startseite, mit Angular-Routing -->
+      <a [routerLink]="['/start']" class="breadcrumb-link">Home</a> 
+      <a [routerLink]="['/event/' + eventId]" class="breadcrumb-link"> /Evenet Ansicht</a> /Umfrage
+
+      <!-- Aktuelle Position in der Navigation -->
+
+    </p>
+  </div>
+
+  <!-- Titelbereich der Seite mit Zurück-Button und Hauptüberschrift -->
+  <div class="title">
+    <!-- Zurück-Button zur Startseite (Angular Routing) -->
+    <button mat-icon-button [routerLink]="['/event/' + eventId]" class="btn-back">
+      <!-- Material Icon für den "Zurück"-Pfeil -->
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <!-- Hauptüberschrift der Seite -->
+    <h1>Umfragen Übersicht</h1>
+  </div>
+
+  <!-- Container für den eigentlichen Seiteninhalt -->
+  <div class="content-container">
+
+    <!-- Prüfen, ob die Daten erfolgreich geladen wurden -->
+    @if(isLoaded){
+
+    <!-- Button for adding a new survey -->
+    <div *ngIf="ongoingSurveys.length === 0 && completedSurveys.length === 0" class="table-btn">
+      <!-- Floating Action Button (FAB) to add a new survey -->
+      <button mat-fab extended (click)="openDialog()">
+        <!-- "Plus"-Icon from Angular Material -->
+        <mat-icon>add</mat-icon> 
+        <!-- Button text -->
+        Umfrage hinzufügen
+      </button>
+    </div>
+
+    <!-- Container für die Accordion-Ansicht der Umfragedaten -->
+    <div class="table-container">
+      <mat-accordion>
+
+        <!-- Panel für bereits abgeschlossene Umfragen -->
+        <mat-expansion-panel 
+          (opened)="panelOpenState.set(true)" 
+          (closed)="panelOpenState.set(false)">
+          
+          <!-- Kopfzeile des Panels -->
+          <mat-expansion-panel-header>
+            <!-- Beschreibung innerhalb der Kopfzeile -->
+            <mat-panel-description>Abgeschlossene Umfragen</mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <!-- Custom-Komponente für Anzeige der abgeschlossenen Umfragen -->
+          <app-survey-question-result-box 
+            [data]="completedSurveys"    
+            [showCompleteButton]="false"> <!-- "Abschließen"-Button wird deaktiviert -->
+          </app-survey-question-result-box>
+
+        </mat-expansion-panel>
+
+        <!-- Panel für laufende (aktive) Umfragen -->
+        <mat-expansion-panel 
+          (opened)="panelOpenState.set(true)" 
+          (closed)="panelOpenState.set(false)">
+          
+          <mat-expansion-panel-header>
+            <mat-panel-description>Laufende Umfragen</mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <!-- Custom-Komponente für Anzeige der laufenden Umfragen -->
+          <app-survey-question-result-box 
+            [data]="ongoingSurveys"   
+            [showCompleteButton]="true"  
+            (complete)="completeSurvey($event)"> <!-- Event: Reaktion auf das Abschließen einer Umfrage -->
+          </app-survey-question-result-box>
+
+        </mat-expansion-panel>
+
+      </mat-accordion>
+    </div>
+
+    }
+
+    <!-- Falls Daten nicht geladen, aber Fehlerstatus erkannt -->
+    @else {
+
+      @if(isFailed) {
+      <!-- Fehleranzeige beim Laden -->
+      <app-loading-failed-box>
+      </app-loading-failed-box>
+      }
+
+      <!-- Falls weder geladen noch Fehler: Ladezustand -->
+      @else {   
+      <app-loading-box>
+      </app-loading-box>
+      }
+
+    }
+
+  </div>
+
+</div>

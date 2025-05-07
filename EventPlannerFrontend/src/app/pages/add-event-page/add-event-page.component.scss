@@ -1,0 +1,180 @@
+@import '../../styles/colors.scss';
+.body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.breadcrumb {
+    display: flex;
+    width: 100%;
+  min-width: 500px;
+
+}
+
+
+.breadcrumb-link {
+    color: $secondarycolor;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.breadcrumb-link:hover {
+    color: $secondarycolor;
+    text-decoration: underline 1.5px;
+    cursor: pointer;
+}
+
+.breadcrumb p {
+    font-size: 1.1em;
+    margin: 10px 0;
+}
+
+.title {
+    color: $secondarycolor;
+    display: flex;
+    gap: 10px;
+    width: 100%;
+  min-width: 500px;
+
+}
+
+.title h1 {
+    font-weight: normal;
+    margin: 0px;
+}
+
+
+.title h1 {
+    font-weight: normal;
+    margin: 0px;
+}
+
+.content-container {
+    display: flex;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    width: 100%;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 200px;
+}
+
+.mat-card {
+  padding: 20px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  min-width: fit-content;
+}
+
+mat-card-title {
+  text-align: left;
+  margin-bottom: 20px;
+  font-size: smaller;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.mat-form-field {
+  width: 100%;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-outline-thick {
+  border-width: 2px;
+}
+
+.image-selection-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.selection-img {
+  min-width: 60px;
+  max-height: 60px;
+  object-fit: cover;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+
+/* Wenn ein Bild ausgewählt ist, umranden wir es */
+mat-radio-button .mat-radio-checked img {
+  border-color: pink;
+  box-shadow: 0 0 5px blue;
+}
+
+/* Datei-Upload */
+.file-upload-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.file-preview {
+  min-width: 100px;
+  max-height: 100px;
+  border-radius: 8px;
+  border: 2px solid #ddd;
+  object-fit: cover;
+}
+
+
+.question-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  margin-top: 10px;
+  background-color: rgb(255, 255, 255);
+}
+
+.answer-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+
+
+
+/* Button Styling */
+.button-container {
+  text-align: center;
+}
+
+.save-btn {
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.save-btn button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.save-btn button:hover:not(:disabled) {
+  background: $primarycolor;
+  color: white;
+}
+
+  

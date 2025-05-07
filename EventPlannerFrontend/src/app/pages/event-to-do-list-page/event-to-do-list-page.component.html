@@ -1,0 +1,87 @@
+
+<body>
+
+  <div class="breadcrumb">
+    <p>
+      <a [routerLink]="['/start']" class="breadcrumb-link">Home</a> 
+      <a [routerLink]="['/event/' + eventId]" class="breadcrumb-link"> /Event Ansicht</a> /ToDo Liste
+    </p>
+  </div>
+
+  <div class="title">
+    <button mat-icon-button [routerLink]="['/event/' + eventId]" class="btn-back">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>To-Do-Liste</h1>
+  </div>
+
+
+  <div class="content-container">
+
+          @if(isLoaded){
+
+            <mat-card class="mat-card">
+              <div class="content">
+        
+                <div class="add-todo">
+                  <mat-form-field class="todo-input" >
+                    <mat-label>Neues To-Do...</mat-label>
+                    <input matInput [(ngModel)]="newTodo" />
+                  </mat-form-field>
+        
+                  <button mat-mini-fab (click)="addTodo()" style="margin-top: 5px;">
+                    <mat-icon>add</mat-icon>
+                  </button>
+                </div>
+        
+                <mat-list *ngIf="todos.length > 0; else noTodos" class="todo-list">
+                  <mat-list-item *ngFor="let todo of todos">
+                    <div class="todo-item">
+                      <mat-checkbox [(ngModel)]="todo.completed" class="checkbox"></mat-checkbox>
+                      <span class="todo-text" [class.completed]="todo.completed">
+                        {{ todo.text }}
+                      </span>
+                      <button mat-icon-button color="warn" (click)="deleteTodo(todo)">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </mat-list-item>
+                </mat-list>
+        
+                <ng-template #noTodos>
+                  <div class="loading-container">
+                    Keine To-Dos vorhanden.
+                  </div>
+                </ng-template>
+        
+              </div>
+            </mat-card>
+
+            
+                
+            }
+      
+            @else {
+      
+              @if(isFailed) {
+          
+                  <div class="loading-container">
+                      <app-loading-failed-box></app-loading-failed-box>
+                  </div>
+              }
+      
+              @else { 
+                  <div class="loading-container">
+                      <app-loading-box></app-loading-box>
+                  </div>
+              }
+      
+          }
+
+      
+
+  </div>
+
+</body>
+
+

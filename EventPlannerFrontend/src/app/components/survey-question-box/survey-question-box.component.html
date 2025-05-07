@@ -1,0 +1,80 @@
+<div [formGroup]="questionForm" class="question-box">
+
+    <mat-form-field>
+        <mat-label>select</mat-label>
+        <mat-select formControlName="answerType">
+          <mat-option *ngFor="let option of options" [value]="option.value">
+            {{ option.viewValue }}
+          </mat-option>
+        </mat-select>
+    </mat-form-field>
+      
+    <mat-form-field appearance="outline">
+      <mat-label>Frage {{ questionIndex + 1 }}</mat-label>
+      <input matInput formControlName="question" required />
+    </mat-form-field>
+  
+    <div *ngIf="questionForm.get('answerType')?.value === 'multiple'" formArrayName="answers">
+      <div
+        *ngFor="let answer of getAnswers().controls; let j = index"
+        style="display: flex; flex-direction: row; align-items: center;"
+      >
+        <mat-form-field appearance="outline">
+          <mat-label>Antwort {{ j + 1 }}</mat-label>
+          <input matInput [formControlName]="j" required />
+        </mat-form-field>
+        <button
+          mat-icon-button
+          color="warn"
+          (click)="removeAnswer(j)"
+          style="margin-left: 5px;"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="questionForm.get('answerType')?.value === 'scale'">
+      <mat-form-field appearance="outline" style="margin-right: 20px;">
+        <mat-label>Min</mat-label>
+        <input matInput type="number" formControlName="minValue" required />
+      </mat-form-field>
+      
+      <mat-form-field appearance="outline">
+        <mat-label>Max</mat-label>
+        <input matInput type="number" formControlName="maxValue" required />
+      </mat-form-field>
+    </div>
+
+    <div *ngIf="questionForm.get('answerType')?.value === 'text'" formArrayName="answers">
+        
+        <mat-form-field appearance="outline" style="width: 40%;">
+            <mat-label>Antwort</mat-label>
+            <input matInput disabled value="Freitextantwort durch Benutzer" />
+        </mat-form-field>
+        
+      </div>
+
+    <div style=" display: flex; justify-content: space-between;">
+      
+      <div>
+        <button mat-mini-fab color="primary" (click)="addAnswer(questionIndex)" [disabled]="questionForm.get('answerType')?.value !== 'multiple' " style="margin-right: 10px;">
+        <mat-icon>add</mat-icon>
+      </button>
+  
+      <button mat-mini-fab color="warn" (click)="removeQuestion(questionIndex)">
+        <mat-icon>delete</mat-icon>
+      </button></div>
+
+      
+      <mat-button-toggle-group *ngIf="questionForm.get('answerType')?.value === 'multiple'" 
+          formControlName="multipleSelection" 
+          [value]="false">
+          <mat-button-toggle [value]="false">eine Antwortmöglichkeit</mat-button-toggle>
+          <mat-button-toggle [value]="true">mehrere Antwortmöglichkeiten</mat-button-toggle>
+      </mat-button-toggle-group>
+        
+      
+    </div>
+  </div>
+  

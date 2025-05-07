@@ -1,0 +1,134 @@
+.mat-card {
+  padding: 20px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  min-width: fit-content;
+}
+
+mat-card-title {
+  text-align: left;
+  margin-bottom: 20px;
+  font-size: smaller;
+}
+
+
+mat-card-title.survey-title {
+  background-color: #f5f5f5;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  width: 80%;
+  border-left: 4px solid #3f51b5;
+}
+
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.survey-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-around;
+  padding: 20px;
+  width: 100%;
+  
+}
+
+.survey-checkbox {
+  margin-bottom: 10px;
+}
+
+.input-card {
+  display: flex;
+  width: 90%;
+}
+
+
+
+
+
+button {
+  align-self: flex-end;
+}
+
+.scale-card {
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+  width: 60%;
+}
+
+
+
+@media (max-width: 600px) {
+  .mat-card {
+    padding: 15px;
+    border-radius: 8px;
+  }
+
+  .survey-card {
+    padding: 8px;
+    width: 100%;
+  }
+
+  .scale-card {
+    width: 80%;
+  }
+
+  mat-card-title {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  .textarea-input {
+    font-size: 14px;
+  }
+
+  button {
+    width: 100%;
+    align-self: center;
+  }
+}
+
+.scale-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+.scale-value {
+  margin-top: 8px;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.inactive-survey {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin: 20px auto;
+  max-width: 600px;
+  text-align: center;
+}
+
+.inactive-survey h2 {
+  margin-bottom: 16px;
+  color: #d32f2f; /* Red color to indicate survey is closed */
+}
+
+.inactive-survey button {
+  margin-top: 20px;
+  align-self: center !important;
+}

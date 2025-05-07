@@ -1,0 +1,74 @@
+@import '../../styles/colors.scss';
+
+.breadcrumb {
+    width: 100%;
+  min-width: 500px;
+
+}
+
+
+.breadcrumb-link {
+    color: $secondarycolor;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.breadcrumb-link:hover {
+    color: $secondarycolor;
+    text-decoration: underline 1.5px;
+    cursor: pointer;
+}
+
+.breadcrumb p {
+    font-size: 1.1em;
+    margin: 10px 0;
+}
+
+.title {
+    color: $secondarycolor;
+    display: flex;
+    gap: 10px;
+    width: 100%;
+  min-width: 500px;
+
+}
+
+.title h1 {
+    font-weight: normal;
+    margin: 0px;
+}
+
+
+.content-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 200px;
+    min-width: 800px;
+    justify-content: flex-start;
+    
+
+}
+
+.table-btn {
+    display: flex;
+    justify-content: right;
+    min-width: 1000px;
+    max-width: 1300px;
+}
+
+.table-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 1100px;
+    width: 100%;
+}
+
+
+
+.loading-container {
+    min-height: 600px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+}

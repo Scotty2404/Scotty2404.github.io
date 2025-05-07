@@ -1,0 +1,175 @@
+// Farbvariablen importieren
+@import '../../styles/colors.scss';
+.body {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.breadcrumb {
+    display: flex;
+    width: 100%;
+    min-width: 200px;
+}
+
+
+.breadcrumb-link {
+    color: $secondarycolor;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.breadcrumb-link:hover {
+    color: $secondarycolor;
+    text-decoration: underline 1.5px;
+    cursor: pointer;
+}
+
+.breadcrumb p {
+    font-size: 1.1em;
+    margin: 10px 0;
+}
+
+.title {
+    color: $secondarycolor;
+    display: flex;
+    gap: 10px;
+    width: 100%;
+  min-width: 500px;
+
+}
+
+.title h1 {
+    font-weight: normal;
+    margin: 0px;
+}
+
+
+.title h1 {
+    font-weight: normal;
+    margin: 0px;
+}
+
+.content-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 200px;
+  min-width: 400px;
+  justify-content: flex-start;
+  
+
+}
+
+.calendar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 300px;
+  width: 100%;
+}
+  
+
+  .mat-card {
+    display: flex;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 300px;
+    min-width: 300px;
+  }
+
+// ---------------- Bereich für das Kontaktformular ----------------
+
+// Card für Kontaktformular
+.contact-card,
+.contact-form-card {
+  width: 100%;
+  max-width: 600px; // Begrenzung auf max. 600px
+  margin: 20px auto; // Vertikaler Abstand, zentriert
+  padding: 20px; // Innenabstand
+  background-color: white;
+}
+
+// Titel der Card
+.card-title {
+  margin-bottom: 10px; // Abstand nach unten
+  color: $primarycolor; // Dunkelblau
+}
+
+// Material Formularelemente
+mat-form-field {
+  width: 100%; // Volle Breite
+  margin-bottom: 16px; // Abstand zwischen den Feldern
+}
+
+// Standard-Button
+.button {
+  margin-top: 20px;
+  width: 100%; // Volle Breite
+  display: block; // Blockelement
+}
+
+// Fehlermeldung bei Formularproblemen
+.error-message {
+  color: red; // Rote Schrift
+  margin-top: 20px; // Abstand nach oben
+  font-weight: bold; // Fett für bessere Sichtbarkeit
+}
+
+// Material Liste
+mat-list {
+  margin-top: 0px;
+  padding-top: 0px;
+  padding-bottom: 0px; // Saubere Kanten bei Listen
+}
+
+// ---------------- Responsives Verhalten ----------------
+
+// Große Tablets
+@media (max-width: 1200px) {
+  .contact-card,
+  .contact-form-card {
+    max-width: 90%; // Breiter auf großen Tablets
+  }
+
+  .card-title {
+    font-size: 1.5em; // Schrift etwas kleiner
+  }
+}
+
+// Normale Tablets
+@media (max-width: 900px) {
+  .contact-card,
+  .contact-form-card {
+    max-width: 95%; // Fast volle Breite
+  }
+
+  .card-title {
+    font-size: 1.3em; // Noch kleinere Schrift
+  }
+
+  .button {
+    margin-top: 15px; // Etwas weniger Abstand
+  }
+}
+
+// Handys
+@media (max-width: 600px) {
+  .contact-card,
+  .contact-form-card {
+    max-width: 100%; // Volle Breite
+    padding: 10px; // Kleineres Padding
+  }
+
+  .card-title {
+    font-size: 1.2em; // Kleinste Schriftgröße
+  }
+
+  .button {
+    margin-top: 10px; // Minimaler Abstand
+  }
+}
