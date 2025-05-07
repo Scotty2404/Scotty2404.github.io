@@ -52,12 +52,12 @@
             <h3>Dein QR-Code:</h3>
             <div class="qr-code-container">
               <img 
-                [src]="'http://192.168.0.138:5000/public' + event.qr_image" 
+                [src]="'http://localhost:5000/public' + event.qr_image" 
                 alt="QR Code" 
                 class="qr-code-image"
               >
               <a 
-                [href]="'http://192.168.0.138:5000/public' + event.qr_image" 
+                [href]="'http://localhost:5000/public' + event.qr_image" 
                 download="Event_QR_Code.png"
                 class="download-button"
               >
@@ -90,7 +90,7 @@
             
             
             <!-- Beispielbild -->
-            <img class="example" [src]="'http://192.168.0.138:5000/public' + event.image" alt="Bild zum Event">
+            <img class="example" [src]="'http://localhost:5000/public' + event.image" alt="Bild zum Event">
                 
                 
             <!-- Location -->
@@ -117,7 +117,7 @@
               <h2>Zur An-/Abmeldung bei EventAcces:</h2>
               <a [href]="event.url">
                 <img 
-                  [src]="'http://192.168.0.138:5000/public' + event.qr_image" 
+                  [src]="'http://localhost:5000/public' + event.qr_image" 
                   alt="QR Code" 
                   class="qr-code-image"
                   style="width: 50%;"

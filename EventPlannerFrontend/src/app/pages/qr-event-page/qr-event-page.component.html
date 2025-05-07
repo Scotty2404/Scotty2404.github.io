@@ -1,6 +1,6 @@
 <div class="event-container">
   <div class="event-card" *ngIf="event">
-    <img [src]="'http://192.168.0.138:5000/public' + event.image" alt="Event Bild" class="event-image" />
+    <img [src]="'http://localhost:5000/public' + event.image" alt="Event Bild" class="event-image" />
 
     <div class="event-details">
       <h1>{{ event.title }}</h1>
